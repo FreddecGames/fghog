@@ -43,7 +43,7 @@
         <script type="text/javascript" src="core/script/sall.js"></script>
         <script type="text/javascript" src="https://kit.fontawesome.com/eec3c710b7.js"></script>
         
-        <title>Heart of Galaxy</title>
+        <title>HoG by FG</title>
 
     </head>
     <body>	
@@ -63,9 +63,11 @@
 				<img id="line_down_info" src="ui/line.png" />
 			</div>
 						
-			<div id="popup_display_toast" class='menu_dark' style='position:absolute;bottom:10%;'>
-				<div id="popup_display_content_toast"></div>
-			</div>			
+			<div id="popup_display_toast" style='position:absolute;bottom:60px;left:0px;right:0px;z-index:11;display:none;'>
+				<div class="d-flex justify-content-center">
+                    <div id="popup_display_content_toast" class="toast show toast-body bg-bar-dark text-center"></div>
+                </div>
+			</div>
 			
 			<div id="loading_screen">
 				<img id="splash" src="ui/splash.png" style="position:absolute;top:0px;left:0px;border:none;margin:0px;z-index:-1"/>
@@ -78,53 +80,106 @@
 			<div class="position-absolute top-0 start-0 end-0 border-bottom bg-bar d-flex align-items-center" style="height:50px;">
 				<div id="topbar_content" class="col-auto px-3" style="width:300px;"></div>
 				<div class="col">
-                    <div class="row gx-2 justify-content-center">
-                        <div class="col-auto">
-                            <button id="b_fleet_icon" type="button" class="btn p-0 lh-1">
-                                <div class="h5"><i class="fas fa-fw fa-space-shuttle"></i></div>
-                                <div class="small">Fleets</div>
-                            </button>
-                        </div>
-                        <img id="b_map_icon" src="ui/map.png" class='icon' style='cursor:pointer;'/>
-                        <img id="b_research_icon" src="ui/research.png" class='icon' style='cursor:pointer;'/>
-                        <img id="b_diplomacy_icon" src="ui/diplomacy.png" class='icon' style='cursor:pointer;'/>
-                        <img id="b_tournament_icon" src="ui/tour.png" class='icon' style='cursor:pointer;'/>
-                        <img id="b_select_icon" src="img/promision.png" class='icon' style='cursor:pointer;'/>
+                    <div class="row justify-content-center">
+                        <button id="b_fleet_icon" type="button" class="col-auto btn lh-1" style="width:85px;">
+                            <div class="h5"><i class="fas fa-fw fa-space-shuttle"></i></div>
+                            <div class="small">Fleets</div>
+                        </button>
+                        <button id="b_map_icon" type="button" class="col-auto btn lh-1" style="width:85px;">
+                            <div class="h5"><i class="fas fa-fw fa-map"></i></div>
+                            <div class="small">Map</div>
+                        </button>
+                        <button id="b_research_icon" type="button" class="col-auto btn lh-1" style="width:85px;">
+                            <div class="h5"><i class="fas fa-fw fa-atom"></i></div>
+                            <div class="small">Research</div>
+                        </button>
+                        <button id="b_diplomacy_icon" type="button" class="col-auto btn lh-1" style="width:85px;">
+                            <div class="h5"><i class="fas fa-fw fa-hands-helping"></i></div>
+                            <div class="small">Diplomacy</div>
+                        </button>
+                        <button id="b_tournament_icon" type="button" class="col-auto btn lh-1" style="width:85px;">
+                            <div class="h5"><i class="fas fa-fw fa-trophy"></i></div>
+                            <div class="small">Tournament</div>
+                        </button>
+                        <button id="b_select_icon" type="button" class="col-auto btn lh-1" style="width:85px;">
+                            <div class="h5"><i class="fas fa-fw fa-globe"></i></div>
+                            <div class="small">Overview</div>
+                        </button>
                     </div>				
 				</div>				
 				<div id="topbar_info" class="col-auto px-3" style="width:300px;">
-					<span id="topbar_rank" style='cursor:pointer;'></span>
-					<span id="topbar_name" class="white_text" style='cursor:pointer;'></span><br>
-					<span id="topbar_year"></span>
-                    <img id="pause_button" src="ui/pause.png" style='position:absolute;top:6px;right:2%;width:32px;height:32px;cursor:pointer;z-index:1000;' />
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="row gx-2 justify-content-end">
+                                <span id="topbar_rank" class="col-auto blue_text"></span>
+                                <span id="topbar_name" class="col-auto white_text"></span>
+                            </div>
+                            <div id="topbar_year" class="row gx-2 justify-content-end"></div>
+                        </div>
+                        <div class="col-auto">
+                            <button id="pause_button" type="button" class="btn lh-1" style="width:65px;">
+                                <div class="h5"><i id="pause_button_icon"></i></div>
+                                <div id="pause_button_text" class="small"></div>
+                            </button>
+                        </div>
+                    </div>
 				</div>
 			</div>
 			
-			<div class="position-absolute bottom-0 start-0 end-0 border-top bg-bar" style="height:50px;">
-                <div id="downbar_wrapper">
-				
-                    <div id="downbar_content"></div>
-                    
-                    <div id="bottom_build_menu">
-                        <img id="b_extraction_icon" src="ui/extraction.png" class='icon' style='cursor:pointer;'/>
-                        <img id="b_production_icon" src="ui/production.png" class='icon' style='cursor:pointer;'/>
-                        <img id="b_energy_icon" src="ui/energy.png" class='icon' style='cursor:pointer;'/>
-                        <img id="b_res_icon" src="ui/dna.png" class='icon' style='cursor:pointer;'/>
-                        <img id="b_shipyard_icon" src="ui/ship.png" class='icon' style='cursor:pointer;'/>
-                        <img id="b_market_icon" src="ui/coin.png" class='icon' style='cursor:pointer;'/>
-                        <img id="b_other_icon" src="ui/loading.png" class='icon' style='cursor:pointer;'/>
-                    </div>					
-					
-					<div id='nebula_name' class='blue_text text_shadow' style='z-index:28;font-size:120%; position:absolute; width:1200px; top:-3px;text-align:center;float:left;'></div>
-					
-                    <div id="icon_cont">
-                        <img id="save_icon" src="ui/save.png" class='icon' style='cursor:pointer;'/>
-                        <img id="export_icon" src="ui/export.png" class='icon' style='cursor:pointer;'/>
-                        <img id="info_icon" src="ui/tuto.png" class='icon' style='cursor:pointer;'/>
-                        <img id="tutorial_icon" src="ui/t.png" class='icon' style='cursor:pointer;'/>
-                        <img id="ads_icon" src="ui/ad.png" class='icon' style='cursor:pointer;'/>
+			<div class="position-absolute bottom-0 start-0 end-0 border-top bg-bar d-flex align-items-center" style="height:50px;">
+                <div id="downbar_content" class="col-auto px-3" style="width:300px;"></div>
+                <div id="bottom_build_menu" class="col">
+                    <div class="row justify-content-center">
+                        <button id="b_extraction_icon" type="button" class="col-auto btn lh-1" style="width:80px;">
+                            <div class="h5"><i class="fas fa-fw fa-dice-d20"></i></div>
+                            <div class="small">Extraction</div>
+                        </button>
+                        <button id="b_production_icon" type="button" class="col-auto btn lh-1" style="width:80px;">
+                            <div class="h5"><i class="fas fa-fw fa-industry"></i></div>
+                            <div class="small">Production</div>
+                        </button>
+                        <button id="b_energy_icon" type="button" class="col-auto btn lh-1" style="width:80px;">
+                            <div class="h5"><i class="fas fa-fw fa-bolt"></i></div>
+                            <div class="small">Energy</div>
+                        </button>
+                        <button id="b_res_icon" type="button" class="col-auto btn lh-1" style="width:80px;">
+                            <div class="h5"><i class="fas fa-fw fa-flask"></i></div>
+                            <div class="small">Labs</div>
+                        </button>
+                        <button id="b_shipyard_icon" type="button" class="col-auto btn lh-1" style="width:80px;">
+                            <div class="h5"><i class="fas fa-fw fa-rocket"></i></div>
+                            <div class="small">Shipyard</div>
+                        </button>
+                        <button id="b_market_icon" type="button" class="col-auto btn lh-1" style="width:80px;">
+                            <div class="h5"><i class="fas fa-fw fa-handshake"></i></div>
+                            <div class="small">Market</div>
+                        </button>
+                        <button id="b_other_icon" type="button" class="col-auto btn lh-1" style="width:80px;">
+                            <div class="h5"><i class="fas fa-fw fa-building"></i></div>
+                            <div class="small">Others</div>
+                        </button>
                     </div>
-					
+                </div>					
+                <div id='nebula_name' class='col blue_text text_shadow'></div>
+                <div id="icon_cont" class="col-auto px-3" style="width:300px;">
+                    <div class="row justify-content-end">
+                        <button id="save_icon" type="button" class="col-auto btn lh-1" style="width:66px;">
+                            <div class="h5"><i class="fas fa-fw fa-save"></i></div>
+                            <div class="small">Save</div>
+                        </button>
+                        <button id="export_icon" type="button" class="col-auto btn lh-1" style="width:66px;">
+                            <div class="h5"><i class="fas fa-fw fa-file-export"></i></div>
+                            <div class="small">Export</div>
+                        </button>
+                        <button id="info_icon" type="button" class="col-auto btn lh-1" style="width:66px;">
+                            <div class="h5"><i class="fas fa-fw fa-cogs"></i></div>
+                            <div class="small">Settings</div>
+                        </button>
+                        <button id="tutorial_icon" type="button" class="col-auto btn lh-1" style="width:66px;">
+                            <div class="h5"><i class="fas fa-fw fa-question-circle"></i></div>
+                            <div class="small">Tutorial</div>
+                        </button>
+                    </div>
                 </div>
 			</div>
 			

@@ -112,16 +112,6 @@ li {
 	max-height:380px;
 	z-index:200;
 }
-#popup_display_toast {
-	position:absolute;
-	border: none;
-	margin: 0;
-	padding: 0;
-	height:auto;
-	max-height:380px;
-	z-index:200;
-	
-}
 
 #line_top {
 	position:relative;
@@ -212,78 +202,6 @@ li {
 
 #version {
 	position: absolute;
-}
-
-
-/* ========================= BARRE DI STATO ==================== */
-
-#topbar_rank {
-	text-align: right;
-}
-
-#topbar_name {
-	text-align: right;
-}
-#topbar_year {
-	text-align: right;
-}
-
-#downbar_content {
-	width: 90%;
-    position: absolute;
-    left:1%;
-    top:8px;
-}
-
-#icon_cont {
-    right:0%;
-    position: absolute;
-    top:0%;
-    width:20%;
-	z-index:45;
-}
-
-#bottom_build_menu {
-    right:20%;
-    position: absolute;
-    top:15%;
-    width:40%;
-}
-
-#achievement_icon {
-	position:absolute;
-	top:6px;
-}
-
-#settings_icon {
-	position:absolute;
-	top:6px;
-    left:30px;
-}
-
-#export_icon {
-	position:absolute;
-	top:6px;
-}
-#save_icon {
-	position:absolute;
-	top:6px;
-	left:30px;
-}
-#info_icon {
-	position:absolute;
-	top:6px;
-	left:60px;
-}
-#tutorial_icon {
-	position:absolute;
-	top:6px;
-	left:90px;
-}
-#ads_icon {
-	position:absolute;
-	top:6px;
-	left:120px;
 }
 
 /* ==================== PLANET INTERFACE ================ */
@@ -1111,6 +1029,7 @@ a:active {color: #80c0ff;}
 .small, small { font-size: .65em; }
 
 .bg-bar { background-color: rgba(22, 38, 46, .5); }
+.bg-bar-dark { background-color: rgba(22, 38, 46, .75); }
 
 .border-top { border-top: 1px solid #20363b!important; }
 .border-end { border-right: 1px solid #20363b!important; }

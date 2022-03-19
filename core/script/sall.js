@@ -2902,7 +2902,7 @@ function settingsLoader(b) {
     for (var e in gameSettings)
         gameSettings[e] = b[e] || gameSettingsReset[e] || !1;
     gameSettings.civis || (gameSettings.civis = "0");
-    gameSettings.gamePaused ? $("#pause_button").attr("src", "" + UI_FOLDER + "/arrow_small.png") : $("#pause_button").attr("src", "" + UI_FOLDER + "/pause.png");
+    gameSettings.gamePaused ? ($("#pause_button_icon").attr("class", "fas fa-fw fa-play"), $("#pause_button_text").html("Resume")) : ($("#pause_button_icon").attr("class", "fas fa-fw fa-pause"), $("#pause_button_text").html("Pause"));
     gameSettings.textSize >= MIN_TEXT_SIZE && gameSettings.textSize <= MAX_TEXT_SIZE && $("body").css("font-size", gameSettings.textSize * textSizeCSSfactor + "" + textSizeCSSunit)
 }
 function planetLoader30(b, e) {
@@ -7926,24 +7926,22 @@ $(document).ready(function() {
         })
     }
     function l(b) {
-        for (var d = "<span class='blue_text'> Research Points: </span>", e = 0, h = 0; h < game.planets.length; h++)
+        for (var d = "<div class='row gx-2'><span class='col-auto blue_text'>Research Points</span>", e = 0, h = 0; h < game.planets.length; h++)
             planets[game.planets[h]].globalProd.researchPoint && (e += planets[game.planets[h]].globalProd.researchPoint);
         wiped || (game.researchPoint += b * e);
         isNaN(game.researchPoint) && (game.researchPoint = 0);
         wiped && (wiped = !1);
-        d += "<span class='white_text'>" + beauty(game.researchPoint) + " (" + (0 < e ? "+" : "") + beauty(e) + "/s)</span>";
-        gameSettings.showRPSpent && (d += "<span class='blue_text'> - Total RP earned: </span><span class='white_text'>" + beauty(game.totalRPspent()) + "</span>");
-        0 < game.timeTravelNum && (d = d + "<br><span class='green_text'> Technology Points: </span>" + ("<span class='green_text'>" + beauty(Math.floor(game.techPoints)) + "</span>"),
-        gameSettings.showRPSpent && (d += "<span class='green_text'> - Total TP earned: </span><span class='green_text'>" + beauty(game.totalTPspent()) + "</span>"));
+        d += "<span class='col-auto white_text'>" + beauty(game.researchPoint) + " <span class='small text-success'>" + (0 < e ? "+" : "") + beauty(e) + "/s</span></span>";
+        0 < game.timeTravelNum && (d = d + "<div class='row gx-2'><span class='col-auto blue_text'>Technology Points</span>" + ("<span class='col-auto white_text'>" + beauty(Math.floor(game.techPoints)) + "</span>"));
         document.getElementById("downbar_content") && (document.getElementById("downbar_content").innerHTML = d);
         return d
     }
     function u() {
         var b = parseInt(game.days / 365)
           , d = parseInt(game.days) - 365 * b
-          , e = "<span class='blue_text' >Influence: </span><span class='white_text'>" + game.influence() + "</span><br>";
-        5 <= game.researches[3].level && (e += " <span class='blue_text'>Market Coins: </span><span class='white_text'>" + beauty(Math.floor(game.money)) + "<img src='" + UI_FOLDER + "/coin.png' style='height:16px;width:16px;position:relative;top:4px;'></span>");
-        b = "<span class='blue_text' >Year: </span><span class='white_text'>" + b + "</span>" + (" <span class='blue_text'>Day: </span><span class='white_text'>" + d + "</span>");
+          , e = "<div class='row gx-2'><span class='col-auto blue_text' >Influence</span><span class='col-auto white_text'>" + game.influence() + "</span></div>";
+        5 <= game.researches[3].level && (e += "<div class='row gx-2'><span class='col-auto blue_text'>Market Coins</span><span class='col-auto white_text'>" + beauty(Math.floor(game.money)) + " <i class='blue_text fas fa-fw fa-coins'></i></span>");
+        b = "<span class='col-auto blue_text'>Year</span><span class='col-auto white_text'>" + b + "</span>" + (" <span class='col-auto blue_text'>Day</span><span class='col-auto white_text'>" + d + "</span>");
         document.getElementById("topbar_content") && (document.getElementById("topbar_content").innerHTML = e);
         document.getElementById("topbar_year") && (document.getElementById("topbar_year").innerHTML = b)
     }
@@ -9058,10 +9056,7 @@ $(document).ready(function() {
             toastTimeout && clearTimeout(toastTimeout);
             currentToast && currentToast.dropToast();
             clearTimeout(toastTimeout);
-            document.getElementById("popup_display_content_toast") && (document.getElementById("popup_display_content_toast").innerHTML = "<span style='float:left; text-align:center;'>" + this.content + "</span>");
-            gameSettings.toastRight ? $("#popup_display_toast").css("right", "" + parseInt(100 + b) + "px") : $("#popup_display_toast").css("right", "" + parseInt(($(window).width() - b) / 2) + "px");
-            $("#popup_display_content_toast").css("width", "" + b + "px");
-            $("#popup_display_content_toast").css("height", "" + d + "px");
+            document.getElementById("popup_display_content_toast").innerHTML = "<span>" + this.content + "</span>";            
             $("#popup_display_toast").show();
             $("#popup_display_toast").click(function() {
                 currentToast.dropToast()
@@ -9909,8 +9904,6 @@ $(document).ready(function() {
         currentUpdater = function() {}
         ;
         $("#map_image").attr("src", "" + IMG_FOLDER + "/nebula/" + b.icon);
-        MAP_IMAGE_ZOOM && ($("#map_image").css("width", b.width / gameSettings.mapzoomlevel + "px"),
-        $("#map_image").css("height", b.height / gameSettings.mapzoomlevel + "px"));
         if (MAP_REGIONS) {
             var l = ""
               , n = "red blu orange gray green yellow magenta cream".split(" ")
@@ -9929,12 +9922,12 @@ $(document).ready(function() {
             }
             $("#map_region_container").html(l)
         }
-        l = "<img id='map_zoom_m' style='position:relative;top:8px;width:32px;height:32px;cursor:pointer;' src='" + UI_FOLDER + "/zoomm.png'/>";
-        1 < game.mapsLength() && (l += "<img id='map_arrow_left' style='position:relative;top:4px;width:20px;height:20px;cursor:pointer;' src='" + UI_FOLDER + "/arrow_small_left.png'/>");
-        l += b.name;
-        1 < game.mapsLength() && (l += "<img id='map_arrow_right' style='position:relative;top:4px;width:20px;height:20px;cursor:pointer;' src='" + UI_FOLDER + "/arrow_small.png'/>");
-        l += "<img id='map_zoom_p' style='position:relative;top:8px;width:32px;height:32px;cursor:pointer;' src='" + UI_FOLDER + "/zoomp.png'/>";
-        document.getElementById("nebula_name") && (document.getElementById("nebula_name").innerHTML = l);
+        var l = "<div class='row gx-2 align-items-center justify-content-center'>";
+        1 < game.mapsLength() && (l += "<button type='button' id='map_arrow_left' class='col-auto btn lh-1'><i class='fas fa-fw fa-chevron-left'></i></button>");
+        l += "<div class='col-auto text-center' style='width:150px;'>" + b.name + "</div>";
+        1 < game.mapsLength() && (l += "<button type='button' id='map_arrow_right' class='col-auto btn lh-1'><i class='fas fa-fw fa-chevron-right'></i>");
+        l += "</div>";        
+        document.getElementById("nebula_name").innerHTML = l;
         $("#map_arrow_left").click(function() {
             var d = (b.id + nebulas.length - 1) % game.mapsLength();
             L(nebulas[d], gameSettings.mapzoomlevel)
@@ -9942,16 +9935,6 @@ $(document).ready(function() {
         $("#map_arrow_right").click(function() {
             var d = (b.id + 1) % game.mapsLength();
             L(nebulas[d], gameSettings.mapzoomlevel)
-        });
-        $("#map_zoom_p").click(function() {
-            gameSettings.mapzoomlevel >= MAP_ZOOM_MIN && (gameSettings.mapzoomlevel -= MAP_ZOOM_STEP);
-            gameSettings.mapzoomlevel < MAP_ZOOM_MIN && (gameSettings.mapzoomlevel = MAP_ZOOM_MIN);
-            L(b, gameSettings.mapzoomlevel)
-        });
-        $("#map_zoom_m").click(function() {
-            gameSettings.mapzoomlevel <= MAP_ZOOM_MAX && (gameSettings.mapzoomlevel += MAP_ZOOM_STEP);
-            gameSettings.mapzoomlevel > MAP_ZOOM_MAX && (gameSettings.mapzoomlevel = MAP_ZOOM_MAX);
-            L(b, gameSettings.mapzoomlevel)
         });
         l = "";
         var v = Array(b.planets.length);
@@ -12509,18 +12492,10 @@ $(document).ready(function() {
                         for (d = 0; d < u.length; d++)
                             u[d] && planetLoader(planets[d], u[d]);
                         setIdleBonus();
-                        //submitNumber("Number of planets", game.planets.length);
-                        //submitNumber("Infuence", game.influence());
                         qurisTournament.fleet = null;
                         generateQurisTournamentFleet();
                         var z = b();
-                        //submitNumber("Military Value", z);
-                        //submitNumber("Number of time travels", game.timeTravelNum);
-                        //submitNumber("Tournament Rank", qurisTournament.points + 1);
                         var A = parseInt(Math.floor(game.days / 365));
-                        //submitNumber("Total years", A);
-                        //submitNumber("totaltp", parseInt(game.totalTPspent()));
-                        //submitNumber("Total Population", parseInt(game.totalPopulation()));
                         planets[game.planets[0]] && C(planets[game.planets[0]])
                     } else
                         document.getElementById("impsave") && (document.getElementById("impsave").innerHTML = "Import Save: <span class='red_text'>Corrupted data</span>")
@@ -12597,8 +12572,8 @@ $(document).ready(function() {
             N[na].b();
             N[na].volume = Math.floor(N.v * gameSettings.masterVolume / 100) / 100
         };
-        N[b].addEventListener("loadedmetadata", d);
-        2 <= N[b].readyState && d()
+        //N[b].addEventListener("loadedmetadata", d);
+        //2 <= N[b].readyState && d()
     }
     function ia() {
         qa()
@@ -13272,63 +13247,23 @@ $(document).ready(function() {
     $("#export_icon").click(function() {
         wa()
     });
-    $("#export_icon").hover(function() {
-        (new w(128,10,"<span class='blue_text' style='width:100%;text-align:center'>Save Export</span>","info")).drawInfo();
-        $(document).on("mousemove", function(b) {
-            mouseX = b.pageX + 16;
-            mouseY = b.pageY + 10;
-            $("#popup_info").css({
-                left: mouseX,
-                top: mouseY
-            })
-        });
-        $("#popup_info").css({
-            left: mouseX,
-            top: mouseY
-        })
-    }, function() {
-        currentPopup.drop()
-    });
-    $("#export_icon").mouseout(function() {
-        $(document).on("mousemove", function() {})
-    });
     $("#pause_button").click(function() {
         if (gameSettings.gamePaused) {
             gameSettings.gamePaused = !1;
             0 < idlePauseDuration && setSubBon(idlePauseDuration);
-            $("#pause_button").attr("src", "" + UI_FOLDER + "/pause.png");
+            $("#pause_button_icon").attr("class", "fas fa-fw fa-pause");
+            $("#pause_button_text").html("Pause");
             var b = new w(120,0,"<span class='blue_text text_shadow'>Game resumed</span>!","info")
         } else
             gameSettings.gamePaused = !0,
             stopBon(),
-            $("#pause_button").attr("src", "" + UI_FOLDER + "/arrow_small.png"),
+            $("#pause_button_icon").attr("class", "fas fa-fw fa-play"),
+            $("#pause_button_text").html("Resume"),
             b = new w(120,0,"<span class='blue_text text_shadow'>Game paused</span>!","info");
         b.drawToast()
     });
-    h("pause_button", "<span class='blue_text' style='width:100%;text-align:center'>Pause the game</span>", 110);
     $("#save_icon").click(function() {
         save();
-        0 < userID && ta()
-    });
-    $("#save_icon").hover(function() {
-        (new w(50,10,"<span class='blue_text' style='width:100%;text-align:center'>Save</span>","info")).drawInfo();
-        $(document).on("mousemove", function(b) {
-            mouseX = b.pageX + 16;
-            mouseY = b.pageY + 10;
-            $("#popup_info").css({
-                left: mouseX,
-                top: mouseY
-            })
-        });
-        $("#popup_info").css({
-            left: mouseX,
-            top: mouseY
-        })
-    }, function() {
-        currentPopup.drop()
-    });
-    $("#save_icon").mouseout(function() {
-        $(document).on("mousemove", function() {})
     });
     var Q = new function(b, d, e) {
         this.a = this.t = b;
@@ -13384,7 +13319,6 @@ $(document).ready(function() {
         $(document).on("mousemove", function() {})
     });
     $("#tutorial_icon").click(startTutorial);
-    adsAvailable || $("#ads_icon").hide();
     $("#ads_icon").click(function() {
         (new w(320,80,"<br><span class='blue_text'>Do you want to watch an ad and get a production bonus now?</span>","confirm",function() {
             showAds()
@@ -13394,70 +13328,10 @@ $(document).ready(function() {
     $("#b_fleet_icon").click(function() {
         game.researches[researchesName[FLEET_ENABLING_RESEARCH]].level > FLEET_ENABLING_LEVEL ? S(currentCriteria) : (new w(220,0,"<span class='white_text'>You must research </span><br><span class='blue_text text_shadow'>Interstellar Travel</span>!","info")).drawToast()
     });
-    $("#b_fleet_icon").hover(function() {
-        (new w(80,10,"<span class='blue_text' style='width:100%;text-align:center'>Fleets</span>","info")).drawInfo();
-        $(document).on("mousemove", function(b) {
-            mouseX = b.pageX + 16;
-            mouseY = b.pageY + 10;
-            $("#popup_info").css({
-                left: mouseX,
-                top: mouseY
-            })
-        });
-        $("#popup_info").css({
-            left: mouseX,
-            top: mouseY
-        })
-    }, function() {
-        currentPopup.drop()
-    });
-    $("#b_fleet_icon").mouseout(function() {
-        $(document).on("mousemove", function() {})
-    });
     $("#b_map_icon").click(function() {
         game.researches[researchesName[MAP_ENABLING_RESEARCH]].level > MAP_ENABLING_LEVEL ? L(currentNebula) : (new w(220,0,"<span class='white_text'>You must research </span><br><span class='blue_text text_shadow'>Interstellar Travel</span>!","info")).drawToast()
     });
-    $("#b_map_icon").hover(function() {
-        (new w(48,10,"<span class='blue_text' style='width:100%;text-align:center'>Map</span>","info")).drawInfo();
-        $(document).on("mousemove", function(b) {
-            mouseX = b.pageX + 16;
-            mouseY = b.pageY + 10;
-            $("#popup_info").css({
-                left: mouseX,
-                top: mouseY
-            })
-        });
-        $("#popup_info").css({
-            left: mouseX,
-            top: mouseY
-        })
-    }, function() {
-        currentPopup.drop()
-    });
-    $("#b_map_icon").mouseout(function() {
-        $(document).on("mousemove", function() {})
-    });
     $("#b_select_icon").click(O);
-    $("#b_select_icon").hover(function() {
-        (new w(80,10,"<span class='blue_text' style='width:100%;text-align:center'>Overview</span>","info")).drawInfo();
-        $(document).on("mousemove", function(b) {
-            mouseX = b.pageX + 16;
-            mouseY = b.pageY + 10;
-            $("#popup_info").css({
-                left: mouseX,
-                top: mouseY
-            })
-        });
-        $("#popup_info").css({
-            left: mouseX,
-            top: mouseY
-        })
-    }, function() {
-        currentPopup.drop()
-    });
-    $("#b_select_icon").mouseout(function() {
-        $(document).on("mousemove", function() {})
-    });
     $("#b_build_icon").click(function() {
         currentPlanet.civis == game.id ? B() : (new w(220,0,"<span class='red_text'>You do not own this planet!</span>!","info")).drawToast()
     });
@@ -13484,97 +13358,14 @@ $(document).ready(function() {
     $("#b_extraction_icon").click(function() {
         z("mining", currentPlanet)
     });
-    $("#b_extraction_icon").hover(function() {
-        (new w(95,10,"<span class='blue_text' style='width:100%;text-align:center'>Extraction</span>","info")).drawInfo();
-        $(document).on("mousemove", function(b) {
-            mouseX = b.pageX + 16;
-            mouseY = b.pageY + 10;
-            $("#popup_info").css({
-                left: mouseX,
-                top: mouseY
-            })
-        });
-        $("#popup_info").css({
-            left: mouseX,
-            top: mouseY
-        })
-    }, function() {
-        currentPopup.drop()
-    });
-    $("#b_extraction_icon").mouseout(function() {
-        $(document).on("mousemove", function() {})
-    });
     $("#b_production_icon").click(function() {
         z("prod", currentPlanet)
-    });
-    $("#b_production_icon").hover(function() {
-        (new w(96,10,"<span class='blue_text' style='width:100%;text-align:center'>Production</span>","info")).drawInfo();
-        $(document).on("mousemove", function(b) {
-            mouseX = b.pageX + 16;
-            mouseY = b.pageY + 10;
-            $("#popup_info").css({
-                left: mouseX,
-                top: mouseY
-            })
-        });
-        $("#popup_info").css({
-            left: mouseX,
-            top: mouseY
-        })
-    }, function() {
-        currentPopup.drop()
-    });
-    $("#b_production_icon").mouseout(function() {
-        $(document).on("mousemove", function() {})
     });
     $("#b_energy_icon").click(function() {
         z("energy", currentPlanet)
     });
-    $("#b_energy_icon").hover(function() {
-        (new w(64,10,"<span class='blue_text' style='width:100%;text-align:center'>Energy</span>","info")).drawInfo();
-        $(document).on("mousemove", function(b) {
-            mouseX = b.pageX + 16;
-            mouseY = b.pageY + 10;
-            $("#popup_info").css({
-                left: mouseX,
-                top: mouseY
-            })
-        });
-        $("#popup_info").css({
-            left: mouseX,
-            top: mouseY
-        })
-    }, function() {
-        currentPopup.drop()
-    });
-    $("#b_energy_icon").mouseout(function() {
-        $(document).on("mousemove", function() {})
-    });
-    $("#b_defence_icon").click(function() {
-        C(currentPlanet)
-    });
     $("#b_shipyard_icon").click(function() {
         aa(currentPlanet)
-    });
-    $("#b_shipyard_icon").hover(function() {
-        (new w(80,10,"<span class='blue_text' style='width:100%;text-align:center'>Shipyard</span>","info")).drawInfo();
-        $(document).on("mousemove", function(b) {
-            mouseX = b.pageX + 16;
-            mouseY = b.pageY + 10;
-            $("#popup_info").css({
-                left: mouseX,
-                top: mouseY
-            })
-        });
-        $("#popup_info").css({
-            left: mouseX,
-            top: mouseY
-        })
-    }, function() {
-        currentPopup.drop()
-    });
-    $("#b_shipyard_icon").mouseout(function() {
-        $(document).on("mousemove", function() {})
     });
     $("#b_market_icon").click(function() {
         if (quests[questNames.pirates_4].done && "Merchant Republic" != game.chosenGovern)
@@ -13590,26 +13381,6 @@ $(document).ready(function() {
         else
             b = new w(220,0,"<span class='red_text'>The trade hub is unable to contact a market in this map</span>!","info"),
             b.drawToast()
-    });
-    $("#b_market_icon").hover(function() {
-        (new w(64,10,"<span class='blue_text' style='width:100%;text-align:center'>Market</span>","info")).drawInfo();
-        $(document).on("mousemove", function(b) {
-            mouseX = b.pageX + 16;
-            mouseY = b.pageY + 10;
-            $("#popup_info").css({
-                left: mouseX,
-                top: mouseY
-            })
-        });
-        $("#popup_info").css({
-            left: mouseX,
-            top: mouseY
-        })
-    }, function() {
-        currentPopup.drop()
-    });
-    $("#b_market_icon").mouseout(function() {
-        $(document).on("mousemove", function() {})
     });
     $("#b_other_icon").click(function() {
         z("other", currentPlanet)
@@ -13637,87 +13408,23 @@ $(document).ready(function() {
     $("#b_res_icon").click(function() {
         z("research", currentPlanet)
     });
-    $("#b_res_icon").hover(function() {
-        (new w(142,10,"<span class='blue_text' style='width:100%;text-align:center'>Research buildings</span>","info")).drawInfo();
-        $(document).on("mousemove", function(b) {
-            mouseX = b.pageX + 16;
-            mouseY = b.pageY + 10;
-            $("#popup_info").css({
-                left: mouseX,
-                top: mouseY
-            })
-        });
-        $("#popup_info").css({
-            left: mouseX,
-            top: mouseY
-        })
-    }, function() {
-        currentPopup.drop()
-    });
-    $("#b_res_icon").mouseout(function() {
-        $(document).on("mousemove", function() {})
-    });
     $("#b_research_icon").click(P);
-    $("#b_research_icon").hover(function() {
-        (new w(96,10,"<span class='blue_text' style='width:100%;text-align:center'>Research</span>","info")).drawInfo();
-        $(document).on("mousemove", function(b) {
-            mouseX = b.pageX + 16;
-            mouseY = b.pageY + 10;
-            $("#popup_info").css({
-                left: mouseX,
-                top: mouseY
-            })
-        });
-        $("#popup_info").css({
-            left: mouseX,
-            top: mouseY
-        })
-    }, function() {
-        currentPopup.drop()
-    });
-    $("#b_research_icon").mouseout(function() {
-        $(document).on("mousemove", function() {})
-    });
     $("#b_diplomacy_icon").click(function() {
         R(-1)
     });
-    h("b_diplomacy_icon", "<span class='blue_text' style='width:100%;text-align:center'>Diplomacy</span>", 80);
     (0 == game.timeTravelNum || 7 > game.researches[3].level && 0 == game.timeTravelNum) && $("#b_diplomacy_icon").hide();
     MOBILE_LANDSCAPE && (4 <= game.researches[3].level || 0 < game.timeTravelNum) && $("#b_diplomacy_icon").show();
     $("#b_tournament_icon").click(function() {
         M()
     });
-    h("b_tournament_icon", "<span class='blue_text' style='width:100%;text-align:center'>Space Tournament</span>", 130);
     7 > game.researches[3].level && $("#b_tournament_icon").hide();
-    $("#b_achievements_icon").click(function() {});
-    $("#b_achievements_icon").hover(function() {
-        (new w(120,10,"<span class='blue_text' style='width:100%;text-align:center'>Achievements</span>","info")).drawInfo();
-        $(document).on("mousemove", function(b) {
-            mouseX = b.pageX + 16;
-            mouseY = b.pageY + 10;
-            $("#popup_info").css({
-                left: mouseX,
-                top: mouseY
-            })
-        });
-        $("#popup_info").css({
-            left: mouseX,
-            top: mouseY
-        })
-    }, function() {
-        currentPopup.drop()
-    });
-    $("#b_achievements_icon").mouseout(function() {
-        $(document).on("mousemove", function() {})
-    });
     document.getElementById("l_info") && (document.getElementById("l_info").innerHTML = "Loading game...");
     $("#loading_bar").css("width", "100%");
     (function() {
         for (var b = !1, d = 0; d < ranks.length && !b; )
             ranks[d].requirement() ? game.playerRank = ranks[d] : b = !0,
             d++;
-        $("#topbar_rank").attr("style", "font-family:'xolonium';color:#80c0ff;font-size:80%");
-        document.getElementById("topbar_rank") && (document.getElementById("topbar_rank").innerHTML = "Player Name: ")
+        document.getElementById("topbar_rank") && (document.getElementById("topbar_rank").innerHTML = "Player Name")
     }
     )();
     C(currentPlanet);
@@ -13773,12 +13480,6 @@ $(document).ready(function() {
     $("#popup_container").hide();
     $("#popup_info").hide();
     $("#loading_screen").hide();
-    $("body").on("mousewheel DOMMouseScroll", function(b) {
-        var d = null;
-        "mousewheel" === b.type ? d = -1 * b.originalEvent.wheelDelta : "DOMMouseScroll" === b.type && (d = 40 * b.originalEvent.detail);
-        d && (b.preventDefault(),
-        $(this).scrollTop(d + $(this).scrollTop()))
-    });
     K();
     C(planets[game.planets[0]]);
     for (Z = 0; Z < planets.length; Z++)
@@ -13831,150 +13532,4 @@ $(document).ready(function() {
         K();
         $("#profile_interface").show()
     });
-    MOBILE_LANDSCAPE && testAdsAvailable()
 });
-function printShipStats(b) {
-    for (var e = "", d = 0; d < b; d++) {
-        e += "\n\\" + ships[d].name + "\n";
-        for (var g = 0, h = 0; h < ships[d].cost.length; h++)
-            0 < ships[d].cost[h] && (g += e += resources[h].name + ": power " + ships[d].power / ships[d].cost[h] + ", armor " + ships[d].armor / ships[d].cost[h] + ", hp " + ships[d].hp / ships[d].cost[h] + " mc:" + beauty(ships[d].cost[h] * resourcesPrices[h]) + "\n")
-    }
-    console.log(e)
-}
-function speedTab() {
-    for (var b = "", e = 0; 16 > e; e++) {
-        var d = [1.2, 1.5, 2, 3, 5, 10, 50];
-        b += "| " + ships[e].name + " | ";
-        for (var g = 0; g < d.length; g++) {
-            var h = 4.6 * d[g] / Math.log(ships[e].weight) - 2;
-            b += " -" + Math.floor(100 - 50 * (1.1 - 2 * h / (1 + Math.abs(2 * h)) * .9)) + "% | "
-        }
-        b += "\n"
-    }
-    console.log(b)
-}
-function fleetCost(b) {
-    for (var e = Array(resNum), d = 0; d < resNum; d++)
-        e[d] = 0;
-    for (d = 0; d < resNum; d++)
-        for (var g = 0; g < ships.length; g++)
-            e[d] += ships[g].cost[d] * b.ships[g];
-    b = "";
-    for (d = 0; d < resNum; d++)
-        0 < e[d] && (b += resources[d].name + ": " + beauty(e[d]) + "\n");
-    console.log(b)
-}
-function basePrices() {
-    for (var b = Array(resNum), e = 0; e < resNum; e++)
-        b[e] = 0;
-    for (e = 0; e < game.planets.length; e++)
-        for (var d = 0; d < resNum; d++)
-            b[d] += planets[game.planets[e]].globalProd[d];
-    d = b[0];
-    for (e = 0; e < resNum; e++)
-        0 < b[e] && b[e] > d && (d = b[e]);
-    for (e = 0; e < resNum; e++)
-        0 < b[e] && (b[e] = d / b[e]);
-    d = Array(resNum);
-    for (e = 0; e < resNum; e++)
-        d[e] = {
-            name: resources[e].name,
-            price: b[e]
-        };
-    b = "[";
-    for (e = 0; e < resNum - 1; e++)
-        console.log(d[e].name + ": " + d[e].price),
-        b += Math.floor(10 * d[e].price) / 100 + ",";
-    b += Math.floor(10 * d[resNum - 1].price) / 100 + "]";
-    console.log(b)
-}
-var plotFleets = function() {
-    for (var b = [], e = [], d = [], g = [], h = 0, l = 0; l < planets.length; l++)
-        planets[l].fleets[1] && (b[h] = {
-            p: planets[l].fleets[1].power(),
-            h: planets[l].fleets[1].hp(),
-            a: planets[l].fleets[1].armor()
-        },
-        h++);
-    b.sort(function(b, d) {
-        return b.p < d.p ? -1 : b.p > d.p ? 1 : 0
-    });
-    e[0] = 1;
-    d[0] = 1;
-    for (l = g[0] = 1; l < h; l++)
-        e[l] = b[l].p / b[l - 1].p,
-        d[l] = b[l].h / b[l - 1].h,
-        g[l] = b[l].a / b[l - 1].a;
-    b = "power = [";
-    for (l = 0; l < h - 1; l++)
-        b += e[l] + ", ";
-    b += e[h - 1] + "]; hp = [";
-    for (l = 0; l < h - 1; l++)
-        b += d[l] + ", ";
-    b += d[h - 1] + "]; armor = [";
-    for (l = 0; l < h - 1; l++)
-        b += g[l] + ", ";
-    b += g[h - 1] + "];";
-    console.log(b)
-}
-  , prestigeArr = "[";
-function ppp(b) {
-    game.researches[researchesName.secret].level = 1;
-    game.researches[researchesName.secret].bonus();
-    game.researchPoint = Math.pow(b, game.timeTravelNum) * tri;
-    planets[0].structure[buildingsName.space_machine].number = 1;
-    planets[0].structure[buildingsName.time_machine].number = 1;
-    for (b = 0; b < nebulas[0].planets.length; b++)
-        game.pushPlanet(nebulas[0].planets[b]);
-    prestigeArr += game.techPoints + ","
-}
-function simb(b, e) {
-    document.getElementById("ship_list") && (document.getElementById("ship_list").innerHTML = b.battle(e, "true").r)
-}
-function viewFleetsStrength(b) {
-    for (var e = [], d = 0, g = 0; g < planets.length; g++)
-        planets[g].fleets[1] && (e[d] = {
-            n: planets[g].name,
-            v: planets[g].fleets[1].value(),
-            raw: planets[g].fleets[1].rawValue(),
-            pow: planets[g].fleets[1].power(),
-            hp: planets[g].fleets[1].hp()
-        },
-        d++);
-    for (d = 0; d < e.length - 1; d++) {
-        g = d;
-        for (var h = d + 1; h < e.length; h++)
-            e[h].v < e[g].v && (g = h);
-        h = e[g];
-        e[g] = e[d];
-        e[d] = h
-    }
-    if (!b)
-        for (console.log(e[0].n + " " + e[0].v),
-        h = 1; h < e.length; h++)
-            console.log(e[h].n + " \t" + beauty(e[h].v) + " \t" + Math.pow(1.1, (e[h].v - e[h - 1].v) / 100).toFixed(2) + " \t" + beauty(e[h].v - e[h - 1].v) + " " + beauty(e[h].raw) + " " + beauty(e[h].pow) + " " + beauty(e[h].hp));
-    return e
-}
-function resetTutorial() {
-    for (var b = 0; b < tutorials.length; b++)
-        tutorials[b].done = !1
-}
-function rankView() {
-    for (var b = 0, e = 1, d = viewFleetsStrength(!0), g = 0; 1E4 > g; g++) {
-        var h = Math.floor(Math.log(b + 1) / Math.log(2) + 1);
-        if (h > e) {
-            e = 1E16 * (1 + Math.pow(1.5, b));
-            for (var l = "", u = 0; u < d.length; u++)
-                e > d[u].raw && (l = d[u].n + "(x" + beauty(e / d[u].raw) + ")");
-            console.log("Rank: " + h + " Points: " + b + " Strength: " + beauty(e) + " - " + l);
-            e = h
-        }
-        b++
-    }
-}
-function extractNames(b, e) {
-    for (var d = "{", g = 0; g < b.length; g++)
-        d += '"' + b[g][e].toLowerCase() + '":{\n\t\ten:"' + b[g][e].toLowerCase() + '"\n\t},\n\t';
-    return d + "}"
-}
-;

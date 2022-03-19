@@ -13396,7 +13396,6 @@ var researchesDefinition = [{
     extraAction: function() {
         exportPlanetInterface(planets[0]);
         $("#planet_info").css("z-index", 0);
-        $("#b_extraction_icon").css("z-index", 0)
     },
     drop: function() {
         $("#planet_info").css("z-index", 0)
