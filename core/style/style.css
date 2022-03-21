@@ -33,7 +33,7 @@ body {
 	height: 100%;
 	margin:0;
 	padding:0;
-	font-size:.8rem;
+	font-size:.75rem;
     font-weight: 700;
     font-family: "Oxanium";
 }
@@ -44,14 +44,8 @@ span,p {
 
 ul {
     list-style-type: none;
-    border: none;
-	top:0;
-	left:0;
-	bottom:0;
-	right:0;
 	margin:0;
 	padding:0;
-	max-width: 98%;
 }
 
 li {
@@ -206,29 +200,6 @@ li {
 
 /* ==================== PLANET INTERFACE ================ */
 
-#planet_interface {
-	position:absolute;
-	border:none;
-	margin:0;
-	padding:0;
-	top:50px;
-	bottom:50px;
-	left:0px;
-    right:0px;
-}
-
-#planet_visualizer {
-	position:absolute;
-	border:none;
-	margin:0;
-	padding:0;
-	top:10%;
-	left:25%;
-    height:90%;
-    float:left;
-    align-items:center;
-}
-
 #building_icon {
 	position:absolute;
 	border:none;
@@ -239,57 +210,6 @@ li {
 	top:408px;
 	left:0px;
 }
-
-#planet_info {
-	position: absolute;
-	border:none;
-	margin:0;
-	padding:0;
-	min-width: 200px;
-    width: 28%;
-    max-width: 300px;
-	height: 84%;
-	top: 8%;
-	left:0%;
-	overflow-x:hidden;
-	overflow-y:auto;
-}
- 
-#info_list {
-	border: none;
-	top:0;
-	left:0;
-	bottom:0;
-	right:0;
-	margin:0;
-	padding:0;
-}
-
-#planet_info2 {
-	position: absolute;
-	border:none;
-	margin:0;
-	padding:0;
-	min-width: 200px;
-    width: 28%;
-    max-width: 300px;
-	height: 84%;
-	top: 8%;
-	right:0%;
-	overflow-x:hidden;
-	overflow-y:auto;
-}
- 
-#info_list2 {
-	border: none;
-	top:0;
-	left:0;
-	bottom:0;
-	right:0;
-	margin:0;
-	padding:0;
-}
-
 
 /* ========================= PLANET BUILDING INTERFACE ========================= */
 
@@ -919,9 +839,9 @@ a:active {color: #80c0ff;}
 .interface {
 	position: absolute;
 	border: none;
-	top: 8%;
+	top: 50px;
 	right: 0;
-	bottom: 0;
+	bottom: 50px;
 	margin: 0;
 	padding: 0;
 	width: 100%;
@@ -1042,4 +962,4 @@ a:active {color: #80c0ff;}
 
 .toast { font-size: .65rem; }
 
-.h5, h5 { margin-bottom: 0; }
+.h5, h5 { font-weight: 700; margin-bottom: 0; }

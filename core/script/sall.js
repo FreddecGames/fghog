@@ -1,13 +1,6 @@
-function cssPropertyValueSupported(b, e) {
-    var d = document.createElement("div");
-    d.style[b] = e;
-    return d.style[b] === e
-}
 var textSizeCSSfactor = 1
   , textSizeCSSunit = "vw";
-cssPropertyValueSupported("font-size", "1vw") || (textSizeCSSunit = "%",
-textSizeCSSfactor = 90 / 1.1,
-$("body").css("font-size", bodyTextPct + "%"));
+
 var spaghetti_code = !0, GAME_VERSION = 43, GAME_SUB_VERSION = "D", GAME_DIMX = 1200, GAME_DIMY = 600, fpsFleet = 10, fps = 2, MAX_FLEET_EXPERIENCE = 5E3, MAX_POLLUTION = 1E3 * bi, ATK_TIMER = 500, MAX_AUTO_DELIVERY_PER_PLANET = 5, averageT = 1 / fps, averageTFleet = 1 / fpsFleet, wiped = !1, DEBUG_MAIN_TIME = !1, adsAvailable = !1, idlePauseDuration = 0, tracks = [], AUXILIA_MODE = "ATTACK", repLevel = {
     hostile: {
         min: -1E3,
@@ -148,184 +141,150 @@ var SchedulerUI = function() {
         return "<span class='" + (b.color + "_text" || "blue_text") + "' style='font-size:" + (b.fontSize || "100%") + "'>" + (b.content || "") + "</span>"
     }
     ;
-    this.planetInfoUpdater = function(b) {
-        this.planetEnergyInfoUpdater(b)
+    this.planetInfo = function(planet) {
+        
+        let t1 = "", ret = ""
+        
+        if (game.searchPlanet(planet.id))
+            if (planet.id == game.capital) t1 = "text-warning"
+            else t1 = "blue_text"
+        else if (null == planet.civis) t1 = "white_text"
+        else if (null != planet.civis) t1 = "red_text"
+
+        ret = "<div class='col-12 text-center'>"
+        ret += "<div class='h5 " + t1 + "'>" + planet.name + "</div>"
+        if (planet.id == game.capital) ret += "<div class='text-warning small'>Capital</div>"
+        ret += "</div>"
+        
+        ret += "<div class='col-12'>" + this.planetPhysicsInfo(planet) + "</div>"
+        ret += "<div class='col-12'>" + this.planetEnergyInfo(planet) + "</div>"
+        ret += "<div class='col-12'>" + this.planetResourcesMultiplier(planet) + "</div>"
+        
+        return ret
     }
-    ;
-    this.planetEnergyInfoUpdater = function(b) {
-        b = b[0];
-        var e = Math.floor(b.energyProduction())
-          , d = -Math.floor(b.energyConsumption())
-          , g = e - d
-          , h = b.energyMalus();
-        1 < h ? h = 1 : 0 > h && (h = 0);
-        var l = "green_text";
-        .85 <= h && 1 > h ? l = "gold_text" : .85 > h && (l = "red_text");
-        vanillaHtml("planet_energy_production", e);
-        vanillaHtml("planet_energy_consumption", d);
-        vanillaHtml("planet_energy_balance", g);
-        vanillaHtml("planet_energy_efficiency", Math.floor(1E4 * h) / 100 + "%");
-        vanillaHtml("planet_rs_prod", "+" + beauty(b.globalProd.researchPoint) + "/s");
-        $("#planet_energy_balance").attr("class", l);
-        $("#planet_energy_efficiency").attr("class", l);
-        gameSettings.populationEnabled && (document.getElementById("popul") && (document.getElementById("popul").innerHTML = beauty(b.population) + " " + (0 < b.globalProd.population + b.populationRatio ? "<span class='green_text'>(+" + beauty(b.globalProd.population + b.populationRatio) + "/s)</span>" : "<span class='red_text'>(" + beauty(b.globalProd.population + b.populationRatio) + "/s)</span>")),
-        document.getElementById("habitable") && (document.getElementById("habitable").innerHTML = beauty(b.habitableSpace())))
+    
+    this.planetPhysicsInfo = function(planet) {
+        
+        let ret = ""
+        
+        ret = "<div class='row gx-2'><span class='col blue_text'>Type</span><span class='col-auto white_text'>" + planet.type.capitalize() + " planet</span></div>"
+        ret += "<div class='row gx-2'><span class='col blue_text'>Radius</span><span class='col-auto white_text'>" + planet.info.radius.toLocaleString() + " km</span></div>"
+        ret += "<div class='row gx-2'><span class='col blue_text'>Temperature</span><span class='col-auto white_text'>" + planet.info.temp + " °C</span></div>"
+        ret += "<div class='row gx-2'><span class='col blue_text'>Atmosphere</span><span class='col-auto white_text'>" + planet.info.atmos + "</span></div>"
+        ret += "<div class='row gx-2'><span class='col blue_text'>Orbital Distance</span><span class='col-auto white_text'>" + planet.info.orbit + " AU</span></div>"
+        ret += "<div class='row gx-2'><span class='col blue_text'>Influence</span><span class='col-auto white_text'>" + planet.influence + "</span></div>"
+        
+        return ret
     }
-    ;
-    this.planetInfo = function(b) {
-        var e = "", d;
-        game.searchPlanet(b.id) ? d = "blue_text" : null == b.civis ? d = "white_text" : null != b.civis && (d = "red_text");
-        var g = "200px";
-        MOBILE && (g = "100%");
-        b.id == game.capital ? (e += "<span class='blue_text' style='font-size:120%; float:left; width:" + g + "; text-align:center; top:8px; color: rgb(240,180,20);'>" + b.name + "</span>",
-        MOBILE || (e += "<br><span class='blue_text' style='font-size: 80%; float:left; width:" + g + "; text-align:center; top: 32px; color: rgb(240,180,20);'>(Capital)</span>")) : e += "<span class='" + d + "' style='font-size:120%; float:left; width:" + g + "; text-align:center; top:8px;'>" + b.name + "</span>";
-        d = "top:48px;position:absolute;margin-top:16px; ;";
-        MOBILE && (d = "margin-top:0px; ",
-        e += "<img id='planet_visualizer' src='" + IMG_FOLDER + "/" + b[PLANET_IMG_FIELD] + (1 == PLANET_FOLDER_DOUBLE ? "/" + b[PLANET_IMG_FIELD] : "") + ".png' style='position:relative;left:10%;width:80%;height:auto;'/>");
-        e = e + ("<ul id='info_list' style='" + d + " text-align:left; clear:both;'>") + "<div style='position:relative; left:8px;'>" + this.planetPhysicsInfo(b);
-        e += "<br><br>";
-        e += this.planetEnergyInfo(b);
-        e += this.planetResourcesMultiplier(b);
-        e += "</div>";
-        d = [];
-        e += "<br><br>";
-        if (game.searchPlanet(b.id)) {
-            g = new exportButton("action_b","Buildings",-1,40,exportBuildingSelectionInterface);
-            e += g.getHtml();
-            var h = new exportButton("action_auto","Autoroutes",-1,40,function() {
-                exportTravelingShipInterface(b.id)
-            }
-            );
-            1 < game.planets.length && !MOBILE_LANDSCAPE && (e += h.getHtml());
-            if (!MOBILE && !MOBILE_LANDSCAPE) {
-                var l = new exportButton("action_sendqueue","Send resources for queue",-1,40,function() {
-                    b.queue[0] && resourceRequest(b)
-                }
-                );
-                if (4 <= game.planets.length || 0 < game.timeTravelNum)
-                    e += l.getHtml()
-            }
-            butExportBlueprint = new exportButton("action_export_blueprint","Export Building Setup",-1,40,function() {
-                (new exportPopup(512,150,"<br><textarea id='blueprintexport' spellcheck='false' rows='3' style='width:80%;'>" + currentPlanet.exportBlueprint() + "</textarea>","Ok")).draw()
-            }
-            );
-            butImportBlueprint = new exportButton("action_import_blueprint","Import Building Setup",-1,40,function() {
-                (new exportPopup(512,200,"","importBlueprint")).draw()
-            }
-            );
-            if (6 <= game.planets.length || 0 < game.timeTravelNum)
-                e += butExportBlueprint.getHtml(),
-                e += butImportBlueprint.getHtml();
-            if (0 < currentPlanet.id && quests[questNames.traum_7] && quests[questNames.traum_7].done) {
-                var u = new exportButton("action_give_to","Give to the Empire",-1,40,function() {
-                    transferPlanet2(currentPlanet.id, civisName.traum);
-                    exportPlanetInterface(currentPlanet)
-                }
-                );
-                e += u.getHtml()
-            }
-            d.push(g);
-            1 < game.planets.length && !MOBILE_LANDSCAPE && d.push(h);
-            MOBILE || MOBILE_LANDSCAPE || d.push(l);
-            d.push(butExportBlueprint);
-            d.push(butImportBlueprint);
-            0 < currentPlanet.id && quests[questNames.traum_7] && quests[questNames.traum_7].done && d.push(u)
-        } else
-            null == b.civis ? currentPlanetClicker = function() {
-                mapInterface(nebulas[b.map])
-            }
-            : null != b.civis && (currentPlanetClicker = function() {
-                mapInterface(nebulas[b.map])
-            }
-            );
-        b.id == tournamentPlanet && (l = new exportButton("action_tournament","<span class='red_text' style='font-size:110%'>Space Tournament",-1,40,function() {
-            exportTournamentInterface()
+    
+    this.planetEnergyInfo = function(planet) {
+        
+        let ret = ""
+        
+        if (game.searchPlanet(planet.id)) {
+            
+            ret += "<div class='row gx-2'><span class='col blue_text'>Energy Prod.</span><span class='col-auto white_text' id='planet_energy_production'>" + Math.floor(planet.energyProduction()).toLocaleString() + "</span></div>"
+            ret += "<div class='row gx-2'><span class='col blue_text'>Energy Cons.</span><span class='col-auto white_text' id='planet_energy_consumption'>" + Math.floor(-planet.energyConsumption()).toLocaleString() + "</span></div>"
+
+            let t1 = planet.energyMalus()
+            if (t1 > 1) t1 = 1
+            else if (t1 < 0) t1 = 0
+            
+            let t2 = "text-success"
+            if (t1 >= .85 && t1 < 1) t2 = "text-warning"
+            else if (t1 < .85) t2 = "text-danger"
+
+            let t3 = Math.floor(planet.energyProduction() + planet.energyConsumption())
+
+            ret += "<div class='row gx-2'><span class='col blue_text'>Balance</span><span class='col-auto " + t2 + "' id='planet_energy_balance'>" + parseInt(Math.floor(t3)).toLocaleString() + "</span></div>"
+            ret += "<div class='row gx-2'><span class='col blue_text'>Efficiency</span><span class='col-auto " + t2 + "' id='planet_energy_efficiency'>" + Math.floor(1e4 * t1) / 100 + "%</span></div>"
+            
+            if (planet.globalProd.researchPoint > 0) ret += "<div class='row gx-2'><span class='col blue_text'>Research Points</span><span id='planet_rs_prod' class='col-auto white_text'>+" + beauty(planet.globalProd.researchPoint) + "/s</span></div>"
         }
-        ),
-        e += l.getHtml(),
-        d.push(l));
-        e += "</ul>";
-        return {
-            html: e,
-            buttons: d
-        }
-    }
-    ;
-    this.planetPhysicsInfo = function(b) {
-        var e = "<span class='blue_text'>Type: </span><span class='white_text'>" + b.type.capitalize() + " " + LOCALE_PLANET_NAME + "</span><br>";
-        UI_SHOW_PLANET_RADIUS && (e += "<span class='blue_text'>Radius: </span><span class='white_text'>" + b.info.radius + " km</span><br>");
-        e += "<span class='blue_text'>Temperature: </span><span class='white_text'>" + b.info.temp + " \u00b0C</span><br>";
-        UI_SHOW_PLANET_ATMOSPHERE && (e += "<span class='blue_text'>" + LOCALE_ATMOSPHERE + ": </span><span class='white_text'>" + b.info.atmos + "</span><br>");
-        UI_SHOW_PLANET_ORBITAL_DISTANCE && (e += "<span class='blue_text'>Orbital Distance: </span><span class='white_text'>" + b.info.orbit + " AU</span><br><br>");
-        return e += "<span class='blue_text'>Influence: </span><span class='white_text'>" + b.influence + "</span><br>"
-    }
-    ;
-    this.planetEnergyInfo = function(b) {
-        var e = "";
-        if (game.searchPlanet(b.id)) {
-            e += "<span class='blue_text'>Energy Prod.: </span><span class='white_text' style='float:right;margin-right:20%;' id='planet_energy_production'>" + Math.floor(b.energyProduction()) + "</span><br>";
-            e += "<span class='blue_text'>Energy Cons.: </span><span class='white_text' style='float:right;margin-right:20%;' id='planet_energy_consumption'>" + Math.floor(-b.energyConsumption()) + "</span><br>";
-            var d = Math.floor(b.energyProduction() + b.energyConsumption())
-              , g = b.energyMalus();
-            1 < g ? g = 1 : 0 > g && (g = 0);
-            var h = "green_text";
-            .85 <= g && 1 > g ? h = "gold_text" : .85 > g && (h = "red_text");
-            e += "<span class='blue_text'>Balance: </span><span class='" + h + "' style='float:right;margin-right:20%;' id='planet_energy_balance'>" + parseInt(Math.floor(d)) + "</span><br>";
-            e += "<span class='blue_text'>Efficiency: </span><span class='" + h + "' style='float:right;margin-right:20%;' id='planet_energy_efficiency'>" + Math.floor(1E4 * g) / 100 + "%</span><br>";
-            0 < b.globalProd.researchPoint && (e += "<span class='blue_text'>Research Points: </span><span id='planet_rs_prod' class='white_text' style='float:right;margin-right:20%;'>+" + beauty(b.globalProd.researchPoint) + "/s</span><br><br>")
-        }
-        gameSettings.populationEnabled && (e += "<span class='blue_text'>Population Growth: </span><span id='popGrow' class='white_text' style='float:right;margin-right:20%;'>" + 100 * b.basePopulation + "%" + (0 < b.structure[buildingsName.clonation].number ? "<span class='green_text'>(+" + b.structure[buildingsName.clonation].number + "%)</span>" : "") + "/y</span><br><span class='blue_text'>Population: </span><span id='popul' class='white_text' style='float:right;margin-right:20%;'>" + beauty(b.population) + " " + (0 < b.globalProd.population + b.populationRatio ? "<span class='green_text'>(+" + beauty(b.globalProd.population + b.populationRatio) + "/s)</span>" : "<span class='red_text'>(" + beauty(b.globalProd.population + b.populationRatio) + "/s)</span>") + "</span><br><span class='blue_text'>Habitable Space: </span><span id='habitable' class='white_text' style='float:right;margin-right:20%;'>" + beauty(b.habitableSpace()) + "</span><br><br>");
+        
         this.updaters.push(this.planetInfoUpdater);
-        this.updatersParam.push([b]);
-        return e
+        this.updatersParam.push([planet]);
+
+        return ret
     }
-    ;
-    this.planetResourcesMultiplier = function(b) {
-        for (var e = "", d = 0; d < resNum; d++)
-            resources[d].show(game) && (0 < b.baseResources[d] && "ore" == resources[d].type && (e += "<span class='blue_text'>" + resources[d].name.capitalize() + ":</span><span class='white_text' style='float:right;margin-right:20%;'>x" + b.baseResources[d].toFixed(2) + "</span><br>"),
-            1 != b.baseResources[d] && "ore" != resources[d].type && (e += "<span class='" + (1 <= b.baseResources[d] ? "green_text" : "red_text") + "'>" + resources[d].name.capitalize() + ":</span><span class='white_text' style='float:right;margin-right:20%;'>x" + b.baseResources[d].toFixed(2) + "</span><br>"));
-        return e
+    
+    this.planetInfoUpdater = function(params) { this.planetEnergyInfoUpdater(params) }
+
+    this.planetEnergyInfoUpdater = function(params) {
+        
+        let planet = params[0]
+        
+        $("#planet_energy_production").innerHTML = Math.floor(planet.energyProduction()).toLocaleString()
+        $("#planet_energy_consumption").innerHTML = Math.floor(-planet.energyConsumption()).toLocaleString()
+        
+        let t1 = planet.energyMalus()
+        if (t1 > 1) t1 = 1
+        else if (t1 < 0) t1 = 0
+        
+        let t2 = "text-success"
+        if (t1 >= .85 && t1 < 1) t2 = "text-warning"
+        else if (t1 < .85) t2 = "text-danger"
+
+        let t3 = Math.floor(planet.energyProduction() + planet.energyConsumption())
+            
+        $("#planet_energy_balance").innerHTML = parseInt(Math.floor(t3)).toLocaleString()
+        $("#planet_energy_balance").attr("class", "col-auto " + t2)
+        
+        $("#planet_energy_efficiency").innerHTML = Math.floor(1e4 * t1) / 100 + "%"
+        $("#planet_energy_efficiency").attr("class", "col-auto " + t2)
+        
+        $("#planet_rs_prod").innerHTML = "+" + beauty(planet.globalProd.researchPoint) + "/s"        
     }
-    ;
-    this.resourcesSort = {
-        name: !1
-    };
-    this.resourcesSortUpdate = function() {
-        this.resourcesSort.name = gameSettings.sortResName;
-        this.resourcesSort.stock = gameSettings.sortResStock
+    
+    this.planetResourcesMultiplier = function(planet) {
+
+        let ret = ""
+        
+        for (let i = 0; i < resNum; i++)
+            if (resources[i].show(game)) {
+                
+                if (0 < planet.baseResources[i] && "ore" == resources[i].type) ret += "<div class='row gx-2'><span class='col blue_text'>" + resources[i].name.capitalize() + "</span><span class='col-auto white_text'>x" + planet.baseResources[i].toFixed(2) + "</span></div>"
+                else if (1 != planet.baseResources[i] && "ore" != resources[i].type) ret += "<div class='row gx-2'><span class='col " + (1 <= planet.baseResources[i] ? "text-success" : "text-danger") + "'>" + resources[i].name.capitalize() + "</span><span class='col-auto white_text'>x" + planet.baseResources[i].toFixed(2) + "</span></div>"
+            }
+            
+        return ret
     }
-    ;
-    this.planetResourcesUpdater = function(b) {
-        b = b[0];
-        var e = "<div style='position:relative; left:8px;'>";
-        for (var d = b.rawProduction(), g = Array(resNum), h = 0; h < resNum; h++)
-            g[h] = h;
-        gameSettings.sortResName && (g = sortedResources);
-        var l = Array(resNum);
-        b.importExport();
-        for (var u = 0; u < resNum; u++)
-            h = g[u],
-            l[h] = b.globalImport[h] - b.globalExport[h];
-        for (u = 0; u < resNum; u++)
-            if (h = g[u],
-            resources[h].show(game) || 0 < b.resources[h]) {
-                e += "<div id='res_name_div_" + h + "' ";
-                var v = "<span id='buildingAid_" + h + "'>";
-                highlightProd[h] ? (e += " style='background:rgba(0,255,0,0.3);'>",
-                v += "<img src='" + UI_FOLDER + "/arrow_up_green.png' />") : highlightCons[h] ? (e += " style='background:rgba(255,0,0,0.3);'>",
-                v += "<img src='" + UI_FOLDER + "/arrow_down_red.png' />") : e = highlightRes[h] ? e + " style='background:rgba(75,129,156,0.3);'>" : e + ">";
+    
+    this.planetResourcesUpdater = function(params) {
+        
+        let planet = params[0]
+        
+        let d = planet.rawProduction()
+        
+        planet.importExport()
+        
+        let l = Array(resNum);
+        for (let i = 0; i < resNum; i++) l[i] = planet.globalImport[i] - planet.globalExport[i]
+
+        var e = ""
+        
+        for (let i = 0; i < resNum; i++) {
+            if (resources[i].show(game) || planet.resources[i] > 0) {
+                
+                e += "<div id='res_name_div_" + i + "' class='row gx-2'>"
+                
+                var v = "<span id='buildingAid_" + i + "'>";                
+                highlightProd[i] ? (e += " style='background:rgba(0,255,0,0.3);'>",
+                v += "<img src='" + UI_FOLDER + "/arrow_up_green.png' />") : highlightCons[i] ? (e += " style='background:rgba(255,0,0,0.3);'>",
+                v += "<img src='" + UI_FOLDER + "/arrow_down_red.png' />") : e = highlightRes[i] ? e + " style='background:rgba(75,129,156,0.3);'>" : e + ">";
                 v += "</span>";
-                e += "<span class='blue_text'>" + resources[h].name.capitalize() + ": </span><span class='white_text' style='margin-righ:16px;font-size:80%' id='res_name_prod_" + h + "' name='" + h + "'>" + beauty(b.resources[h]) + " <span class='" + (0 <= d[h] ? 0 < d[h] ? "green_text" : "gray_text" : "red_text oblique_txt") + "'>(" + (0 < d[h] ? "+" : "") + beauty(d[h]) + "/s)" + v + "</span>";
-                0 != l[h] && (e += "<span class='" + (0 <= l[h] ? 0 < l[h] ? "purple_text" : "gray_text" : "pink_text oblique_txt") + "'> (" + (0 < l[h] ? "+" : "") + beauty(l[h]) + "/s)</span>");
-                MOBILE_LANDSCAPE && 0 < game.planets.length && 0 != game.totalProd[h] && (e += "<span class='" + (0 <= game.totalProd[h] ? 0 < game.totalProd[h] ? "purple_text" : "gray_text" : "pink_text oblique_txt") + "'> (" + (0 < game.totalProd[h] ? "+" : "") + beauty(game.totalProd[h]) + "/s)</span>");
-                gameSettings.populationEnabled && h == FOOD_RESOURCE && 0 < (b.population - b.sustainable()) / 5E3 && (e += "<span class='gold_text' id='res_name_prod_biomass' name='" + h + "'>(-" + beauty((b.population - b.sustainable()) / 5E3) + "/s)</span>");
+                
+                e += "<span class='col blue_text'>" + resources[i].name.capitalize() + "</span><span class='col-auto white_text' id='res_name_prod_" + i + "' name='" + i + "'>" + beauty(planet.resources[i]) + " <small class='" + (0 <= d[i] ? 0 < d[i] ? "green_text" : "gray_text" : "red_text") + "'>" + (0 < d[i] ? "+" : "") + beauty(d[i]) + "/s" + v + "</small>";
+                0 != l[i] && (e += "<small class='" + (0 <= l[i] ? 0 < l[i] ? "purple_text" : "gray_text" : "pink_text") + "'> " + (0 < l[i] ? "+" : "") + beauty(l[i]) + "/s</small>");
                 e += "</span></div>"
             }
-        return e + "</div>"
+        }
+        
+        return e
     }
-    ;
+    
     this.planetResources = function(b) {
-        var e = "<div style='position:relative; left:8px;'>";
+        var e = "<div>";
         if (game.searchPlanet(b.id)) {
             for (var d = b.rawProduction(), g = Array(resNum), h = 0; h < resNum; h++)
                 g[h] = h;
@@ -2903,7 +2862,6 @@ function settingsLoader(b) {
         gameSettings[e] = b[e] || gameSettingsReset[e] || !1;
     gameSettings.civis || (gameSettings.civis = "0");
     gameSettings.gamePaused ? ($("#pause_button_icon").attr("class", "fas fa-fw fa-play"), $("#pause_button_text").html("Resume")) : ($("#pause_button_icon").attr("class", "fas fa-fw fa-pause"), $("#pause_button_text").html("Pause"));
-    gameSettings.textSize >= MIN_TEXT_SIZE && gameSettings.textSize <= MAX_TEXT_SIZE && $("body").css("font-size", gameSettings.textSize * textSizeCSSfactor + "" + textSizeCSSunit)
 }
 function planetLoader30(b, e) {
     for (var d = 0; d < resNum; d++)
@@ -3208,33 +3166,39 @@ function Research(b) {
     this.descSave = b.desc;
     this.buildingBonus = b.buildingBonus || b.bb || {};
     this.extraDescription = new Function(b.desc);
+    
     this.description = function() {
+        
         var b = "", d;
-        for (d in this.buildingBonus)
-            this.buildingBonus[d].showCondition || (this.buildingBonus[d].showCondition = function() {
-                return !0
-            }
-            );
+        
         for (d in this.buildingBonus) {
+            
             var g = this.buildingBonus[d];
-            if (g.showCondition() && g.level - 1 <= this.level && buildings[buildingsName[g.id]].showRes()) {
+            if (g.level - 1 <= this.level && buildings[buildingsName[g.id]].showRes()) {
+                
                 var h = g.value;
-                g.reduction && (h = g.value - g.reduction.value * (this.level - g.level),
-                this.level > g.reduction.limit && (h = 0),
-                0 > h && (h = 0),
-                h = Math.round(100 * h) / 100);
+                if (g.reduction) {
+                    
+                    h = g.value - g.reduction.value * (this.level - g.level)
+                    if (this.level > g.reduction.limit) h = 0
+                    if (0 > h) h = 0
+                    h = Math.round(100 * h) / 100
+                }
+                
                 if (0 != h) {
                     var l = "production";
                     g.resource ? (l = "production",
                     0 > buildings[buildingsName[g.id]].resourcesProd[resourcesName[g.resource].id] && (l = "consumption"),
-                    l = "<span class='blue_text' style='font-size:100%;'>" + g.resource.capitalize() + "</span> " + l) : g.cost && (l = "<span class='blue_text' style='font-size:100%;'>" + g.cost.capitalize() + "</span> cost");
-                    b += "<span class='blue_text' style='font-size:100%;'>" + buildings[buildingsName[g.id]].displayName + "</span> - " + l + " " + (0 <= h ? "+" : "-") + Math.abs(h) + "% <br>"
+                    l = "<span class='blue_text'>" + g.resource.capitalize() + "</span> ") : g.cost && (l = "<span class='blue_text'>" + g.cost.capitalize() + "</span> cost");
+                    
+                    b += "<div class='row gx-2'><div class='col'><span class='blue_text'>" + buildings[buildingsName[g.id]].displayName + " - </span>" + l + "</div><span class='col-auto white_text'>" + (0 <= h ? "+" : "-") + Math.abs(h) + "%</span></div>"
                 }
             }
         }
+        
         return b += this.extraDescription()
     }
-    ;
+    
     this.simplyAvailable = function() {
         var b = !0, d;
         for (d in this.req)
@@ -7926,20 +7890,20 @@ $(document).ready(function() {
         })
     }
     function l(b) {
-        for (var d = "<div class='row gx-2'><span class='col-auto blue_text'>Research Points</span>", e = 0, h = 0; h < game.planets.length; h++)
+        for (var d = "<div class='row gx-2 align-items-baseline'><span class='col-auto blue_text'>Research Points</span>", e = 0, h = 0; h < game.planets.length; h++)
             planets[game.planets[h]].globalProd.researchPoint && (e += planets[game.planets[h]].globalProd.researchPoint);
         wiped || (game.researchPoint += b * e);
         isNaN(game.researchPoint) && (game.researchPoint = 0);
         wiped && (wiped = !1);
-        d += "<span class='col-auto white_text'>" + beauty(game.researchPoint) + " <span class='small text-success'>" + (0 < e ? "+" : "") + beauty(e) + "/s</span></span>";
-        0 < game.timeTravelNum && (d = d + "<div class='row gx-2'><span class='col-auto blue_text'>Technology Points</span>" + ("<span class='col-auto white_text'>" + beauty(Math.floor(game.techPoints)) + "</span>"));
+        d += "<span class='col-auto white_text'>" + beauty(game.researchPoint) + "</span><span class='col-auto small text-success'>" + (0 < e ? "+" : "") + beauty(e) + "/s</span>";
+        0 < game.timeTravelNum && (d = d + "<div class='row gx-2'><span class='col-auto text-success'>Technology Points</span>" + ("<span class='col-auto text-success'>" + beauty(Math.floor(game.techPoints)) + "</span>"));
         document.getElementById("downbar_content") && (document.getElementById("downbar_content").innerHTML = d);
         return d
     }
     function u() {
         var b = parseInt(game.days / 365)
           , d = parseInt(game.days) - 365 * b
-          , e = "<div class='row gx-2'><span class='col-auto blue_text' >Influence</span><span class='col-auto white_text'>" + game.influence() + "</span></div>";
+          , e = "<div class='row gx-2'><span class='col-auto blue_text' >Influence</span><span class='col-auto white_text'>" + game.influence().toLocaleString() + "</span></div>";
         5 <= game.researches[3].level && (e += "<div class='row gx-2'><span class='col-auto blue_text'>Market Coins</span><span class='col-auto white_text'>" + beauty(Math.floor(game.money)) + " <i class='blue_text fas fa-fw fa-coins'></i></span>");
         b = "<span class='col-auto blue_text'>Year</span><span class='col-auto white_text'>" + b + "</span>" + (" <span class='col-auto blue_text'>Day</span><span class='col-auto white_text'>" + d + "</span>");
         document.getElementById("topbar_content") && (document.getElementById("topbar_content").innerHTML = e);
@@ -9118,7 +9082,27 @@ $(document).ready(function() {
     function C(b) {
         currentPlanet = b;
         currentInterface = "planetInterface";
-        var d = MOBILE_LANDSCAPE ? "<div id='planet_view'><img id='arrow_left' src='ui/arrow_small_left.png' style='position:absolute;top:16px;width:48px;height:48px;left:27%;top:45%;z-index:1;cursor:pointer;'/><img id='arrow_right' src='ui/arrow_small.png' style='position:absolute;top:16px;width:48px;height:48px;right:27%;top:45%;z-index:1;cursor:pointer;'/><img id='planet_visualizer' src='ui/void.png' usemap='#planet_visualizer_map' style='top:16px;'/>\x3c!--map name='planet_visualizer_map' id='planet_click_map'><area shape='circle' coords='256,256,180' href='javascript:currentPlanetClicker();'></map--\x3e<div id='planet_places'></div><div id='civis_name' class='blue_text text_shadow' style='z-index:28;font-size:120%; position:absolute; left:20%;width:45%; top:1%;text-align:center;float:left;'></div></div><div id='planet_info' class='menu'><ul id='info_list'></ul><ul id ='info_list_placeholder' style='height:900px;'></ul></div><div id='planet_info2' class='menu'><ul id='info_list2'></ul><ul id ='info_list2_placeholder' style='height:880px;'></ul></div>" : MOBILE ? "<div id='planet_info' class='menu'><ul id='info_list' style='position:relative;'></ul><ul id='info_list2' style='position:relative;'></ul><ul id ='info_list_placeholder' style='height:880px;'></ul></div>" : "<div id='planet_view'><img id='arrow_left' src='ui/arrow_small_left.png' style='position:absolute;top:16px;width:48px;height:48px;left:27%;top:45%;z-index:1;cursor:pointer;'/><img id='arrow_right' src='ui/arrow_small.png' style='position:absolute;top:16px;width:48px;height:48px;right:27%;top:45%;z-index:1;cursor:pointer;'/><img id='planet_visualizer' src='ui/void.png' usemap='#planet_visualizer_map' style='top:16px;'/>\x3c!--map name='planet_visualizer_map' id='planet_click_map'><area shape='circle' coords='256,256,180' href='javascript:currentPlanetClicker();'></map--\x3e<div id='planet_places'></div><div id='civis_name' class='blue_text text_shadow' style='z-index:28;font-size:120%; position:absolute; width:1024px; top:50px;text-align:center;float:left;'></div></div><div id='planet_info' class='menu'><ul id='info_list'></ul><ul id ='info_list_placeholder' style='height:900px;'></ul></div><div id='planet_info2' class='menu'><ul id='info_list2'></ul><ul id ='info_list2_placeholder' style='height:880px;'></ul></div>";
+        var d = "" +
+            "<div class='h-100 d-flex align-items-stretch'>" +
+                "<div class='h-100 col-auto bg-bar border-end p-3' style='width:300px;overflow-y:auto;'>" +
+                    "<div id='info_list' class='row g-3'></div>" +
+                "</div>" +
+                "<div id='planet_view' class='col d-flex flex-column'>" +
+                    "<div id='civis_name' class='pt-3' style='z-index:1;'></div>" +
+                    "<div class='flex-fill d-flex align-items-center'>" +
+                        "<button type='button' id='arrow_left' class='btn'><i class='fas fa-fw fa-chevron-left'></i></button>" +
+                        "<div class='col text-center'><img id='planet_visualizer' src='ui/void.png' width='75%' /></div>" +
+                        "<button type='button' id='arrow_right' class='btn'><i class='fas fa-fw fa-chevron-right'></i></button>" +
+                        "<div id='planet_places'></div>" +
+                    "</div>" +
+                "</div>" +
+                "<div class='h-100 col-auto bg-bar border-start p-3' style='width:300px;overflow-y:auto;'>" +
+                    "<div class='row g-3'>" +
+                        (game.searchPlanet(b.id) ? "<div class='col-12 text-center'><span class='h5 blue_text'>Status</span></div>" : "") +
+                        "<div id='info_list2' class='col-12'></div>" +
+                    "</div>" +
+                "</div>" +
+            "</div>";
         $("#planet_interface").html(d);
         d = {
             axis: "y",
@@ -9126,14 +9110,11 @@ $(document).ready(function() {
             scrollInertia: 0,
             autoHideScrollbar: !1
         };
-        $("#planet_info").mCustomScrollbar(d);
-        MOBILE || $("#planet_info2").mCustomScrollbar(d);
         for (var e = d = 0; e < resNum; e++)
             resources[e].show(game) && d++;
-        MOBILE ? $("#info_list_placeholder").css("height", 16 * d + 580 + "px") : $("#info_list2_placeholder").css("height", 16 * d + 400 + "px");
         currentUpdater = function() {}
         ;
-        MOBILE || $("#planet_visualizer").attr("src", "" + IMG_FOLDER + "/" + b[PLANET_IMG_FIELD] + (1 == PLANET_FOLDER_DOUBLE ? "/" + b[PLANET_IMG_FIELD] : "") + ".png");
+        MOBILE || $("#planet_visualizer").attr("src", "" + IMG_FOLDER + "/" + b[PLANET_IMG_FIELD] + ".png");
         e = "";
         for (d = 0; d < b.places.length; d++) {
             var g = b.places[d];
@@ -9169,58 +9150,47 @@ $(document).ready(function() {
         $("#arrow_left").hide(),
         $("#arrow_right").unbind(),
         $("#arrow_right").hide());
-        null != b.civis ? (e = "<span class='white_text' style='font-size:100%;'>Controlled by </span><span  id='civ_name' name='" + b.civis + "' style='cursor:pointer'>" + civis[b.civis].name + "</span><img src='" + UI_FOLDER + "/civis/" + civis[b.civis].playerName + ".png' style='height:32px;width:32px;top:8px;position:relative;'>",
-        ALLOW_CIVIS_RENAME && b.civis == game.id && (e += "<img id='game_rename' src='" + UI_FOLDER + "/RENAME.png' style='width:16px;height:16px;position:relative;top:3px;cursor:pointer;'/>"),
-        document.getElementById("civis_name") && (document.getElementById("civis_name").innerHTML = e),
+        
+        null != b.civis ? (e = "<div class='row gx-2 justify-content-center align-items-center'><span class='col-auto white_text'>Controlled by</span><button type='button' id='civ_name' class='col-auto btn py-0 d-flex align-items-center' name='" + b.civis + "'><img src='" + UI_FOLDER + "/civis/" + civis[b.civis].playerName + ".png' style='height:32px;width:32px;' /><span class='h5'>" + civis[b.civis].name + "</span></button>",
+        document.getElementById("civis_name").innerHTML = e,
         b.civis && $("#civ_name").click(function() {
             (MOBILE_LANDSCAPE || 0 < game.timeTravelNum) && R(b.civis)
-        }),
-        ALLOW_CIVIS_RENAME && b.civis == game.id && $("#game_rename").click(function() {
-            (new w(360,140,"<br><span class='blue_text text_shadow'>Type the new name</span><br>","renameGame")).draw()
-        })) : document.getElementById("civis_name") && (document.getElementById("civis_name").innerHTML = "");
+        })) : document.getElementById("civis_name").innerHTML = "";
+
         g = uiScheduler.planetInfo(b);
-        e = g.buttons;
-        if (!MOBILE) {
-            document.getElementById("info_list") && (document.getElementById("info_list").innerHTML = g.html);
-            for (var n = 0; n < e.length; n++)
-                e[n].enable()
+        document.getElementById("info_list").innerHTML = g;
+        
+        if (game.searchPlanet(b.id)) {
+            
+            document.getElementById("info_list2").innerHTML = uiScheduler.planetResourcesUpdater([b])
+            
+            currentUpdater = function() {
+                
+                document.getElementById("info_list2").innerHTML = uiScheduler.planetResourcesUpdater([b])
+                uiScheduler.planetInfoUpdater([b])
+            }
         }
-        e = "";
-        MOBILE && (e += "<div style='position:absolute;top:16px;height:512px;width:100%;'></div>" + g.html);
-        g = "200px";
-        MOBILE && (g = "100%");
-        if (game.searchPlanet(b.id))
-            d = "position:absolute;",
-            MOBILE && (d = "position:relative;"),
-            e += "<span class='blue_text' style='" + d + " font-size:120%; float:left; width:" + g + "; text-align:center; top:16px;'>Status</span>";
-        else if (b.unlock && (d = researchesName[b.unlock],
-        e = e + ("<br><span class='green_text' style='font-size:100%; float:left; width:" + g + "; text-align:center; top:8px;'>This planet unlocks: </span><br><br>") + ("<span class='blue_text' style='font-size: 100%;'>" + game.researches[d].name + " Research</span><br><br>"),
-        e += "<span class='white_text'>" + game.researches[d].description() + "</span><li>"),
-        b.searchCivisFleet(game.id)) {
-            g = 0;
-            for (d in b.fleets)
-                if (0 != d && "hub" != d && b.fleets[d].civis == b.civis) {
-                    d = uiScheduler.fleetInfo(b.id, d, b.fleets[d]);
-                    g += d.cnt;
-                    e += "<div id='enemy_fleet_info_list' style='position:relative;'>" + d.html + "</div>";
-                    break
-                }
-            $("#info_list2").css("height", "" + (768 + 16 * g) + "px")
+        else if (b.unlock) {
+            
+            d = researchesName[b.unlock]
+            
+            e = "<div class='text-center mb-3'><div class='green_text'>This planet unlocks</div><div class='green_text h5'>" + game.researches[d].name + " Research</div></div>"
+            e += "<div class='mb-3'>" + game.researches[d].description() + "</div>"
+            
+            if (b.searchCivisFleet(game.id)) {
+                g = 0;
+                for (d in b.fleets)
+                    if (0 != d && "hub" != d && b.fleets[d].civis == b.civis) {
+                        d = uiScheduler.fleetInfo(b.id, d, b.fleets[d]);
+                        g += d.cnt;
+                        e += "<div id='enemy_fleet_info_list'>" + d.html + "</div>";
+                        break
+                    }
+            }   
+    
+            document.getElementById("info_list2").innerHTML = e
         }
-        d = "position:absolute;";
-        MOBILE && (d = "position:relative;");
-        e = e + ("<ul id='info_list2' style='" + d + " text-align:left; top:48px; margin-top:16px; clear:both;'>") + uiScheduler.planetResources(b);
-        e += "</ul>";
-        document.getElementById("info_list2") && (document.getElementById("info_list2").innerHTML = e);
-        game.searchPlanet(b.id) && (MOBILE || (currentUpdater = function() {
-            var d = "position:absolute;";
-            MOBILE && (d = "position:relative;");
-            d = "<span class='blue_text' style='position:absolute; font-size:120%; float:left; width:200px; text-align:center; top:8px;'>Status</span>" + ("<ul id='info_list2' style='" + d + " text-align:left; top:48px; margin-top:16px; clear:both;'>") + uiScheduler.planetResourcesUpdater([b]);
-            d += "</ul>";
-            document.getElementById("info_list2") && (document.getElementById("info_list2").innerHTML = d);
-            uiScheduler.planetInfoUpdater([b])
-        }
-        ));
+        
         K();
         $("#planet_interface").show();
         $("#back_button").unbind();
@@ -11621,10 +11591,6 @@ $(document).ready(function() {
             gameSettings.soundVolume = $(this).val();
             oa()
         });
-        $("#slide_textsize").change(function() {
-            $(this).val() >= MIN_TEXT_SIZE && $(this).val() <= MAX_TEXT_SIZE && ($("body").css("font-size", $(this).val() * textSizeCSSfactor + "" + textSizeCSSunit),
-            gameSettings.textSize = $(this).val())
-        });
         $("#slide_techuiscale").change(function() {
             gameSettings.techuiScale = $(this).val()
         });
@@ -12516,45 +12482,6 @@ $(document).ready(function() {
             var b = pa(document.getElementById("saveimport").value);
             "" != b && document.getElementById("impsave2") && (document.getElementById("impsave2").innerHTML = "Alternative Import: " + b)
         }));
-        $.post("https://heartofgalaxy.com/metadata.php", {
-            id: userID,
-            name: userName
-        }).done(function(b) {
-            if (" error " != b) {
-                var d = new Date(1E3 * b);
-                b = d.getFullYear();
-                var e = d.getMonth()
-                  , g = d.getDate()
-                  , h = d.getHours()
-                  , l = "0" + d.getMinutes();
-                d = "0" + d.getSeconds();
-                b = b + "-" + e + "-" + g + " " + h + ":" + l.substr(-2) + ":" + d.substr(-2);
-                MOBILE_LANDSCAPE || "Last cloud save at: " + b + " (CLICK TO FORCE LOAD)";
-                console.log("AIOOOOOO");
-                $("#metadata_cloud").html("");
-                $("#metadata_cloud").click(function() {
-                    $.post("https://heartofgalaxy.com/load.php", {
-                        id: userID,
-                        name: userName,
-                        time: 0
-                    }).done(function(b) {
-                        " no " == b ? b = new exportPopup(210,0,"<span class='blue_text text_shadow'>Detected newer local version</span>","info") : " error " == b ? b = new exportPopup(210,0,"<span class='blue_text text_shadow'>Error during online loading</span>","info") : (b = b.substr(1),
-                        b = pa(b),
-                        "" == b && (b = "<span class='blue_text text_shadow'>Game loaded from online save!</span>"),
-                        b = new exportPopup(210,0,b,"info"));
-                        b.drawToast();
-                        console.log("okcloud_force")
-                    }).fail(function() {
-                        (new exportPopup(210,0,"<span class='red_text red_text_shadow'>Error during online loading, loading from local</span>","info")).drawToast();
-                        console.log("failcloud_force")
-                    })
-                })
-            }
-            console.log("okcloud")
-        }).fail(function() {
-            MOBILE_LANDSCAPE || ((new exportPopup(210,0,"<span class='red_text red_text_shadow'>Error while forcing cloud loading</span>","info")).drawToast(),
-            console.log("failcloud"))
-        });
         K();
         $("#profile_interface").show();
         game.searchPlanet(currentPlanet.id) && $("#bottom_build_menu").show()
@@ -13298,26 +13225,6 @@ $(document).ready(function() {
     $("#info_icon").click(function() {
         T()
     });
-    $("#info_icon").hover(function() {
-        (new w(48,10,"<span class='blue_text' style='width:100%;text-align:center'>Info</span>","info")).drawInfo();
-        $(document).on("mousemove", function(b) {
-            mouseX = b.pageX + 16;
-            mouseY = b.pageY + 10;
-            $("#popup_info").css({
-                left: mouseX,
-                top: mouseY
-            })
-        });
-        $("#popup_info").css({
-            left: mouseX,
-            top: mouseY
-        })
-    }, function() {
-        currentPopup.drop()
-    });
-    $("#info_icon").mouseout(function() {
-        $(document).on("mousemove", function() {})
-    });
     $("#tutorial_icon").click(startTutorial);
     $("#ads_icon").click(function() {
         (new w(320,80,"<br><span class='blue_text'>Do you want to watch an ad and get a production bonus now?</span>","confirm",function() {
@@ -13385,26 +13292,6 @@ $(document).ready(function() {
     $("#b_other_icon").click(function() {
         z("other", currentPlanet)
     });
-    $("#b_other_icon").hover(function() {
-        (new w(110,10,"<span class='blue_text' style='width:100%;text-align:center'>Other buildings</span>","info")).drawInfo();
-        $(document).on("mousemove", function(b) {
-            mouseX = b.pageX + 16;
-            mouseY = b.pageY + 10;
-            $("#popup_info").css({
-                left: mouseX,
-                top: mouseY
-            })
-        });
-        $("#popup_info").css({
-            left: mouseX,
-            top: mouseY
-        })
-    }, function() {
-        currentPopup.drop()
-    });
-    $("#b_other_icon").mouseout(function() {
-        $(document).on("mousemove", function() {})
-    });
     $("#b_res_icon").click(function() {
         z("research", currentPlanet)
     });
@@ -13465,8 +13352,6 @@ $(document).ready(function() {
     $("#quest_interface").mCustomScrollbar(ea);
     $("#diplomacy_list_container").mCustomScrollbar(ea);
     $("#profile_interface").mCustomScrollbar(ea);
-    $("#planet_info").mCustomScrollbar(ea);
-    $("#planet_info2").mCustomScrollbar(ea);
     $("#planet_mini").mCustomScrollbar(ea);
     $("#building_info").mCustomScrollbar(ea);
     $("#shipyard_info").mCustomScrollbar(ea);

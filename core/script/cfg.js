@@ -1,3 +1,24 @@
+var NEW_AUTOROUTES = false;
+var staticBon = 1;
+var dynamicBon = 1;
+var distanceBon = 1;
+var MOBILE_LANDSCAPE = false;
+var MIN_TEXT_SIZE = 0.5;
+var MAX_TEXT_SIZE = 1.5;
+var DEFAULT_TEXT_SIZE = 1.1;
+
+var SHARED_RESOURCES = false;
+var staticBon = 1; 
+var dynamicBon = 1; 
+var distanceBon = 1;
+var dynamicTechBon = 1;
+var dynamicResearchBon = 1;
+var bodyTextPct = 90;
+var POPUP_VERTICAL = true;
+var IDLE_BONUS_ENABLED = true;
+var AG_SAVE = false;
+var userID = 0;
+
 for (var MOBILE = !1, HORIZONS = !0, POPULATION_ENABLED = !1, ENERGY_ENABLED = !0, ALLOW_CIVIS_RENAME = !1, MAP_IMAGE_ZOOM = !1, MAP_ZOOM_STEP = .2, MAP_ZOOM_MIN = 1, MAP_ZOOM_MAX = 2, MAP_REGIONS = !1, GOVERNMENT_HOURS_CHANGE = 8, TRIBAL_REBEL_CHANCE = 2E-4, NEW_AUTOROUTES = !1, UI_FOLDER = "ui", UI_LINE_RESEARCHES = "line.png", UI_LINE_MENU = "line.png", UI_LINE_POPUP = "line.png", UI_LINE_ROUTE = "line.png", UI_ROUTE_LINE_HEIGHT = 3, UI_SHOW_PLANET_RADIUS = !0, UI_SHOW_PLANET_ATMOSPHERE = !0, UI_SHOW_PLANET_ORBITAL_DISTANCE = !0, SETTINGS_PER_ROW = 3, MAP_SHOW_PLANETS_NAME = !0, MAP_SHOW_PLANETS_NAME_HOVER = !1, MAP_PLANET_ICON_SIZE = 48, IMG_FOLDER = "img", SAVESTR_HEAD = "HG", PLANET_FOLDER_DOUBLE = !1, PLANET_IMG_FIELD = "icon", LOCALE_PLANET_NAME = "planet", LOCALE_CIVILIZATION_NAME = "civilization", LOCALE_ATMOSPHERE = "Atmosphere", mi = 1E6, bi = 1E3 * mi, tri = 1E3 * bi, qad = 1E3 * tri, artifactsDefinition = [{
     id: "aurea_core",
     name: "Aurea Core",
@@ -12166,7 +12187,7 @@ var researchesDefinition = [{
 }, {
     id: "xiran_artofwar",
     name: "Xiran Art of War",
-    desc: "var str =\"\"; if (this.level == 0) {str+= \"Allows production of <span class='blue_text' style='font-size:100%;'>Xirandrium</span> and <span class='blue_text' style='font-size:100%;'>Explosives</span>\" ;} if (this.level < 2) {str+= \"<br>Level 2: Allows construction of <span class='blue_text' style='font-size:100%;'>Ballistic Artillery</span>\";}if (this.level < 3) {str+= \"<br>Level 3: Allows construction of <span class='blue_text' style='font-size:100%;'>Laser Artillery</span>\";}  if (this.level < 8) {str+= \"<br>Level 8: Allows construction of <span class='blue_text' style='font-size:100%;'>Planetary Cannons</span>\";} return str;",
+    desc: "var str =\"\"; if (this.level == 0) {str += \"<div class='white_text mt-2 row gx-2'><div class='col'>Level 1</div><div class='col-auto'><span class='blue_text'>Xirandrium</span>, <span class='blue_text'>Explosives</span></div></div>\" ;} if (this.level < 2) {str+= \"<div class='white_text row gx-2'><div class='col'>Level 2</div><div class='col-auto'><span class='blue_text'>Ballistic Artillery</span></div></div>\";}if (this.level < 3) {str+= \"<div class='white_text row gx-2'><div class='col'>Level 3</div><div class='col-auto'><span class='blue_text'>Laser Artillery</span></div></div>\";}  if (this.level < 8) {str+= \"<div class='white_text row gx-2'><div class='col'>Level 8</div><div class='col-auto'><span class='blue_text'>Planetary Cannons</span></div></div>\";} return str;",
     researchPoint: 150 * tri,
     techPoint: 1E7,
     multBonus: 2,
@@ -13380,10 +13401,8 @@ var researchesDefinition = [{
     check: baseCheckTut,
     extraAction: function() {
         exportPlanetInterface(planets[0]);
-        $("#planet_info").css("z-index", 1E3)
     },
     drop: function() {
-        $("#planet_info").css("z-index", 0)
     }
 }, {
     id: "tut4",
@@ -13395,10 +13414,8 @@ var researchesDefinition = [{
     check: baseCheckTut,
     extraAction: function() {
         exportPlanetInterface(planets[0]);
-        $("#planet_info").css("z-index", 0);
     },
     drop: function() {
-        $("#planet_info").css("z-index", 0)
     }
 }, {
     id: "tut6",
@@ -13418,7 +13435,6 @@ var researchesDefinition = [{
         $("#planet_mini").css("z-index", 1E3)
     },
     drop: function() {
-        $("#planet_info").css("z-index", 0);
         $("#planet_mini").css("z-index", 0)
     }
 }, {

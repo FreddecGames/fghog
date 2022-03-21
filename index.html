@@ -1,29 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-		
-		<script>
-			var NEW_AUTOROUTES = false;
-			var staticBon = 1;
-			var dynamicBon = 1;
-			var distanceBon = 1;
-			var MOBILE_LANDSCAPE = false;
-			var MIN_TEXT_SIZE = 0.5;
-			var MAX_TEXT_SIZE = 1.5;
-			var DEFAULT_TEXT_SIZE = 1.1;
-			
-			var SHARED_RESOURCES = false;
-			var staticBon = 1; 
-			var dynamicBon = 1; 
-			var distanceBon = 1;
-			var dynamicTechBon = 1;
-			var dynamicResearchBon = 1;
-			var bodyTextPct = 90;
-			var POPUP_VERTICAL = true;
-			var IDLE_BONUS_ENABLED = true;
-			var AG_SAVE = false;
-            var userID = 0;
-		</script>
         
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -116,20 +93,18 @@
                             </div>
                             <div id="topbar_year" class="row gx-2 justify-content-end"></div>
                         </div>
-                        <div class="col-auto">
-                            <button id="pause_button" type="button" class="btn lh-1" style="width:65px;">
-                                <div class="h5"><i id="pause_button_icon"></i></div>
-                                <div id="pause_button_text" class="small"></div>
-                            </button>
-                        </div>
+                        <button id="pause_button" type="button" class="col-auto btn lh-1" style="width:65px;">
+                            <div class="h5"><i id="pause_button_icon"></i></div>
+                            <div id="pause_button_text" class="small"></div>
+                        </button>
                     </div>
 				</div>
 			</div>
 			
 			<div class="position-absolute bottom-0 start-0 end-0 border-top bg-bar d-flex align-items-center" style="height:50px;">
                 <div id="downbar_content" class="col-auto px-3" style="width:300px;"></div>
-                <div id="bottom_build_menu" class="col">
-                    <div class="row justify-content-center">
+                <div class="col">
+                    <div id="bottom_build_menu" class="row justify-content-center">
                         <button id="b_extraction_icon" type="button" class="col-auto btn lh-1" style="width:80px;">
                             <div class="h5"><i class="fas fa-fw fa-dice-d20"></i></div>
                             <div class="small">Extraction</div>
@@ -159,8 +134,8 @@
                             <div class="small">Others</div>
                         </button>
                     </div>
+                    <div id='nebula_name' class='blue_text text_shadow'></div>
                 </div>					
-                <div id='nebula_name' class='col blue_text text_shadow'></div>
                 <div id="icon_cont" class="col-auto px-3" style="width:300px;">
                     <div class="row justify-content-end">
                         <button id="save_icon" type="button" class="col-auto btn lh-1" style="width:66px;">
@@ -344,30 +319,7 @@
 				</div>
 			</div>
 			
-			<div id="planet_interface">
-				<div id="planet_view">
-					<img id="arrow_left" src="ui/arrow_small_left.png" style="position:absolute;top:16px;width:48px;height:48px;left:27%;top:45%;z-index:1;cursor:pointer;"/>
-					<img id="arrow_right" src="ui/arrow_small.png" style="position:absolute;top:16px;width:48px;height:48px;right:27%;top:45%;z-index:1;cursor:pointer;"/>
-					<img id="planet_visualizer" src="ui/void.png" usemap='#planet_visualizer_map' style="top:16px;"/>
-					<div id='planet_places'></div>
-					<div id='civis_name' class='blue_text text_shadow' style='z-index:28;font-size:120%; position:absolute; width:1024px; top:50px;text-align:center;float:left;'>
-					</div>
-				</div>
-				<div id="planet_info" class="menu">
-					<ul id="info_list">
-
-					</ul>
-					<ul id ="info_list_placeholder" style="height:880px;">
-					</ul>
-				</div>
-				<div id="planet_info2" class="menu">
-					<ul id="info_list2">
-
-					</ul>
-					<ul id ="info_list2_placeholder" style="height:880px;">
-					</ul>
-				</div>
-			</div>
+			<div id="planet_interface" class="interface"></div>
 			
 			<div id="planet_selection_interface" class="interface">
 				<ul id="planet_list">
