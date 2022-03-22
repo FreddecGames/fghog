@@ -1,12 +1,3 @@
-*:not(input):not(textarea) {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
 selectable {
     -webkit-touch-callout: text;
     -webkit-user-select: text;
@@ -36,10 +27,6 @@ body {
 	font-size:.75rem;
     font-weight: 700;
     font-family: "Oxanium";
-}
-
-span,p {
-	cursor:default;
 }
 
 ul {
@@ -198,76 +185,7 @@ li {
 	position: absolute;
 }
 
-/* ==================== PLANET INTERFACE ================ */
-
-#building_icon {
-	position:absolute;
-	border:none;
-	width:32px;
-	height:32px;
-	margin:0;
-	padding:0;
-	top:408px;
-	left:0px;
-}
-
 /* ========================= PLANET BUILDING INTERFACE ========================= */
-
-#planet_building_interface {
-	position:absolute;
-	border:none;
-	margin:0;
-	padding:0;
-	top:8%;
-	left:0%;
-	width:100%;
-	height:84%;
-}
-
-#planet_mini {
-	position: absolute;
-	top:0%;
-	left:0%;
-	/*height:430px;*/
-	height:100%;
-	width:25%;
-}
-
-#mini_list {
-	position:absolute;
-	left:0%;
-	top:25%;
-	width:96%;
-	height:30%;
-}
-
-#planet_mini_image {
-	position:absolute;
-	top:16px;
-	left:20px;
-	width:160px;
-	height:160px;
-	cursor:pointer;
-}
-
-#planet_mini_name {
-	position:absolute;
-	top:12px;
-	width:200px;
-	text-align:center;
-	float:left;
-	left:0px;
-	font-size:120%;
-}
-
-#building_info {
-	position: absolute;
-	top:0%;
-	right:0%;
-	/*height:430px;*/
-	height:100%;
-	width:25%;
-}
 
 #building_info_list {
 	position:absolute;
@@ -285,25 +203,6 @@ li {
 	float:left;
 	left:0px;
 	font-size:120%;
-}
-
-#building_list {
-}
-
-#building_list_container {
-	position:relative;
-	top:1%;
-	bottom:1%;
-	left:25%;
-	/*height:430px;*/
-	height:100%;
-	width:50%;
-	overflow-x:hidden;
-	overflow-y:auto;
-}
-
-#building_list li {
-	cursor: pointer;
 }
 
 /* ========================= SHIPYARD INTERFACE ========================= */
@@ -556,35 +455,6 @@ li {
  
 #quest_list li {
 	cursor: pointer;
-}
-
-/* ========================== MAP INTERFACE ========================= */
-
-#race_interface {
-	position:absolute;
-	overflow:auto;
-	width:100%;
-	height:84%;
-	top:8%;
-	left:0px;
-}
-#map_interface {
-	position:absolute;
-	overflow:auto;
-	width:100%;
-	height:84%;
-	top:8%;
-	left:0px;
-}
-
-#map_container {
-	position:absolute;
-	overflow-x:hidden;
-	overflow-y:auto;
-	width:100%;
-	height:100%;
-	top:0px;
-	left:0px;
 }
 
 /* ========================== TECH INTERFACE ========================= */
@@ -946,7 +816,7 @@ a:active {color: #80c0ff;}
 .text-primary { color: #80c0ff!important; }
 .text-success { color: #0f0!important; }
 
-.small, small { font-size: .65em; }
+.small, small { font-size: .75em; }
 
 .bg-bar { background-color: rgba(22, 38, 46, .5); }
 .bg-bar-dark { background-color: rgba(22, 38, 46, .75); }
@@ -956,7 +826,7 @@ a:active {color: #80c0ff;}
 .border-start { border-left: 1px solid #20363b!important; }
 .border-bottom { border-bottom: 1px solid #20363b!important; }
 
-.btn { color: #80c0ff; }
+.btn { color: #80c0ff; font-size: .75rem; font-weight: 700; }
 .btn:hover { color: #fff; }
 .btn:focus { box-shadow: none }
 

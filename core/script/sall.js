@@ -1,7 +1,4 @@
-var textSizeCSSfactor = 1
-  , textSizeCSSunit = "vw";
-
-var spaghetti_code = !0, GAME_VERSION = 43, GAME_SUB_VERSION = "D", GAME_DIMX = 1200, GAME_DIMY = 600, fpsFleet = 10, fps = 2, MAX_FLEET_EXPERIENCE = 5E3, MAX_POLLUTION = 1E3 * bi, ATK_TIMER = 500, MAX_AUTO_DELIVERY_PER_PLANET = 5, averageT = 1 / fps, averageTFleet = 1 / fpsFleet, wiped = !1, DEBUG_MAIN_TIME = !1, adsAvailable = !1, idlePauseDuration = 0, tracks = [], AUXILIA_MODE = "ATTACK", repLevel = {
+var GAME_VERSION = 43, GAME_SUB_VERSION = "D", GAME_DIMX = 1200, GAME_DIMY = 600, fpsFleet = 10, fps = 2, MAX_FLEET_EXPERIENCE = 5E3, MAX_POLLUTION = 1E3 * bi, ATK_TIMER = 500, MAX_AUTO_DELIVERY_PER_PLANET = 5, averageT = 1 / fps, averageTFleet = 1 / fpsFleet, wiped = !1, DEBUG_MAIN_TIME = !1, adsAvailable = !1, idlePauseDuration = 0, tracks = [], AUXILIA_MODE = "ATTACK", repLevel = {
     hostile: {
         min: -1E3,
         max: -1
@@ -183,8 +180,8 @@ var SchedulerUI = function() {
         
         if (game.searchPlanet(planet.id)) {
             
-            ret += "<div class='row gx-2'><span class='col blue_text'>Energy Prod.</span><span class='col-auto white_text' id='planet_energy_production'>" + Math.floor(planet.energyProduction()).toLocaleString() + "</span></div>"
-            ret += "<div class='row gx-2'><span class='col blue_text'>Energy Cons.</span><span class='col-auto white_text' id='planet_energy_consumption'>" + Math.floor(-planet.energyConsumption()).toLocaleString() + "</span></div>"
+            ret += "<div class='row gx-2'><span class='col blue_text'>Energy Prod.</span><span class='col-auto white_text' id='planet_energy_production'>" + Math.floor(planet.energyProduction()).toLocaleString() + "/s</span></div>"
+            ret += "<div class='row gx-2'><span class='col blue_text'>Energy Cons.</span><span class='col-auto white_text' id='planet_energy_consumption'>" + Math.floor(-planet.energyConsumption()).toLocaleString() + "/s</span></div>"
 
             let t1 = planet.energyMalus()
             if (t1 > 1) t1 = 1
@@ -196,7 +193,7 @@ var SchedulerUI = function() {
 
             let t3 = Math.floor(planet.energyProduction() + planet.energyConsumption())
 
-            ret += "<div class='row gx-2'><span class='col blue_text'>Balance</span><span class='col-auto " + t2 + "' id='planet_energy_balance'>" + parseInt(Math.floor(t3)).toLocaleString() + "</span></div>"
+            ret += "<div class='row gx-2'><span class='col blue_text'>Balance</span><span class='col-auto " + t2 + "' id='planet_energy_balance'>" + (t3 > 0 ? "+": "") + parseInt(Math.floor(t3)).toLocaleString() + "/s</span></div>"
             ret += "<div class='row gx-2'><span class='col blue_text'>Efficiency</span><span class='col-auto " + t2 + "' id='planet_energy_efficiency'>" + Math.floor(1e4 * t1) / 100 + "%</span></div>"
             
             if (planet.globalProd.researchPoint > 0) ret += "<div class='row gx-2'><span class='col blue_text'>Research Points</span><span id='planet_rs_prod' class='col-auto white_text'>+" + beauty(planet.globalProd.researchPoint) + "/s</span></div>"
@@ -214,8 +211,8 @@ var SchedulerUI = function() {
         
         let planet = params[0]
         
-        $("#planet_energy_production").innerHTML = Math.floor(planet.energyProduction()).toLocaleString()
-        $("#planet_energy_consumption").innerHTML = Math.floor(-planet.energyConsumption()).toLocaleString()
+        $("#planet_energy_production").html = Math.floor(planet.energyProduction()).toLocaleString() + "/s"
+        $("#planet_energy_consumption").html = Math.floor(planet.energyConsumption()).toLocaleString() + "/s"
         
         let t1 = planet.energyMalus()
         if (t1 > 1) t1 = 1
@@ -227,13 +224,13 @@ var SchedulerUI = function() {
 
         let t3 = Math.floor(planet.energyProduction() + planet.energyConsumption())
             
-        $("#planet_energy_balance").innerHTML = parseInt(Math.floor(t3)).toLocaleString()
+        $("#planet_energy_balance").html = (t3 > 0 ? "+": "") + parseInt(Math.floor(t3)).toLocaleString() + "/s"
         $("#planet_energy_balance").attr("class", "col-auto " + t2)
         
-        $("#planet_energy_efficiency").innerHTML = Math.floor(1e4 * t1) / 100 + "%"
+        $("#planet_energy_efficiency").html = Math.floor(1e4 * t1) / 100 + "%"
         $("#planet_energy_efficiency").attr("class", "col-auto " + t2)
         
-        $("#planet_rs_prod").innerHTML = "+" + beauty(planet.globalProd.researchPoint) + "/s"        
+        $("#planet_rs_prod").html = "+" + beauty(planet.globalProd.researchPoint) + "/s"        
     }
     
     this.planetResourcesMultiplier = function(planet) {
@@ -266,17 +263,12 @@ var SchedulerUI = function() {
         for (let i = 0; i < resNum; i++) {
             if (resources[i].show(game) || planet.resources[i] > 0) {
                 
-                e += "<div id='res_name_div_" + i + "' class='row gx-2'>"
-                
-                var v = "<span id='buildingAid_" + i + "'>";                
-                highlightProd[i] ? (e += " style='background:rgba(0,255,0,0.3);'>",
-                v += "<img src='" + UI_FOLDER + "/arrow_up_green.png' />") : highlightCons[i] ? (e += " style='background:rgba(255,0,0,0.3);'>",
-                v += "<img src='" + UI_FOLDER + "/arrow_down_red.png' />") : e = highlightRes[i] ? e + " style='background:rgba(75,129,156,0.3);'>" : e + ">";
-                v += "</span>";
-                
-                e += "<span class='col blue_text'>" + resources[i].name.capitalize() + "</span><span class='col-auto white_text' id='res_name_prod_" + i + "' name='" + i + "'>" + beauty(planet.resources[i]) + " <small class='" + (0 <= d[i] ? 0 < d[i] ? "green_text" : "gray_text" : "red_text") + "'>" + (0 < d[i] ? "+" : "") + beauty(d[i]) + "/s" + v + "</small>";
-                0 != l[i] && (e += "<small class='" + (0 <= l[i] ? 0 < l[i] ? "purple_text" : "gray_text" : "pink_text") + "'> " + (0 < l[i] ? "+" : "") + beauty(l[i]) + "/s</small>");
-                e += "</span></div>"
+                e += "<div id='res_name_div_" + i + "' class='row gx-2 align-items-baseline'>"                
+                e += "<span class='col blue_text'>" + resources[i].name.capitalize() + "</span>"
+                e += "<span class='col-auto white_text' id='res_name_prod_" + i + "' name='" + i + "'>" + beauty(planet.resources[i]) + "</span>"
+                e += "<small class='col-auto text-end " + (0 <= d[i] ? 0 < d[i] ? "green_text" : "gray_text" : "red_text") + "' style='width:60px;'>" + (0 < d[i] ? "+" : "") + beauty(d[i]) + "/s</small>"
+                0 != l[i] && (e += "<small class='col-auto text-end " + (0 <= l[i] ? 0 < l[i] ? "purple_text" : "gray_text" : "pink_text") + "' style='width:55px;'> " + (0 < l[i] ? "+" : "") + beauty(l[i]) + "/s</small>")
+                e += "</div>"
             }
         }
         
@@ -800,8 +792,8 @@ var SchedulerUI = function() {
     }
     ;
     this.templateBuilding = function(b) {
-        var e = ""
-          , d = null;
+        
+        var e = "", d = null;
         if (b) {
             d = "button";
             planets[b.pid].structureAffordable(b.bid) || (d = "red_button");
@@ -819,42 +811,47 @@ var SchedulerUI = function() {
             l.removeClass("button"),
             l.addClass("red_button"));
             l = "";
-            var y = "<div style='width:98%; height:80px;position:relative;'><div style='position:relative; top:8px; left:8px'>";
-            y = h.structure[g].active ? y + ("<img id='b_shut_" + g + "' name='" + g + "' src='" + UI_FOLDER + "/act.png' style='z-index:10;width:16px;height:16px;position:relative;top:3px;left:-2px;' style='cursor:pointer;'/>") : y + ("<img id='b_shut_" + g + "' name='" + g + "' src='" + UI_FOLDER + "/shut.png' style='z-index:10;width:16px;height:16px;position:relative;top:3px;left:-2px;' style='cursor:pointer;'/>");
+        
+        var y = "";
+        
+            y += "<button type='button' id='b_shut_" + g + "' name='" + g + "' class='col-auto btn btn-sm'>"
+            if (h.structure[g].active) y += "<i class='fas fa-fw fa-power-off text-success'></i>"
+            else y += "<i class='fas fa-fw fa-power-off text-danger'></i>"
+            y += "</button>"
+            
+            y += "<span class='col-auto blue_text'>" + buildings[g].displayName + "</span>"            
+            y += "<span class='col-auto white_text' id='b_queuen_" + g + "'>" + h.structure[g].number + "</span>"
+            
             for (var A = !1, E = 0, x = ""; !A && E < resNum; )
                 A = h.globalNoRes[g][E],
                 x = " (needs " + resources[E].name.capitalize() + ")",
                 E++;
-            y = A ? y + ("<span class='blue_text' style='font-size: 100%;'>" + buildings[g].displayName + " <span class='red_text' style='font-size:80%;' id='b_nores_" + g + "'>" + x + "</span></span> ") : y + ("<span class='blue_text' style='font-size: 100%;'>" + buildings[g].displayName + " <span class='red_text' style='font-size:80%;' id='b_nores_" + g + "'></span></span>");
-            y += "<span class='white_text'><span id='b_queuen_" + g + "'>" + h.structure[g].number;
+            y = A ? y + ("<span class='col red_text' style='font-size:80%;' id='b_nores_" + g + "'>" + x + "</span></span> ") : y + ("<span class='col red_text' style='font-size:80%;' id='b_nores_" + g + "'></span></span>");
+            
             for (var H in h.queue)
                 if (h.queue[H].b == g) {
-                    y += " (" + h.queue[H].n + " in queue)<img id='b_drop_queue_" + g + "' name='" + g + "' src='" + UI_FOLDER + "/x.png' style='width:24px;height:24px;position:relative;top:8px;left:-2px;' style='cursor:pointer;'/>";
+                    y += "<span class='col-auto'>" + h.queue[H].n + " in queue <button type='button' id='b_drop_queue_" + g + "' name='" + g + "' class='btn btn-sm'><i class='fas fa-fw fa-times-circle'></i></button>";
                     break
                 }
-            y += "</span></span></div><div style='position:relative; top:16px; left:8px'>";
-            H = 0;
-            A = h.showBuyCostRaw(g, 1);
-            for (E = 0; E < resNum; E++)
-                x = A[E],
-                0 < x && buildings[g].buildable && (l += "</div><div style='position:absolute; top:" + (32 + 16 * H) + "px; left: 320px;'>",
-                l += "<span class='" + u + "' id='b_res_" + g + "_" + E + "'>" + resources[E].name.capitalize() + ": </span>",
-                l += "<span class='" + v + "' id='b_cost_" + g + "_" + E + "'>" + beauty(x),
-                gameSettings.showMultipliers && (l += " (x" + buildings[g].resourcesMult[E] + ")"),
-                l += "</span><br>",
-                H++);
-            l += "</div><div style='position:relative; top:16px; left:8px'>";
-            buildings[g].buildable && (l += "<img id='b_build_" + g + "' name='" + g + "' src='" + UI_FOLDER + "/add2.png' style='width:32px;height:32px;position:relative;top:3px;left:-2px;' style='cursor:pointer;'/>",
-            l += "<img id='b_build10_" + g + "' name='" + g + "' src='" + UI_FOLDER + "/add10.png' style='width:32px;height:32px;position:relative;top:3px;left:-2px;' style='cursor:pointer;'/>",
-            l += "<img id='b_build50_" + g + "' name='" + g + "' src='" + UI_FOLDER + "/add50.png' style='width:32px;height:32px;position:relative;top:3px;left:-2px;' style='cursor:pointer;'/>",
-            l += "<img id='b_void' src='" + UI_FOLDER + "/void.png' style='width:32px;height:32px;position:relative;top:3px;left:-2px;'/>",
-            l += "<img id='b_dismantle_" + g + "' name='" + g + "' src='" + UI_FOLDER + "/x.png' style='width:32px;height:32px;position:relative;top:3px;left:-2px;' style='cursor:pointer;'/>",
-            l += "<img id='b_dismantle10_" + g + "' name='" + g + "' src='" + UI_FOLDER + "/x10.png' style='width:32px;height:32px;position:relative;top:3px;left:-2px;' style='cursor:pointer;'/>",
-            l += "<img id='b_dismantle50_" + g + "' name='" + g + "' src='" + UI_FOLDER + "/x50.png' style='width:32px;height:32px;position:relative;top:3px;left:-2px;' style='cursor:pointer;'/>");
-            u = "32px";
-            h.structure[g].showUI && (u = "80px",
-            y += l + "</div></div>");
-            e += "<li id='building" + b.bid + "' name='" + b.bid + "' style='height:" + u + ";' class='" + d + "'>" + y + "</li>";
+            y += "</span>"
+
+            if (buildings[g].buildable) {
+                
+                y += "<div class='col-auto'>"
+                y += "<button type='button' id='b_dismantle_" + g + "' name='" + g + "' class='btn btn-sm'><i class='fas fa-fw fa-minus-circle'></i>1</button>"
+                y += "<button type='button' id='b_dismantle10_" + g + "' name='" + g + "' class='btn btn-sm'><i class='fas fa-fw fa-minus-circle'></i>10</button>"
+                y += "<button type='button' id='b_dismantle50_" + g + "' name='" + g + "' class='btn btn-sm'><i class='fas fa-fw fa-minus-circle'></i>50</button>"
+                y += "</div>"
+                
+                y += "<div class='col-auto'>"
+                y += "<button type='button' id='b_build_" + g + "' name='" + g + "' class='btn btn-sm'><i class='fas fa-fw fa-plus-circle'></i>1</button>"
+                y += "<button type='button' id='b_build10_" + g + "' name='" + g + "' class='btn btn-sm'><i class='fas fa-fw fa-plus-circle'></i>10</button>"
+                y += "<button type='button' id='b_build50_" + g + "' name='" + g + "' class='btn btn-sm'><i class='fas fa-fw fa-plus-circle'></i>50</button>"
+                y += "</div>"
+            }
+            
+            e += "<div id='building" + b.bid + "' name='" + b.bid + "' class='btn w-100 border-bottom rounded-0'><div class='row gx-2 align-items-center'>" + y + "</div></div>";
+            
             d = function() {
                 var d = buildings[parseInt($(this).attr("name"))]
                   , b = "<span class='green_text'>(Active)</span>";
@@ -1012,208 +1009,7 @@ function playAudio(b) {
     b.volume = Math.floor(gameSettings.soundVolume * gameSettings.masterVolume / 100) / 100;
     b.play()
 }
-var Base64String = {
-    compressToUTF16: function(b) {
-        var e = [], d, g = 0;
-        b = this.compress(b);
-        for (d = 0; d < b.length; d++) {
-            var h = b.charCodeAt(d);
-            switch (g++) {
-            case 0:
-                e.push(String.fromCharCode((h >> 1) + 32));
-                var l = (h & 1) << 14;
-                break;
-            case 1:
-                e.push(String.fromCharCode(l + (h >> 2) + 32));
-                l = (h & 3) << 13;
-                break;
-            case 2:
-                e.push(String.fromCharCode(l + (h >> 3) + 32));
-                l = (h & 7) << 12;
-                break;
-            case 3:
-                e.push(String.fromCharCode(l + (h >> 4) + 32));
-                l = (h & 15) << 11;
-                break;
-            case 4:
-                e.push(String.fromCharCode(l + (h >> 5) + 32));
-                l = (h & 31) << 10;
-                break;
-            case 5:
-                e.push(String.fromCharCode(l + (h >> 6) + 32));
-                l = (h & 63) << 9;
-                break;
-            case 6:
-                e.push(String.fromCharCode(l + (h >> 7) + 32));
-                l = (h & 127) << 8;
-                break;
-            case 7:
-                e.push(String.fromCharCode(l + (h >> 8) + 32));
-                l = (h & 255) << 7;
-                break;
-            case 8:
-                e.push(String.fromCharCode(l + (h >> 9) + 32));
-                l = (h & 511) << 6;
-                break;
-            case 9:
-                e.push(String.fromCharCode(l + (h >> 10) + 32));
-                l = (h & 1023) << 5;
-                break;
-            case 10:
-                e.push(String.fromCharCode(l + (h >> 11) + 32));
-                l = (h & 2047) << 4;
-                break;
-            case 11:
-                e.push(String.fromCharCode(l + (h >> 12) + 32));
-                l = (h & 4095) << 3;
-                break;
-            case 12:
-                e.push(String.fromCharCode(l + (h >> 13) + 32));
-                l = (h & 8191) << 2;
-                break;
-            case 13:
-                e.push(String.fromCharCode(l + (h >> 14) + 32));
-                l = (h & 16383) << 1;
-                break;
-            case 14:
-                e.push(String.fromCharCode(l + (h >> 15) + 32, (h & 32767) + 32)),
-                g = 0
-            }
-        }
-        e.push(String.fromCharCode(l + 32));
-        return e.join("")
-    },
-    decompressFromUTF16: function(b) {
-        for (var e = [], d, g, h = 0, l = 0; l < b.length; ) {
-            g = b.charCodeAt(l) - 32;
-            switch (h++) {
-            case 0:
-                d = g << 1;
-                break;
-            case 1:
-                e.push(String.fromCharCode(d | g >> 14));
-                d = (g & 16383) << 2;
-                break;
-            case 2:
-                e.push(String.fromCharCode(d | g >> 13));
-                d = (g & 8191) << 3;
-                break;
-            case 3:
-                e.push(String.fromCharCode(d | g >> 12));
-                d = (g & 4095) << 4;
-                break;
-            case 4:
-                e.push(String.fromCharCode(d | g >> 11));
-                d = (g & 2047) << 5;
-                break;
-            case 5:
-                e.push(String.fromCharCode(d | g >> 10));
-                d = (g & 1023) << 6;
-                break;
-            case 6:
-                e.push(String.fromCharCode(d | g >> 9));
-                d = (g & 511) << 7;
-                break;
-            case 7:
-                e.push(String.fromCharCode(d | g >> 8));
-                d = (g & 255) << 8;
-                break;
-            case 8:
-                e.push(String.fromCharCode(d | g >> 7));
-                d = (g & 127) << 9;
-                break;
-            case 9:
-                e.push(String.fromCharCode(d | g >> 6));
-                d = (g & 63) << 10;
-                break;
-            case 10:
-                e.push(String.fromCharCode(d | g >> 5));
-                d = (g & 31) << 11;
-                break;
-            case 11:
-                e.push(String.fromCharCode(d | g >> 4));
-                d = (g & 15) << 12;
-                break;
-            case 12:
-                e.push(String.fromCharCode(d | g >> 3));
-                d = (g & 7) << 13;
-                break;
-            case 13:
-                e.push(String.fromCharCode(d | g >> 2));
-                d = (g & 3) << 14;
-                break;
-            case 14:
-                e.push(String.fromCharCode(d | g >> 1));
-                d = (g & 1) << 15;
-                break;
-            case 15:
-                e.push(String.fromCharCode(d | g)),
-                h = 0
-            }
-            l++
-        }
-        return this.decompress(e.join(""))
-    },
-    _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-    decompress: function(b) {
-        for (var e = [], d, g, h, l, u, v, y = 1, A = b.charCodeAt(0) >> 8; y < 2 * b.length && (y < 2 * b.length - 1 || 0 == A); ) {
-            0 == y % 2 ? (d = b.charCodeAt(y / 2) >> 8,
-            g = b.charCodeAt(y / 2) & 255,
-            h = y / 2 + 1 < b.length ? b.charCodeAt(y / 2 + 1) >> 8 : NaN) : (d = b.charCodeAt((y - 1) / 2) & 255,
-            (y + 1) / 2 < b.length ? (g = b.charCodeAt((y + 1) / 2) >> 8,
-            h = b.charCodeAt((y + 1) / 2) & 255) : g = h = NaN);
-            y += 3;
-            l = d >> 2;
-            d = (d & 3) << 4 | g >> 4;
-            u = (g & 15) << 2 | h >> 6;
-            v = h & 63;
-            if (isNaN(g) || y == 2 * b.length + 1 && A)
-                u = v = 64;
-            else if (isNaN(h) || y == 2 * b.length && A)
-                v = 64;
-            e.push(this._keyStr.charAt(l));
-            e.push(this._keyStr.charAt(d));
-            e.push(this._keyStr.charAt(u));
-            e.push(this._keyStr.charAt(v))
-        }
-        return e.join("")
-    },
-    compress: function(b) {
-        var e = []
-          , d = 1
-          , g = 0;
-        var h = !1;
-        for (b = b.replace(/[^A-Za-z0-9\+\/=]/g, ""); g < b.length; ) {
-            h = this._keyStr.indexOf(b.charAt(g++));
-            var l = this._keyStr.indexOf(b.charAt(g++));
-            var u = this._keyStr.indexOf(b.charAt(g++));
-            var v = this._keyStr.indexOf(b.charAt(g++));
-            h = h << 2 | l >> 4;
-            l = (l & 15) << 4 | u >> 2;
-            var y = (u & 3) << 6 | v;
-            if (0 == d % 2) {
-                var A = h << 8;
-                h = !0;
-                64 != u && (e.push(String.fromCharCode(A | l)),
-                h = !1);
-                64 != v && (A = y << 8,
-                h = !0)
-            } else
-                e.push(String.fromCharCode(A | h)),
-                h = !1,
-                64 != u && (A = l << 8,
-                h = !0),
-                64 != v && (e.push(String.fromCharCode(A | y)),
-                h = !1);
-            d += 3
-        }
-        h ? (e.push(String.fromCharCode(A)),
-        e = e.join(""),
-        e = String.fromCharCode(e.charCodeAt(0) | 256) + e.substring(1)) : e = e.join("");
-        return e
-    }
-}
-  , LZString = function() {
+var LZString = function() {
     function b(b, e) {
         if (!d[b]) {
             d[b] = {};
@@ -1537,47 +1333,35 @@ Array.prototype.min = function() {
         this[e] < b && (b = this[e]);
     return b
 }
-;
 Array.prototype.max = function() {
     for (var b = this[0], e = 1; e < this.length; e++)
         this[e] > b && (b = this[e]);
     return b
 }
-;
 Array.prototype.idMin = function() {
     for (var b = 0, e = 1; e < this.length; e++)
         this[e] < this[b] && (b = e);
     return b
 }
-;
 Array.prototype.idMax = function() {
     for (var b = 0, e = 1; e < this.length; e++)
         this[e] > this[b] && (b = e);
     return b
 }
-;
 Array.prototype.find = function(b) {
     for (var e = 0; e < this.length && this[e] != b; )
         e++;
     return e
 }
-;
 Array.prototype.has = function(b) {
     for (var e = !1, d = 0; d < this.length && !e; )
         this[d] == b && (e = !0),
         d++;
     return e
 }
-;
-function arraySort(b) {
-    b.sort(function(b, d) {
-        return b < d ? -1 : b > d ? 1 : 0
-    })
-}
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1)
 }
-;
 function beautyDot(b) {
     for (var e = Math.log(b) / Math.log(10) / 3, d = "", g = 0; 1E3 <= b && g <= e + 1; )
         d = "." + ("00" + Math.floor(b % 1E3)).substr(-3) + d,
@@ -1601,57 +1385,6 @@ function beauty(b) {
     0 > b && (e = "-");
     d = Math.floor(Math.abs(b)) || 0;
     return d >= bi * bi * bi * bi ? e + (d / bi / bi / bi / bi).toFixed(2) + "Ud" : d >= mi * bi * bi * bi ? e + (d / mi / bi / bi / bi).toFixed(2) + "Dc" : d >= 1E3 * bi * bi * bi ? e + (d / 1E3 / bi / bi / bi).toFixed(2) + "No" : d >= bi * bi * bi ? e + (d / bi / bi / bi).toFixed(2) + "Oc" : d >= mi * bi * bi ? e + (d / mi / bi / bi).toFixed(2) + "Sp" : d >= 1E3 * bi * bi ? e + (d / 1E3 / bi / bi).toFixed(2) + "Sx" : d >= bi * bi ? e + (d / bi / bi).toFixed(2) + "Qi" : d >= mi * bi ? e + (d / mi / bi).toFixed(2) + "Qa" : d >= 1E3 * bi ? e + (d / 1E3 / bi).toFixed(2) + "T" : d >= bi ? e + (d / bi).toFixed(2) + "B" : d >= mi ? e + (d / mi).toFixed(2) + "M" : 1E3 <= d ? e + (d / 1E3).toFixed(2) + "K" : 100 <= d ? e + d.toFixed(1) : e + Math.abs(b).toFixed(2)
-}
-function parseBeauty(b) {
-    b = ("" + b).replace(/,/g, "");
-    b = b.split(/(?=[a-zA-Z])/g);
-    return parseFloat(b[0]) * qton(b[1])
-}
-function qton(b) {
-    var e = 1;
-    b && ("K" == b.toUpperCase() ? e = 1E3 : "M" == b.toUpperCase() ? e = mi : "B" == b.toUpperCase() ? e = bi : "T" == b.toUpperCase() ? e = tri : "QA" == b.toUpperCase() ? e = 1E3 * tri : "QI" == b.toUpperCase() ? e = mi * tri : "SX" == b.toUpperCase() ? e = bi * tri : "SP" == b.toUpperCase() ? e = tri * tri : "OC" == b.toUpperCase() ? e = 1E3 * tri * tri : "NO" == b.toUpperCase() ? e = mi * tri * tri : "DE" == b.toUpperCase() && (e = bi * tri * tri));
-    return e
-}
-function qtonTest(b) {
-    for (var e = 0, d = 0; d < b; d++) {
-        var g = Math.random() + .01;
-        g = Math.pow(g, 10) * tri;
-        var h = beauty(g);
-        h = parseBeauty(h);
-        var l = Math.abs(g - h) / Math.abs(g);
-        1 > l && (e = Math.max(l, e),
-        .1 < l && console.log(g + " " + h + " " + l))
-    }
-    console.log(e)
-}
-var rNum = "I II III IV V VI VII VIII IX X XI XII XIII XIV XV XVI XVII XVIII XIX XX".split(" ");
-function romanize(b) {
-    if (0 == b)
-        return "";
-    if (10 > b)
-        return rNum[parseInt(b - 1)];
-    if (40 > b) {
-        for (var e = "", d = 0; d < parseInt(b / 10) % 10; d++)
-            e += "X";
-        return e += romanize(b % 10)
-    }
-    if (50 > b)
-        return "XL" + romanize(b % 10);
-    if (90 > b) {
-        e = "L";
-        var g = parseInt(b / 10) - 5;
-        for (d = 0; d < g; d++)
-            e += "X";
-        return e + romanize(parseInt(b % 10))
-    }
-    if (100 > b)
-        return "XC" + romanize(parseInt(b % 10));
-    if (400 > b) {
-        e = "";
-        for (d = 0; d < parseInt(b / 100) % 10; d++)
-            e += "C";
-        return e + romanize(b % 100)
-    }
 }
 function Artifact(b) {
     this.id = b.id;
@@ -1684,34 +1417,6 @@ function charactersNumber() {
     for (var b = 0, e = 0; e < characters.length; e++)
         characters[e].unlocked && b++;
     return b
-}
-var alphanumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789012345678901234567890123456789"
-  , numeric = "0123456789";
-function randomString(b) {
-    b = b || 8;
-    for (var e = "", d = 0; d < b; d++)
-        e += alphanumeric.charAt(Math.floor(Math.random() * alphanumeric.length));
-    return e
-}
-function randomNumericString(b) {
-    b = b || 6;
-    for (var e = "", d = 0; d < b; d++)
-        e += numeric.charAt(Math.floor(Math.random() * numeric.length));
-    return e
-}
-function Article(b, e, d, g) {
-    this.name = b;
-    this.type = e;
-    this.cost = [];
-    for (b = 0; b < resNum; b++)
-        this.cost[b] = 0;
-    for (b = 0; b < g.length; b++)
-        this.cost[g[b][0]] = g[b][1];
-    this.prob = function() {}
-    ;
-    this.effect = function() {}
-    ;
-    this.desc = d
 }
 var questNames = [];
 function Resource(b) {
@@ -2097,29 +1802,6 @@ function PlanetBuilding(b, e, d, g) {
         return buildings[this.building].value / d
     }
 }
-function PlanetBuilder(b, e, d, g, h, l) {
-    return new Planet({
-        id: b,
-        name: e,
-        resources: {
-            iron: d,
-            hydrogen: g
-        },
-        icon: h,
-        pos: l
-    })
-}
-function StationPiece(b) {
-    this.id = b.id;
-    this.name = b.name;
-    this.requirement = b.requirement || function() {
-        return !0
-    }
-    ;
-    this.available = function() {
-        return this.requirement() ? !0 : !1
-    }
-}
 function Planet(b) {
     this.region = b.region;
     this.id = b.id;
@@ -2259,7 +1941,7 @@ function Planet(b) {
     this.pollutionRate = b.baseRes.pollution || 1;
     this.structure = [];
     this.icon = b.icon || "void.png";
-    this.info = b.info || new PlanetInfo(0,0,"",0,[]);
+    this.info = b.info || { radius:0, temp:0 };
     this.civis = null;
     b.pos && (this.x = b.pos[0] || 0,
     this.y = b.pos[1] || 0);
@@ -2985,32 +2667,6 @@ function planetSaver(b) {
             e.af[d] = b.autofleets[d];
     return e
 }
-function planetSaver33(b) {
-    var e = {};
-    e.i = b.id;
-    e.n = b.name;
-    e.t = b.type;
-    b.compactQueue();
-    e.q = b.queue;
-    e.r = {};
-    e.rq = {};
-    for (var d = 0; d < resNum; d++)
-        0 < b.resources[d] && (e.r[d] = parseInt(Math.floor(b.resources[d])).toString(36)),
-        0 < b.resourcesRequest[d] && (e.rq[d] = parseInt(Math.floor(b.resourcesRequest[d])).toString(36));
-    e.e = b.energy;
-    e.p = b.population;
-    e.s = {};
-    for (d = 0; d < buildings.length; d++)
-        b.structure[d] && (b.structure[d].active ? 0 < b.structure[d].number && (e.s[d] = b.structure[d].number) : 0 < b.structure[d].number && (e.s[d] = {},
-        e.s[d].n = b.structure[d].number,
-        e.s[d].a = 1));
-    e.c = b.civis;
-    e.f = {};
-    e.hf = fleetSaver(b.fleets.hub, "slim");
-    for (d in b.fleets)
-        b.fleets[d] && !isNaN(parseInt(d)) && 0 != parseInt(d) && (e.f[d] = fleetSaver(b.fleets[d], "slim"));
-    return e
-}
 function fleetSaver(b, e) {
     var d = {};
     d.n = b.name;
@@ -3084,11 +2740,6 @@ function planetArraySaver(b) {
         e[d] = planetSaver(b[d]);
     return e
 }
-function planetArraySaver33(b) {
-    for (var e = [], d = 0; d < b.length; d++)
-        e[d] = planetSaver33(b[d]);
-    return e
-}
 function planetArraySaver30(b) {
     for (var e = [], d = 0; d < b.length; d++)
         e[d] = planetSaver30(b[d]);
@@ -3100,11 +2751,11 @@ function Route(b, e, d) {
     this.planet2 = planets[planetsName[e]].id;
     this.type = d || "normal";
     this.cx = function() {
-        return planets[this.planet1].x - planets[this.planet2].x
+        return (100 * planets[this.planet1].x / 1050) - (100 * planets[this.planet2].x / 1050)
     }
     ;
     this.cy = function() {
-        return planets[this.planet1].y - planets[this.planet2].y
+        return (100 * planets[this.planet1].y / 1400) - (100 * planets[this.planet2].y / 1400)
     }
     ;
     this.distance = function() {
@@ -3122,13 +2773,6 @@ function Route(b, e, d) {
         this.planet1 == b ? d = !0 : this.planet2 == b && (d = !0);
         return d
     }
-}
-function PlanetInfo(b, e, d, g, h) {
-    this.radius = b;
-    this.temp = e;
-    this.atmos = d;
-    this.orbit = g;
-    this.color = h
 }
 function Nebula(b) {
     this.name = b.name;
@@ -3312,12 +2956,6 @@ function researchLoader(b, e) {
         b.bonus();
     b.bonusLevel = g
 }
-function Book(b) {
-    this.title = b.title;
-    this.pages = b.pages;
-    this.pageNum = this.pages.lenth;
-    this.requirement = b.req
-}
 function Character(b) {
     this.id = b.id;
     this.name = b.name;
@@ -3446,12 +3084,6 @@ function questChecker() {
         !quests[b].notified && quests[b].checkCompletion() && quests[b].available() && (0 <= quests[b].provider && 0 < civis[quests[b].provider].planets.length || -1 == quests[b].provider) && (quests[b].notified = !0,
         (new exportPopup(300,0,"<span class='green_text'>You can now claim the reward of</span><br><span class='blue_text'>" + quests[b].name + "</span>","info")).drawToast())
 }
-function QuestLine(b) {
-    this.id = b.id;
-    this.name = b.name;
-    this.civis = b.civis;
-    this.currentQuest = b.startingQuest
-}
 function Tutorial(b) {
     this.id = b.id;
     this.done = !1;
@@ -3497,7 +3129,6 @@ function startTutorial() {
     b && !gameSettings.hideTutorial && (b.done = !1,
     tutorialChecker(!0))
 }
-var minimumBonusTime = 60;
 function showPopupIdleBonus(b) {
     var e = Math.floor(game.idleTime % 60)
       , d = Math.floor(game.idleTime / 60) % 60
@@ -3544,614 +3175,6 @@ function setSubBon(b) {
 function stopBon() {
     clearTimeout(idleTimeout)
 }
-function Corporation(b, e, d) {
-    this.name = b;
-    this.currentQuest = null;
-    this.questList = [];
-    this.rep = 0;
-    this.av = !1;
-    this.pow = e;
-    this.msg = d || "";
-    this.subMsg = function() {
-        return "<span class='white_text'>You need at least </span><span class='blue_text'>" + beauty(this.pow) + "</span><span class='white_text'> power to join </span><span class='blue_text'>" + this.name + "</span>"
-    }
-}
-function Entry(b, e) {
-    this.quest = b;
-    this.next = e
-}
-function QuestScheduler() {
-    this.head = null;
-    this.add = function(b) {
-        this.head = new Entry(b,this.head)
-    }
-    ;
-    this.pop = function() {
-        if (null === this.head)
-            return null;
-        var b = this.head.quest;
-        this.head = this.next;
-        return b
-    }
-}
-function ShipPart(b) {
-    this.name = b.name || "Component";
-    this.power = b.power || 0;
-    this.hp = b.hp || 0;
-    this.speed = b.speed || 0;
-    this.armor = b.armor || 0;
-    this.piercing = b.piercing || 0;
-    this.storage = b.storage || 0;
-    this.weight = b.weight || 0;
-    this.shield = b.shield || 0;
-    this.size = b.size || 1;
-    this.type = b.type || "Component";
-    this.subType = b.subType || "Component";
-    this.cost = Array(resNum);
-    for (var e = 0; e < resNum; e++)
-        this.cost[e] = 0;
-    for (e in b.cost)
-        this.cost[resourcesName[e].id] = b.cost[e] || 0
-}
-function Hull(b) {
-    this.name = b.name;
-    this.size = b.size || 0;
-    this.type = b.type || "Spaceship";
-    this.power = b.power || 0;
-    this.speed = b.speed || 0;
-    this.hp = b.hp || 0;
-    this.armor = b.armor || 0;
-    this.piercing = b.piercing || 0;
-    this.weight = b.weight || 2;
-    this.shield = b.shield || 0;
-    this.storage = b.storage || 0
-}
-function Blueprint(b) {
-    this.name = b.name;
-    this.hull = b.hull;
-    this.parts = b.parts || {};
-    this.toShip = function() {
-        var b = new Ship;
-        b.power = this.hull.power;
-        b.speed = this.hull.speed;
-        b.hp = this.hull.hp;
-        b.armor = this.hull.armor;
-        b.piercing = this.hull.piercing;
-        b.weight = this.hull.weight;
-        b.shield = this.hull.shield;
-        b.storage = this.hull.storage;
-        b.type = this.hull.type;
-        for (var d in this.parts) {
-            var g = shipParts[d]
-              , h = this.parts[d];
-            b.power = g.power * h;
-            b.speed = g.speed * h;
-            b.hp = g.hp * h;
-            b.armor = g.armor * h;
-            b.piercing = g.piercing * h;
-            b.weight = g.weight * h;
-            b.shield = g.shield * h;
-            b.storage = g.storage * h
-        }
-    }
-    ;
-    this.cost = function() {}
-}
-var hulls = []
-  , hll = new Hull({
-    name: "25 meters Hull",
-    type: "Fighter",
-    size: 3
-});
-hulls.push(hll);
-hll = new Hull({
-    name: "80 meters Hull",
-    type: "Frigate",
-    size: 8
-});
-hulls.push(hll);
-hll = new Hull({
-    name: "150 meters Hull",
-    type: "Destroyer",
-    size: 21
-});
-hulls.push(hll);
-hll = new Hull({
-    name: "80 meters Ultra-light Hull",
-    type: "Incursor",
-    size: 3
-});
-hulls.push(hll);
-hll = new Hull({
-    name: "200 meters Heavy Hull",
-    type: "Shield ship",
-    size: 50
-});
-hulls.push(hll);
-hll = new Hull({
-    name: "350 meters Hull",
-    type: "Battlecruiser",
-    size: 50
-});
-hulls.push(hll);
-hll = new Hull({
-    name: "500 meters Hull",
-    type: "Battleship",
-    size: 50
-});
-hulls.push(hll);
-hll = new Hull({
-    name: "1200 meters Hull",
-    type: "Admiral",
-    size: 50
-});
-hulls.push(hll);
-hll = new Hull({
-    name: "3500 meters Imperial Hull",
-    type: "Imperial Ship",
-    size: 50
-});
-hulls.push(hll);
-hll = new Hull({
-    name: "11000 meters Hull",
-    type: "Capital Ship",
-    size: 50
-});
-hulls.push(hll);
-hll = new Hull({
-    name: "Heavy Technetium Hull",
-    type: "Assault Ship",
-    size: 50
-});
-hulls.push(hll);
-hll = new Hull({
-    name: "Ultra Light Nanotubes Hull",
-    type: "Servant Ship",
-    size: 50
-});
-hulls.push(hll);
-hll = new Hull({
-    name: "Osmium Hull",
-    type: "Servant Ship",
-    size: 50
-});
-hulls.push(hll);
-var shipParts = [];
-if (SHIPPART_ENABLED()) {
-    var spp = new ShipPart({
-        name: "Low Energy Laser",
-        type: "weapon",
-        subType: "Light Emitting Weapon",
-        power: 8,
-        weight: 10,
-        cost: {
-            steel: 3E4,
-            titanium: 2E3,
-            "full battery": 2
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "High Energy Laser",
-        type: "weapon",
-        subType: "Light Emitting Weapon",
-        size: 4,
-        power: 75,
-        weight: 10,
-        cost: {
-            steel: 3E4,
-            titanium: 2E3,
-            "full battery": 5
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Resonant Light Emitter",
-        type: "weapon",
-        subType: "Light Emitting Weapon",
-        size: 4,
-        power: 75,
-        weight: 10,
-        cost: {
-            steel: 3E4,
-            titanium: 2E3,
-            "full battery": 5
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Double Wave Light Emitter",
-        type: "weapon",
-        subType: "Light Emitting Weapon",
-        size: 4,
-        power: 75,
-        weight: 10,
-        cost: {
-            steel: 3E4,
-            titanium: 2E3,
-            "full battery": 5
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Halean Light Burster",
-        type: "weapon",
-        subType: "Light Emitting Weapon",
-        size: 4,
-        power: 75,
-        weight: 10,
-        cost: {
-            steel: 3E4,
-            titanium: 2E3,
-            "full battery": 5
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Osmium Blade",
-        type: "weapon",
-        subType: "Contact Weapon",
-        size: 2,
-        power: 75,
-        weight: 10,
-        cost: {
-            osmium: 100
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Karan Cutter",
-        type: "weapon",
-        subType: "Contact Weapon",
-        size: 2,
-        power: 75,
-        weight: 10,
-        cost: {
-            osmium: 100
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Hull Driller",
-        type: "weapon",
-        subType: "Contact Weapon",
-        size: 2,
-        power: 75,
-        weight: 10,
-        cost: {
-            osmium: 100
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "100m Mass Accelerator",
-        type: "weapon",
-        subType: "Ballistic Weapon",
-        size: 2,
-        power: 75,
-        weight: 10,
-        cost: {
-            osmium: 100
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "300m Mass Accelerator",
-        type: "weapon",
-        subType: "Ballistic Weapon",
-        size: 2,
-        power: 75,
-        weight: 10,
-        cost: {
-            osmium: 100
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "800m Mass Accelerator",
-        type: "weapon",
-        subType: "Ballistic Weapon",
-        size: 2,
-        power: 75,
-        weight: 10,
-        cost: {
-            osmium: 100
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "2000m Mass Accelerator",
-        type: "weapon",
-        subType: "Ballistic Weapon",
-        size: 2,
-        power: 75,
-        weight: 10,
-        cost: {
-            osmium: 100
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "7000m Mass Accelerator",
-        type: "weapon",
-        subType: "Ballistic Weapon",
-        size: 2,
-        power: 75,
-        weight: 10,
-        cost: {
-            osmium: 100
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Fusion Powered Cannon",
-        type: "weapon",
-        subType: "Energy Weapon",
-        size: 2,
-        power: 75,
-        weight: 10,
-        cost: {
-            osmium: 100
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Antimatter Repulsor",
-        type: "weapon",
-        subType: "Energy Weapon",
-        size: 2,
-        power: 75,
-        weight: 10,
-        cost: {
-            osmium: 100
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Oil Burner Radiator",
-        type: "weapon",
-        subType: "Energy Weapon",
-        size: 2,
-        power: 75,
-        weight: 10,
-        cost: {
-            osmium: 100
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Fission Radiator",
-        type: "weapon",
-        subType: "Energy Weapon",
-        size: 2,
-        power: 75,
-        weight: 10,
-        cost: {
-            osmium: 100
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Biochemical Radiator",
-        type: "weapon",
-        subType: "Energy Weapon",
-        size: 2,
-        power: 75,
-        weight: 10,
-        cost: {
-            osmium: 100
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Sulfur Burner Radiator",
-        type: "weapon",
-        subType: "Energy Weapon",
-        size: 2,
-        power: 75,
-        weight: 10,
-        cost: {
-            osmium: 100
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Titanium Armor",
-        type: "protection",
-        subType: "Armor",
-        armor: 350,
-        hp: 55,
-        speed: -.5,
-        weight: 40,
-        cost: {
-            steel: 3E4,
-            titanium: 2E3
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Nanotubes Armor",
-        type: "protection",
-        subType: "Armor",
-        armor: 350,
-        hp: 55,
-        speed: -.5,
-        weight: 40,
-        cost: {
-            steel: 3E4,
-            titanium: 2E3
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Technetium Armor",
-        type: "protection",
-        subType: "Armor",
-        armor: 350,
-        hp: 55,
-        speed: -.5,
-        weight: 40,
-        cost: {
-            steel: 3E4,
-            titanium: 2E3
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Titanium Armor",
-        type: "protection",
-        subType: "Armor",
-        armor: 350,
-        hp: 55,
-        speed: -.5,
-        weight: 40,
-        cost: {
-            steel: 3E4,
-            titanium: 2E3
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Osmium Armor",
-        type: "protection",
-        subType: "Armor",
-        armor: 350,
-        hp: 55,
-        speed: -.5,
-        weight: 40,
-        cost: {
-            steel: 3E4,
-            titanium: 2E3
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Solar Powered Engine",
-        type: "engine",
-        subType: "Engine",
-        size: 2,
-        speed: 2.8,
-        weight: 20,
-        cost: {
-            steel: 9E4,
-            titanium: 1E3,
-            "full battery": 3
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Methane Engine",
-        type: "engine",
-        subType: "Engine",
-        size: 2,
-        speed: 2.8,
-        weight: 20,
-        cost: {
-            steel: 9E4,
-            titanium: 1E3,
-            "full battery": 3
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Uranium Engine",
-        type: "engine",
-        subType: "Engine",
-        size: 2,
-        speed: 2.8,
-        weight: 20,
-        cost: {
-            steel: 9E4,
-            titanium: 1E3,
-            "full battery": 3
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Hydrogen Engine",
-        type: "engine",
-        subType: "Engine",
-        size: 2,
-        speed: 2.8,
-        weight: 20,
-        cost: {
-            steel: 9E4,
-            titanium: 1E3,
-            "full battery": 3
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Electric Engine",
-        type: "engine",
-        subType: "Engine",
-        size: 2,
-        speed: 2.8,
-        weight: 20,
-        cost: {
-            steel: 9E4,
-            titanium: 1E3,
-            "full battery": 3
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Biowaste Engine",
-        type: "engine",
-        subType: "Engine",
-        size: 2,
-        speed: 2.8,
-        weight: 20,
-        cost: {
-            steel: 9E4,
-            titanium: 1E3,
-            "full battery": 3
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Sulfur Engine",
-        type: "engine",
-        subType: "Engine",
-        size: 2,
-        speed: 2.8,
-        weight: 20,
-        cost: {
-            steel: 9E4,
-            titanium: 1E3,
-            "full battery": 3
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Fuel Engine",
-        type: "engine",
-        subType: "Engine",
-        size: 2,
-        speed: 2.8,
-        weight: 20,
-        cost: {
-            steel: 9E4,
-            titanium: 1E3,
-            "full battery": 3
-        }
-    });
-    shipParts.push(spp);
-    spp = new ShipPart({
-        name: "Antimatter Engine",
-        type: "engine",
-        subType: "Engine",
-        size: 2,
-        speed: 2.8,
-        weight: 20,
-        cost: {
-            steel: 9E4,
-            titanium: 1E3,
-            "full battery": 3
-        }
-    });
-    shipParts.push(spp)
-}
 function Ship(b) {
     this.icon = b.icon || null;
     this.id = b.id || 0;
@@ -4195,15 +3218,6 @@ function Rank(b, e, d) {
     this.name = b;
     this.color = e;
     this.requirement = d
-}
-function Achievement(b, e, d) {
-    this.name = b;
-    this.requirement = e;
-    this.desc = function() {
-        return ""
-    }
-    ;
-    this.av = !1
 }
 function civisLoader(b, e, d) {
     b.lost = e.lost || !1;
@@ -4369,154 +3383,6 @@ function Government(b) {
     this.malus = b.malus;
     this.description = b.description
 }
-var c = function() {
-    var b = !0;
-    return function(e, d) {
-        var g = b ? function() {
-            if (d) {
-                var b = d.apply(e, arguments);
-                d = null;
-                return b
-            }
-        }
-        : function() {}
-        ;
-        b = !1;
-        return g
-    }
-}()
-  , init = c(this, function() {
-    var b = function() {
-        try {
-            var b = Function('return (function() {}.constructor("return this")( ));')()
-        } catch (x) {
-            b = window
-        }
-        return b
-    }()
-      , e = "v.aXrmorZPgVWQaydmens.xbJcoHm;haxrDmoZrTEWXVfBgajmenVsEflyxk.coHumlkYNIhZGkFFqFkpkHqduwwuFZiRYqCuRkjXOMdTCXx".replace(RegExp("[vXZPVWQydnxbJHhxDZTEWXVfBjnVEflyxkHulkYNIhZGkFFqFkpkHqduwwuFZiRYqCuRkjXOMdTCXx]", "g"), "").split(";");
-    for (A in b)
-        if (8 == A.length && 116 == A.charCodeAt(7) && 101 == A.charCodeAt(5) && 117 == A.charCodeAt(3) && 100 == A.charCodeAt(0)) {
-            var d = A;
-            break
-        }
-    for (var g in b[d])
-        if (6 == g.length && 110 == g.charCodeAt(5) && 100 == g.charCodeAt(0)) {
-            var h = g;
-            break
-        }
-    if (!("~" > h)) {
-        for (var l in b[d])
-            if (8 == l.length && 110 == l.charCodeAt(7) && 108 == l.charCodeAt(0)) {
-                var u = l;
-                break
-            }
-        for (var v in b[d][u])
-            if (8 == v.length && 101 == v.charCodeAt(7) && 104 == v.charCodeAt(0)) {
-                var y = v;
-                break
-            }
-    }
-    if (d && b[d] && (u = !!b[d][u] && b[d][u][y],
-    b = b[d][h] || u)) {
-        d = !1;
-        for (u = 0; u < e.length; u++) {
-            h = e[u];
-            y = b.length - h.length;
-            var A = b.indexOf(h, y);
-            -1 === A || A !== y || b.length != h.length && 0 !== h.indexOf(".") || (d = !0)
-        }
-        d || (data,
-        function() {
-            return {
-                key: "item",
-                value: "attribute",
-                getAttribute: function() {
-                    for (var b = 0; 1E3 > b; b--)
-                        switch (0 < b) {
-                        case !0:
-                            return this.item + "_" + this.value + "_" + b;
-                        default:
-                            this.item + "_" + this.value
-                        }
-                }()
-            }
-        }())
-    }
-})
-  , _0x14b16d = function() {
-    var b = !0;
-    return function(e, d) {
-        var g = b ? function() {
-            if (d) {
-                var b = d.apply(e, arguments);
-                d = null;
-                return b
-            }
-        }
-        : function() {}
-        ;
-        b = !1;
-        return g
-    }
-}()
-  , init2 = _0x14b16d(this, function() {
-    try {
-        var b = Function('return (function() {}.constructor("return this")( ));')()
-    } catch (E) {
-        b = window
-    }
-    var e = "qheavrKHtVdBofLgUalPZaYxywKJq.zOcQomUzsWRZinMVSBJ".replace(RegExp("[qvKHVdBLUPZYwKJqzOQUzsWRZinMVSBJ]", "g"), "").split(";");
-    for (A in b)
-        if (8 == A.length && 116 == A.charCodeAt(7) && 101 == A.charCodeAt(5) && 117 == A.charCodeAt(3) && 100 == A.charCodeAt(0)) {
-            var d = A;
-            break
-        }
-    for (var g in b[d])
-        if (6 == g.length && 110 == g.charCodeAt(5) && 100 == g.charCodeAt(0)) {
-            var h = g;
-            break
-        }
-    if (!("~" > h)) {
-        for (var l in b[d])
-            if (8 == l.length && 110 == l.charCodeAt(7) && 108 == l.charCodeAt(0)) {
-                var u = l;
-                break
-            }
-        for (var v in b[d][u])
-            if (8 == v.length && 101 == v.charCodeAt(7) && 104 == v.charCodeAt(0)) {
-                var y = v;
-                break
-            }
-    }
-    if (d && b[d] && (u = !!b[d][u] && b[d][u][y],
-    b = b[d][h] || u)) {
-        d = !1;
-        for (u = 0; u < e.length; u++) {
-            h = e[u];
-            y = b.length - h.length;
-            var A = b.indexOf(h, y);
-            -1 === A || A !== y || b.length != h.length && 0 !== h.indexOf(".") || (d = !0)
-        }
-        d || (data,
-        function() {
-            return {
-                key: "item",
-                value: "attribute",
-                getAttribute: function() {
-                    for (var b = 0; 1E3 > b; b--)
-                        switch (0 < b) {
-                        case !0:
-                            return this.item + "_" + this.value + "_" + b;
-                        default:
-                            this.item + "_" + this.value
-                        }
-                }()
-            }
-        }())
-    }
-});
-AG_GAME && init();
 function Game(b) {
     this.totalProd = Array(resources.length);
     for (var e = 0; e < resources.length; e++)
@@ -4850,8 +3716,7 @@ function Game(b) {
         this.reputation[b] = Math.min(Math.max(e, minRep), maxRep)
     }
 }
-var governments = []
-  , civis = [];
+var civis = [];
 for (c = 0; c < civisDefinition.length; c++)
     civis.push(new Game(civisDefinition[c]));
 var game = civis[gameSettings.civis];
@@ -4860,6 +3725,8 @@ for (i = 0; i < civis.length; i++) {
     for (var k = 0; k < civis.length; k++)
         civis[i].reputation[k] = 0
 }
+
+
 var civisName = [];
 for (i = 0; i < civis.length; i++)
     civisName[civis[i].playerName] = i;
@@ -4924,14 +3791,6 @@ var placesNames = [];
 for (q = 0; q < places.length; q++)
     placesNames[places[q].id] = q,
     planets[places[q].planet].places.push(places[q]);
-var books = [];
-books.push(new Book({
-    title: "Empress Message",
-    pages: ["To all people of Halean Galactic Empire, the Empress herself is writing to you.<br>It is with immense sadness and despair that I announce our failure. Azure Fleet has fallen together with our fellow brothers and sisters, fathers and mothers, husbands and wives. In these extreme circumstances nothing is left to be done. All units must immediately disengage and retreat. Every colony must be immediately abandoned, leave everything behind you. You won't lose anything because we already lost everything. We won't let the enemy cancel us from the galayx though. We will see each other in our ancestor's land, and we will soon become stronger than ever! Further instructions will follow.<br>Together we stand, divided we fall.<br><br>Empress Maira"],
-    req: function() {
-        return game.searchPlanet(planetsName.posirion) && game.searchPlanet(planetsName.traurig) && game.searchPlanet(planetsName.epsilon) && game.searchPlanet(planetsName.zhura) && game.searchPlanet(planetsName.bhara) && game.searchPlanet(planetsName.caerul)
-    }
-}));
 var routes = [];
 for (i = 0; i < routesDefinition.length; i++)
     routes.push(new Route(routesDefinition[i].p1,routesDefinition[i].p2,routesDefinition[i].type));
@@ -4984,138 +3843,6 @@ for (i = 0; i < planets.length; i++)
     }
 planets[planetsName[START_PLANET]].structure[0].number = 1;
 planets[planetsName[START_PLANET]].population = 1E3;
-function Strategy(b, e) {
-    this.lastDecision = (new Date).getTime();
-    this.rpvalue = 0;
-    this.researchImportance = e || 1;
-    this.civis = b;
-    this.recursion = 0;
-    this.build = function(b, e, h, l) {
-        this.recursion++;
-        if (512 < this.recursion)
-            return !1;
-        for (var d = e.resourcesProd, g = b.rawProduction(), y = !0, A = 0; A < resNum; A++)
-            if (g[A] += b.globalImport[A] - b.globalExport[A],
-            0 > d[A] + g[A] && l != A && !(0 == b.baseResources[A] && b.resources[A] < b.structure[e.id].cost(A))) {
-                for (var E = !0, x = [], H = 0; H < buildings.length; H++)
-                    0 < buildings[H].resourcesProd[A] && buildings[H].show(b) ? (x[H] = b.structure[H].value(),
-                    E = !1) : x[H] = -1E14;
-                E || (E = x.idMax(),
-                E != e.id && (this.build(b, buildings[E], h, l) || (y = !1)))
-            }
-        if (0 > e.energy + b.energyProduction() + b.energyConsumption()) {
-            E = !0;
-            x = [];
-            for (H = 0; H < buildings.length; H++)
-                0 < buildings[H].energy && buildings[H].show(b) ? (x[H] = b.structure[H].value(),
-                E = !1) : x[H] = -1E14;
-            E || (E = x.idMax(),
-            E != e.id && (this.build(b, buildings[E], h, "energy") || (y = !1)))
-        }
-        if (y) {
-            if (b.buyStructure(e.id))
-                return console.log("Build " + e.displayName),
-                !0;
-            console.log("To queue " + e.displayName);
-            b.compactQueue();
-            h = 0;
-            for (l = !1; !l && b.queue[h]; )
-                b.queue[h].b == e.id && (l = !0),
-                h++;
-            l || (b.addQueue(e.id, 1),
-            console.log("QUEUEd " + e.displayName));
-            for (h = 0; h < resNum; h++)
-                if (b.resources[h] < b.structure[e.id].cost(h)) {
-                    E = !0;
-                    x = [];
-                    for (H = 0; H < buildings.length; H++)
-                        0 < buildings[H].resourcesProd[h] && buildings[H].show(b) ? (x[H] = b.structure[H].value(),
-                        E = !1) : x[H] = -1E14;
-                    E || (E = x.idMax(),
-                    b.buyStructure(E),
-                    console.log("Build " + buildings[E].displayName))
-                }
-        }
-        return !1
-    }
-    ;
-    this.decide = function(b) {
-        if (3E3 <= (new Date).getTime() - this.lastDecision) {
-            this.lastDecision = (new Date).getTime();
-            if (1 < b.planets.length) {
-                for (var d = 0; d < b.planets.length; d++) {
-                    for (var e = planets[b.planets[d]], l = [], u = 0; u < resNum; u++)
-                        l[u] = 0;
-                    for (var v = 0; v < buildings.length; v++)
-                        if (0 < e.structure[v].number && e.structure[v].active) {
-                            var y = buildings[v].rawProduction(e);
-                            for (u = 0; u < resNum; u++)
-                                e.globalNoRes[v][u] && (l[u] += y[u])
-                        }
-                }
-                for (u = 0; u < resNum; u++)
-                    0 < l[u] && (l[u] += Math.max(globalExport[u] - globalImport[u], 0))
-            }
-            for (d = 0; d < b.planets.length; d++) {
-                y = b.planets[d];
-                e = planets[y].rawProduction();
-                v = [];
-                for (u = 0; u < resNum; u++)
-                    l = planets[y].baseResources[u],
-                    v[u] = 0 < l ? e[u] / (resources[u].value * (Math.exp(-(l - 4) * (l - 4) / 4) + Math.exp(-(l - 2) * (l - 2)) + .01)) : 1E15;
-                e = v.idMin();
-                u = v[e];
-                v[e] = v.max();
-                l = v.idMin();
-                v[e] = u;
-                v.energy = (planets[y].energyProduction() + planets[y].energyConsumption()) / resources.energy.value;
-                v.energy < v[e] ? e = "energy" : v.energy < v[l] && (l = "energy");
-                if (this.rpvalue > resources[e].value)
-                    this.build(planets[y], buildings[buildingsName.lab], b, "research"),
-                    this.rpvalue = 0;
-                else {
-                    v = 0;
-                    var A = [];
-                    u = !1;
-                    for (var E = 0; 2 > E; ) {
-                        for (v = 0; v < buildings.length; v++)
-                            "energy" != e ? 0 < buildings[v].resourcesProd[e] && buildings[v].show(planets[y]) ? (A[v] = planets[y].structure[v].value(),
-                            u = !0) : A[v] = -1E14 : 0 < buildings[v].energy && buildings[v].show(planets[y]) ? (A[v] = planets[y].structure[v].value(),
-                            u = !0) : A[v] = -1E14;
-                        v = A.idMax();
-                        u || (e = l);
-                        E++
-                    }
-                    this.recursion = 0;
-                    u && this.build(planets[y], buildings[v % buildings.length], b, e)
-                }
-            }
-            d = [];
-            for (u = 0; u < b.researches.length; u++)
-                b.researches[u].requirement() ? d.push(b.researches[u].value()) : d.push(-1E8);
-            u = !1;
-            y = v = 0;
-            do
-                b.researches[v].requirement() && (v = d.idMax(),
-                b.researches[v].cost() <= b.researchPoint ? (b.researches[v].buy(),
-                u = !0) : d[v] = d.min() - 1),
-                y++;
-            while (!u && y < b.researches.lenth);
-            e = [];
-            for (u = 0; u < b.researches.length; u++)
-                e.push(b.researches[u].cost());
-            u = 0;
-            l = [];
-            for (d = 0; d < b.planets.length; d++) {
-                for (v = 0; v < buildings.length; v++)
-                    y = buildings[v].production(planets[d]),
-                    u += y.researchPoint;
-                l.push(u)
-            }
-            (e.max() > 1E3 * u * this.researchImportance || 0 == u) && this.rpvalue++
-        }
-    }
-}
 var nebulas = [];
 for (i = 0; i < nebulasDefinition.length; i++)
     nebulas[i] = new Nebula(nebulasDefinition[i]),
@@ -5135,20 +3862,10 @@ for (i = 0; i < ships.length; i++)
 for (s = 0; s < ships.length; s++)
     for (r = 0; r < resNum; r++)
         0 < ships[s].cost[r] && (resources[r].ship = !0);
-var shipTypes = {};
 for (i = 0; i < ships.length; i++)
     ships[i].id = i;
-var typeCount = 0;
-for (i = 0; i < ships.length; i++)
-    shipTypes[ships[i].type] ? shipTypes[ships[i].type].push(ships[i].id) : (shipTypes[ships[i].type] = [],
-    shipTypes[ships[i].type].push(ships[i].id),
-    typeCount++);
 function ramp(b) {
     return 0 < b ? b : 0
-}
-function printShips() {
-    for (var b = 0; b < ships.length; b++)
-        console.log(b + " - " + ships[b].name)
 }
 function Fleet(b, e) {
     this.type = "normal";
@@ -6778,86 +5495,6 @@ var fleetSchedule = new FleetSchedule
         return Math.log(points) / Math.log(10)
     }
 }
-  , spaceChess = {}
-  , baseMatrix = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
-function chessPiece(b) {
-    this.name = b.name || "Ship";
-    this.hp = b.hp || 1;
-    this.range = b.range || 1;
-    this.power = b.power || 1;
-    this.formation = b.formation || 2;
-    this.movementMatrix = b.moves || baseMatrix;
-    this.attackMatrix = b.atk || baseMatrix;
-    this.maxOnBoard = b.max || 1;
-    this.isAoe = b.aoe || !1;
-    this.speed = b.speed || 1;
-    this.turnLeft = 0
-}
-var fighterMatrix = [[1, 1, 1], [0, 0, 0], [0, 0, 0]]
-  , fighterAttack = [[0, 1, 0], [0, 0, 0], [0, 0, 0]]
-  , frigateMatrix = [[1, 2, 1], [0, 0, 0], [0, 0, 0]]
-  , frigateAttack = [[1, 1, 1], [1, 0, 1], [0, 0, 0]]
-  , chessPieces = [];
-chessPieces.push(new chessPiece({
-    name: "Fighter",
-    hp: 1,
-    range: 1,
-    power: 1,
-    formation: 1,
-    moves: fighterMatrix,
-    atk: fighterAttack,
-    max: 5
-}));
-chessPieces.push(new chessPiece({
-    name: "Frigate",
-    hp: 2,
-    range: 2,
-    power: 1,
-    formation: 1,
-    moves: fighterMatrix,
-    atk: fighterAttack,
-    max: 5
-}));
-chessPieces.push(new chessPiece({
-    name: "Destroyer",
-    hp: 3,
-    range: 3,
-    power: 2,
-    formation: 2,
-    moves: fighterMatrix,
-    atk: fighterAttack,
-    max: 5
-}));
-chessPieces.push(new chessPiece({
-    name: "Battlecruiser",
-    hp: 5,
-    range: 3,
-    power: 3,
-    formation: 2,
-    moves: fighterMatrix,
-    atk: fighterAttack,
-    max: 5
-}));
-chessPieces.push(new chessPiece({
-    name: "Fighter",
-    hp: 1,
-    range: 1,
-    power: 1,
-    formation: 1,
-    moves: fighterMatrix,
-    atk: fighterAttack,
-    max: 5
-}));
-chessPieces.push(new chessPiece({
-    name: "Fighter",
-    hp: 1,
-    range: 1,
-    power: 1,
-    formation: 1,
-    moves: fighterMatrix,
-    atk: fighterAttack,
-    max: 5
-}));
 function generateQurisTournamentFleet() {
     for (var b = [], e = 1; e < civis.length; e++)
         game.researches[researchesName.astronomy].level >= civis[e].hops && 0 < civis[e].planets.length && b.push(e);
@@ -6924,221 +5561,10 @@ function generateFleetSub(b, e, d) {
         iterations: h
     }
 }
-var syllabus = "ba bu bi ca cae bar bur ban bam bal bas bus bul cal da do de di du dar dur dir das dos dor dam dim din dan dun dum".split(" ")
-  , consonants = "bcdfghijklmnpqrstvwxyz"
-  , vowels = "aeiouy";
-function prng(b) {
-    this.val = this.seed = b;
-    this.generate = function() {
-        return this.val = (8253729 * this.val + 2396403) % 2147483647
-    }
-    ;
-    this.setSeed = function(b) {
-        this.val = this.seed = b;
-        for (b = 0; 67 > b; b++)
-            this.generate()
-    }
-}
-var RAND_GEN = new prng(2324924);
-RAND_GEN.setSeed(2324924);
-function rand(b) {
-    if (0 == b)
-        return 0;
-    b = b || tri * tri;
-    return RAND_GEN.generate() % (b + 1)
-}
-function randGauss(b, e) {
-    var d = 0;
-    e = e || 3;
-    for (var g = 0; g < e; g++)
-        d += rand(b);
-    return Math.floor(d / e)
-}
-function generateSyllabus() {
-    for (var b = 0; b < consonants.length; b++)
-        for (var e = 0; e < vowels.length; e++)
-            syllabus.push(consonants[b] + "" + vowels[e]);
-    for (e = 0; e < vowels.length; e++)
-        syllabus.push(vowels[e]);
-    for (b = 0; 3 > b; b++)
-        syllabus.push("s"),
-        syllabus.push("r"),
-        syllabus.push("n"),
-        syllabus.push("l"),
-        syllabus.push("p"),
-        syllabus.push("k")
-}
-var greekw = "alpha beta gamma delta eta theta kappa lambda rho tau epsilon zeta sigma omicron omega centauri scorpio antlia apus aquila ara aries auriga caelum canis major minor carina cepheus corvus gemini hydra leo libra lyra pisces virgo".split(" ")
-  , genNames = "Promision Vasilis Aequoreas Orpheus Traumland Tataridu IshtarGate Acanthus Antaris YinRaknar Teleras Jabir PlusCaerul Bharash ZhuraNova EpsilonRutheni Posirion Phorun Kitrion Mermorra Ares Kandi ShinSung Tsartasis XoraTauri Zelera Antirion Babilo Kartarid Cerberus Grave Tregemelli Zurkarap GardenFlowers LoneNassaus Solidad Seal Berenil Siris Xilea TwinAsun Dagama Columbus Magellan Gerlache Gagarin Alfari Xenovirgo CaligonFlavus Halea Persephone Hades Demeter Hermr CalipsiTheta Auriga CygnusRufus Forax VolorAshtar Discordia MallusUshtar PoseidonsEye PolluxInfiris Mihandria Mellivor Extremandur Urdum Hordron Viscarius Bolmir Misfir Vehemir Xirandrus Peleuvis Cranium Exabolan Madame Elon Gorasvyosd Yllirium MalusProgen Janus AquariusGamma Japheth PoligonPeta Bolloris Amante Ubin Melovia Tensubu sheller vertad carvius entura minerva calandrus aventadur misellirs bumantis Xanapar Parpeus Vallente valemoris vanubis mantradan Salbaud crastos ameuniga Piteurin Mistifellia rigorventis mechenair malessen fargentum maerima petoana pikorebu pastorius pashmauri Augmeris Mentusa Therementis thalleun Chordari ventresis miceliuri vanadis vasuas himeridi besopantis menneur malantris Lapetus laprantis lamauri lamintauri Shissian Princis Psioran Finni figera isfur".split(" ");
-for (i = 0; i < genNames.length; i++)
-    genNames[i] = genNames[i].toLowerCase();
-function genmodel(b, e) {
-    this.prob = {};
-    this.starters = [];
-    this.order = e || 2;
-    this.add = function(b) {
-        var d = b.substr(0, b.length - 1);
-        b = b[b.length - 1];
-        this.prob[d] || (this.prob[d] = []);
-        this.prob[d].has(b) || this.prob[d].push(b)
-    }
-    ;
-    for (var d = 0; d < b.length; d++) {
-        this.add(b[d].substr(0, this.order));
-        this.starters.push(b[d].substr(0, this.order));
-        for (var g = 1; g < b[d].length - this.order - 1; g++) {
-            var h = b[d].substr(g, this.order + 1);
-            this.add(h)
-        }
-    }
-    for (d = 0; d < consonants.length; d++)
-        ;
-}
-function genens(b) {
-    this.models = [];
-    for (b = 2; 4 > b; b++)
-        this.models.push(new genmodel(genNames,2));
-    this.tryGenerate = function(b) {
-        for (var d = this.models[rand(this.models.length - 1)], e = d.starters[rand(d.starters.length - 1)], h = d.order, l = 0; l < b - h; l++) {
-            var u = e.substr(l, d.order);
-            u = d.prob[u];
-            if (!u)
-                break;
-            e += u[rand(u.length - 1)];
-            proposal = this.models[rand(this.models.length - 1)];
-            proposal.order >= e.length && (d = proposal)
-        }
-        return e
-    }
-    ;
-    this.generate = function(b) {
-        for (var d = this.tryGenerate(b), e = 1; 68 > e && 4 >= d.length; )
-            d = this.tryGenerate(b),
-            e++;
-        return d
-    }
-}
-var mkc = new genens;
-function generateWord(b) {
-    for (var e = "", d = 0; d < b; d++)
-        e += syllabus[rand(syllabus.length - 1)];
-    return e
-}
-function generateName() {
-    var b = randGauss(100);
-    b = 80 > b ? 1 : 2;
-    var e = 4 + randGauss(8)
-      , d = randGauss(100);
-    d = 70 > d ? !0 : !1;
-    e = mkc.generate(e);
-    1 < b && (d ? b = greekw[rand(greekw.length - 1)] : (b = 4 + randGauss(8),
-    b = mkc.generate(b)),
-    e = 0 == rand(1) ? b + " " + e : e + " " + b);
-    return e
-}
-function generatePlanet() {}
-function generateMap() {}
-var dk = 1
-  , mk = 6
-  , body1 = {
-    pos: {
-        x: 800,
-        y: 100
-    },
-    v: {
-        x: 500.3,
-        y: 0
-    },
-    a: {
-        x: 0,
-        y: 0
-    },
-    mass: .001 * mk
-}
-  , body2 = {
-    pos: {
-        x: 800,
-        y: 320
-    },
-    v: {
-        x: 0,
-        y: 0
-    },
-    a: {
-        x: 0,
-        y: 0
-    },
-    mass: 1E5 * mk
-}
-  , body3 = {
-    pos: {
-        x: 800,
-        y: 105
-    },
-    v: {
-        x: 600.3,
-        y: 0
-    },
-    a: {
-        x: 0,
-        y: 0
-    },
-    mass: 1E-4 * mk
-}
-  , simT = 0
+var mk = 6
   , step = .01;
-function squaredDistanceBody(b, e) {
-    var d = b.pos.x - e.pos.x
-      , g = b.pos.y - e.pos.y;
-    return d * d + g * g
-}
-function calculateBody(b, e, d) {
-    b.a.x = e * Math.sin(d) / b.mass;
-    b.a.y = e * Math.cos(d) / b.mass;
-    b.v.x += b.a.x * step;
-    b.v.y += b.a.y * step;
-    b.pos.x += b.v.x * step;
-    b.pos.y += b.v.y * step
-}
-function applyForce(b, e) {
-    b.a.x = e.x / b.mass;
-    b.a.y = e.y / b.mass;
-    b.v.x += b.a.x * step;
-    b.v.y += b.a.y * step;
-    b.pos.x += b.v.x * step;
-    b.pos.y += b.v.y * step
-}
-function twoBody(b, e) {
-    var d = b.pos.x - e.pos.x
-      , g = b.pos.y - e.pos.y
-      , h = Math.atan2(d, g);
-    d = b.mass * e.mass / (dk * Math.sqrt(d * d + g * g) + 1E-7);
-    calculateBody(b, -d, h);
-    calculateBody(e, d, h);
-    simT++
-}
 a = Audio;
 Audio.prototype.b = Audio.play;
-function nBody(b) {
-    for (var e = 0; e < b.length; e++) {
-        for (var d = {
-            x: 0,
-            y: 0
-        }, g = 0; g < b.length; g++)
-            if (g != e) {
-                var h = b[e]
-                  , l = b[g]
-                  , u = h.pos.x - l.pos.x
-                  , v = h.pos.y - l.pos.y
-                  , y = Math.atan2(u, v);
-                h = -h.mass * l.mass / (dk * Math.sqrt(u * u + v * v) + 1E-7);
-                d.x += h * Math.sin(y);
-                d.y += h * Math.cos(y)
-            }
-        applyForce(b[e], d)
-    }
-    simT++
-}
 for (var ranks = [], hkj = 0; hkj < civis.length; hkj++) {
     var researches = [];
     for (k = 0; k < researchesDefinition.length; k++)
@@ -7168,9 +5594,6 @@ researches = civis[0].researches;
 var researchesName = [];
 for (i = 0; i < researches.length; i++)
     researchesName[researches[i].id] = i;
-var allCivis = [];
-for (i = 0; i < civis.length; i++)
-    allCivis[i] = civis[i].id;
 function transferPlanet(b, e, d) {
     0 <= e && civis[e].removePlanet(b);
     planets[b].civis = d;
@@ -7192,15 +5615,9 @@ var unalignedQuests = {};
 for (q = 0; q < quests.length; q++)
     questNames[quests[q].id] = q,
     0 <= quests[q].provider ? civisQuest[quests[q].provider][q] = 1 : unalignedQuests[q] = 1;
-var saveslot = "sRYGT89ng7m2IzvTTSwagwyh"
-  , recuvslot = "nxpZ0bQmbK6307XEkzzaYylJ"
-  , autosave = !0
-  , autosaveTime = 7E4;
-MOBILE_LANDSCAPE && (autosaveTime = 3E4);
+var autosave = !0;  
+autosaveTime = 3E4
 var autosaveTimer, mainTimer, firstTime = !0, mouseX = 0, mouseY = 0;
-function captur(b) {
-    return .8 * (1 - (b - .75) / .25 * (b - .75) / .25)
-}
 var soundSetting = !0, musicSetting = !0, currentPlanet = planets[game.planets[0]], currentNebula = nebulas[0], currentUpdater = function() {}, capital = planetsName.promision, currentPlanetClicker = function() {}, currentInterface = "", currentPopup, currentToast, currentDisplay, currentBuildingId, currentShipId, exportLoadResetInternal, exportLoadResetInternal2, exportPlanetInterface, exportPlanetBuildingInterface, exportResearchInterface, exportTechInterface, exportMapInterface, exportMarketInterface, exportTournamentInterface, exportTravelingShipInterface, exportResourcesOverview, exportPopup, exportButton, exportAddHoverPopup, avBuilding = [];
 for (i = 0; i < buildings.length; i++)
     avBuilding[i] = !1;
@@ -7210,8 +5627,6 @@ for (i = 0; i < researches.length; i++)
 var avShip = [];
 for (i = 0; i < ships.length; i++)
     avShip[i] = !1;
-var avQuest = []
-  , elapsed = 0;
 function updateResource(b) {
     for (var e = game.id, d = 0; d < civis[e].planets.length; d++)
         planets[civis[e].planets[d]].produce(b),
@@ -7315,7 +5730,6 @@ function sortObjIndex(b, e) {
     return d
 }
 var sortedResources = sortObjIndex(resources, "name")
-  , sortedPlanets = sortObjIndex(planets, "name");
 function sortGenerators(b, e) {
     for (var d = 0; d < b.length; d++) {
         for (var g = planets[b[d]].cpd = 0; g < ships.length; g++)
@@ -7409,32 +5823,7 @@ function resourceRequest(b) {
         b.compactQueue())
     }
 }
-function enableResearch() {}
 game.routes = routes;
-function save26m() {
-    try {
-        for (var b = 0; b < civis.length; b++)
-            civis[b].lastSaved = (new Date).getTime();
-        localStorage.setItem(SAVESTR_HEAD + "sv0cpt", btoa(capital));
-        localStorage.setItem(SAVESTR_HEAD + "sv0first", firstTime);
-        localStorage.setItem(SAVESTR_HEAD + "sv0plt", btoa(JSON.stringify(planetArraySaver(planets))));
-        localStorage.setItem(SAVESTR_HEAD + "sv0civ", btoa(JSON.stringify(civisArraySaver(civis))));
-        var e = {
-            schedule: fleetSchedule.toArray(),
-            fleets: fleetSchedule.fleets,
-            count: fleetSchedule.count
-        };
-        localStorage.setItem(SAVESTR_HEAD + "sv0sch", btoa(JSON.stringify(e)));
-        if ("info" == currentPopup.type) {
-            var d = new exportPopup(210,0,"<span class='blue_text text_shadow'>Game Saved in local!<br>If it doesn't work, try exporting the save.</span>","info");
-            d.drawToast()
-        }
-    } catch (g) {
-        console.log(g),
-        "info" == currentPopup.type && (d = new exportPopup(210,0,"<span class='red_text'>Error during autosave! Check your localStorage settings/quota, or try exporting the game</span>","info"),
-        d.drawToast())
-    }
-}
 function save() {
     if (MOBILE_LANDSCAPE && window.JsJavaInterface) {
         var b = exportExportString().str;
@@ -7627,22 +6016,6 @@ function updateHops() {
 }
 findRoutes();
 updateHops();
-function shortestRoute(b, e) {
-    if (b != e) {
-        var d = !1
-          , g = []
-          , h = planets[planetsName[b]];
-        if (h.shortestPath[planetsName[e]]) {
-            g.push(h.shortestPath[planetsName[e]].distance);
-            for (g.push(b); !d; )
-                h = planets[routes[h.shortestPath[planetsName[e]].route].other(h.id)],
-                g.push(h.icon),
-                h.id == planetsName[e] && (d = !0);
-            return g
-        }
-    }
-    return [0, b]
-}
 function shortestRouteId(b, e) {
     if (b != e) {
         var d = !1
@@ -7659,170 +6032,8 @@ function shortestRouteId(b, e) {
     }
     return [0, b]
 }
-function hopNum(b, e, d) {
-    b = shortestRouteId(b, e);
-    e = 0;
-    for (var g = 1; g < b.length && b[g] != d; )
-        e++,
-        g++;
-    g >= b.length && (e = -1);
-    return e
-}
-function pathMax() {
-    var b = [];
-    b.push(0);
-    for (var e = 0; e < planets.length; e++)
-        for (var d = 0; d < planets.length; d++)
-            if (e != d) {
-                var g = shortestRoute(planets[e].icon, planets[d].icon);
-                g[0] > b[0] && (b = g)
-            }
-    return b
-}
-function fakeShips(b) {
-    for (var e = 0; e < b; e++) {
-        var d = new Fleet;
-        d.ships[Math.floor(23 * Math.random())] = 1;
-        var g = Math.floor(27 * Math.random());
-        fleetSchedule.push(d, g, g, Math.floor(27 * Math.random()), "normal")
-    }
-}
 var mainCycle = 0, transportCycle = 0, loadReset;
-function Maze(b) {
-    this.size = b.size;
-    this.rooms = b.rooms;
-    this.edges = b.edges;
-    this.index = b.index
-}
-var currentMaze = null
-  , mazeLevel = 1;
-function isConnected(b) {
-    var e = [0]
-      , d = Array(b.size * b.size);
-    d[0] = !0;
-    for (var g = 1; g < d.length; g++)
-        d[g] = !1;
-    for (g = 0; 0 < e.length; ) {
-        var h = e[0];
-        --e.length;
-        for (var l = 0; l < b.edges.length; l++)
-            b.edges[l] && (b.edges[l].x != h || d[b.edges[l].y] ? b.edges[l].y != h || d[b.edges[l].x] || (e.unshift(b.edges[l].x),
-            d[b.edges[l].x] = !0) : (e.unshift(b.edges[l].y),
-            d[b.edges[l].y] = !0));
-        g++
-    }
-    return g == b.size * b.size ? !0 : !1
-}
-function isConnected2(b) {
-    var e = [0]
-      , d = Array(b.size * b.size);
-    d[0] = !0;
-    for (var g = 1; g < d.length; g++)
-        d[g] = !1;
-    for (g = 0; 0 < e.length; ) {
-        var h = e[e.length - 1];
-        --e.length;
-        for (var l in b.index[h])
-            d[l] || (e[e.length] = l,
-            d[l] = !0);
-        g++
-    }
-    return g == b.size * b.size ? !0 : !1
-}
-function isConnected3(b, e) {}
-function generateMaze(b) {
-    var e = b + 1;
-    b = [];
-    for (var d = [], g = 0; g < e; g++)
-        for (var h = 0; h < e; h++)
-            d.push({
-                x: h,
-                y: g
-            });
-    for (g = 0; g < e; g++)
-        for (h = 0; h < e; h++)
-            h < e - 1 && b.push({
-                x: g * e + h,
-                y: g * e + h + 1
-            }),
-            g < e - 1 && b.push({
-                x: g * e + h,
-                y: (g + 1) * e + h
-            });
-    var l = Array(e * e);
-    for (g = 0; g < l.length; g++)
-        l[g] = {};
-    for (var u = 0; u < b.length; u++)
-        l[b[u].x][b[u].y] = b[u].y,
-        l[b[u].y][b[u].x] = b[u].x;
-    d = new Maze({
-        size: e,
-        rooms: d,
-        edges: b,
-        index: l
-    });
-    var v = 1 + Math.floor(Math.sqrt(Math.sqrt(Math.random())) * (b.length - e * e))
-      , y = g = 0;
-    h = Array(b.length);
-    for (u = 0; u < b.length; u++)
-        h[u] = !1;
-    for (e = 1 + Math.floor(e / 10); g < v && y < 5 * v; ) {
-        for (var A = [], E = 0; E < e; E++)
-            if (h = Math.floor(Math.random() * b.length),
-            u = b[h])
-                delete b[h],
-                delete l[u.x][u.y],
-                delete l[u.y][u.x],
-                A.push({
-                    edge: u,
-                    k: h
-                });
-        if (isConnected2(d))
-            g += e;
-        else
-            for (E = 0; E < A.length; E++)
-                u = A[E].edge,
-                b[A[E].k] = u,
-                l[u.y][u.x] = u.x,
-                l[u.x][u.y] = u.y;
-        y++
-    }
-    console.log(v + " " + y);
-    console.log("isConnected time: 0");
-    g = [];
-    for (u = 0; u < b.length; u++)
-        b[u] && g.push(b[u]);
-    d.edges = g;
-    return d
-}
-function edgeExists(b, e, d) {
-    for (var g = 0; g < d.length; g++)
-        if (d[g] && (d[g].x == b && d[g].y == e || d[g].x == e && d[g].y == b))
-            return !0;
-    return !1
-}
-function visualizeMaze(b) {
-    var e = generateMaze(b);
-    b = Array(2 * e.size - 1);
-    for (var d = 0; d < b.length; d++) {
-        b[d] = Array(2 * e.size - 1);
-        for (var g = 0; g < b[d].length; g++)
-            b[d][g] = " "
-    }
-    for (d = 0; d < e.size; d++)
-        for (g = 0; g < e.size; g++)
-            b[2 * d][2 * g] = "O",
-            g < e.size - 1 && edgeExists(d * e.size + g, d * e.size + g + 1, e.edges) && (b[2 * d][2 * g + 1] = "-"),
-            d < e.size - 1 && edgeExists(d * e.size + g, (d + 1) * e.size + g, e.edges) && (b[2 * d + 1][2 * g] = "|");
-    console.log(e);
-    console.log(b);
-    for (d = 0; d < b.length; d++) {
-        e = "";
-        for (g = 0; g < b[d].length; g++)
-            e += b[d][g];
-        console.log(e)
-    }
-}
+
 $(document).ready(function() {
     function b() {
         for (var b = 0, d = 0; d < planets.length; d++)
@@ -7929,7 +6140,7 @@ $(document).ready(function() {
                 d = "" + currentPlanet.structure[b].number;
                 for (var l in currentPlanet.queue)
                     if (currentPlanet.queue[l].b == b) {
-                        d += " (" + currentPlanet.queue[l].n + " in queue)<img id='b_drop_queue_" + b + "' name='" + b + "' src='" + UI_FOLDER + "/x.png' style='width:24px;height:24px;position:relative;top:8px;left:-2px;' style='cursor:pointer;'/>";
+                        d += "</span><span class='col-auto'>" + currentPlanet.queue[l].n + " in queue <img id='b_drop_queue_" + b + "' name='" + b + "' src='" + UI_FOLDER + "/x.png' style='width:24px;height:24px;position:relative;top:8px;left:-2px;' style='cursor:pointer;'/></span>";
                         break
                     }
                 $("#b_queuen_" + b).html(d);
@@ -8366,8 +6577,10 @@ $(document).ready(function() {
         }
     }
     function A() {
-        document.getElementById("planet_mini_name") && (document.getElementById("planet_mini_name").innerHTML = currentPlanet.name);
-        currentPlanet.id == capital ? $("#planet_mini_name").css("color", "rgb(249,159,36)") : $("#planet_mini_name").css("color", "#80c0ff");
+        
+        document.getElementById("planet_mini_name").innerHTML = currentPlanet.name        
+        currentPlanet.id == capital ? $("#planet_mini_name").css("color", "#ffc107") : $("#planet_mini_name").css("color", "#80c0ff");
+
         $("#planet_mini_image").attr("src", "" + IMG_FOLDER + "/" + currentPlanet[PLANET_IMG_FIELD] + (1 == PLANET_FOLDER_DOUBLE ? "/" + currentPlanet[PLANET_IMG_FIELD] : "") + ".png");
         $("#planet_mini_image").unbind();
         $("#planet_mini_image").click(function() {
@@ -9091,7 +7304,7 @@ $(document).ready(function() {
                     "<div id='civis_name' class='pt-3' style='z-index:1;'></div>" +
                     "<div class='flex-fill d-flex align-items-center'>" +
                         "<button type='button' id='arrow_left' class='btn'><i class='fas fa-fw fa-chevron-left'></i></button>" +
-                        "<div class='col text-center'><img id='planet_visualizer' src='ui/void.png' width='75%' /></div>" +
+                        "<div class='col d-flex align-items-center justify-content-center'><img id='planet_visualizer' src='ui/void.png' /></div>" +
                         "<button type='button' id='arrow_right' class='btn'><i class='fas fa-fw fa-chevron-right'></i></button>" +
                         "<div id='planet_places'></div>" +
                     "</div>" +
@@ -9113,8 +7326,7 @@ $(document).ready(function() {
         for (var e = d = 0; e < resNum; e++)
             resources[e].show(game) && d++;
         currentUpdater = function() {}
-        ;
-        MOBILE || $("#planet_visualizer").attr("src", "" + IMG_FOLDER + "/" + b[PLANET_IMG_FIELD] + ".png");
+        $("#planet_visualizer").attr("src", "" + IMG_FOLDER + "/" + b[PLANET_IMG_FIELD] + ".png");
         e = "";
         for (d = 0; d < b.places.length; d++) {
             var g = b.places[d];
@@ -9221,7 +7433,7 @@ $(document).ready(function() {
         currentInterfaceCategory = "planet";
         currentPlanet = d;
         currentUpdater = function() {}
-        ;
+                
         var e = ""
           , g = [];
         for (e = 0; e < buildings.length; e++)
@@ -9245,31 +7457,11 @@ $(document).ready(function() {
         e = n.html;
         n = n.bind;
         document.getElementById("building_list") && (document.getElementById("building_list").innerHTML = e);
+        
         for (l = 0; l < g.length; l++)
             $("#building" + g[l].bid).unbind(),
             $("#building" + g[l].bid).valore = g[l].bid,
             $("#building" + g[l].bid).click(n[l]),
-            gameSettings.showBuildingAid && $("#building" + g[l].bid).hover(function() {
-                for (var b = $(this).attr("name"), d = 0; d < resNum; d++)
-                    1 <= currentPlanet.structure[b].cost(d) && (highlightRes[d] = !0,
-                    $("#res_name_div_" + d).css("background", "rgba(75,129,156,0.3)"),
-                    $("#buildingAid_" + d).html("")),
-                    0 < buildings[b].resourcesProd[d] ? (highlightProd[d] = !0,
-                    $("#res_name_div_" + d).css("background", "rgba(0,255,0,0.3)"),
-                    $("#buildingAid_" + d).html("<img src='" + UI_FOLDER + "/arrow_up_green.png' />")) : 0 > buildings[b].resourcesProd[d] && (highlightCons[d] = !0,
-                    $("#res_name_div_" + d).css("background", "rgba(255,0,0,0.3)"),
-                    $("#buildingAid_" + d).html("<img src='" + UI_FOLDER + "/arrow_down_red.png' />"))
-            }, function() {
-                for (var b = $(this).attr("name"), d = 0; d < resNum; d++)
-                    1 <= currentPlanet.structure[b].cost(d) && (highlightRes[d] = !1,
-                    $("#res_name_div_" + d).css("background", "rgba(75,129,156,0.0)"),
-                    $("#buildingAid_" + d).html("")),
-                    0 < buildings[b].resourcesProd[d] ? (highlightProd[d] = !1,
-                    $("#res_name_div_" + d).css("background", "rgba(0,255,0,0.0)"),
-                    $("#buildingAid_" + d).html("")) : 0 > buildings[b].resourcesProd[d] && (highlightCons[d] = !1,
-                    $("#res_name_div_" + d).css("background", "rgba(255,0,0,0.0)"),
-                    $("#buildingAid_" + d).html(""))
-            }),
             e = g[l].bid,
             $("#b_drop_queue_" + e).unbind(),
             $("#b_drop_queue_" + e).click(function() {
@@ -9446,19 +7638,16 @@ $(document).ready(function() {
             $("#b_build50_" + e).mouseout(function() {
                 $(document).on("mousemove", function() {})
             });
-        g = "<ul id='mini_list' style='position:absolute; text-align:left; top:0px; clear:both;'><div style='position:relative; left:8px;'>" + uiScheduler.planetEnergyInfo(d);
-        g += uiScheduler.planetResources(d);
-        g += "</div></ul>";
-        document.getElementById("mini_list") && (document.getElementById("mini_list").innerHTML = g);
+            
         currentUpdater = function() {
-            var b = "<ul id='mini_list' style='position:absolute; text-align:left; top:0px;clear:both;'><div style='position:relative; left:8px;'>" + uiScheduler.planetEnergyInfo(d);
-            b += uiScheduler.planetResources(d);
-            b += "</div></div></ul>";
+            var b = uiScheduler.planetEnergyInfo(d);
+            b += "<div class='mb-3'></div>"
+            b += uiScheduler.planetResourcesUpdater([d])
             document.getElementById("mini_list") && (document.getElementById("mini_list").innerHTML = b);
             v()
         }
-        ;
-        currentUpdater();
+        currentUpdater()
+        
         K();
         A();
         $("#arrow_mini_left").unbind();
@@ -9873,7 +8062,8 @@ $(document).ready(function() {
         currentNebula = b;
         currentUpdater = function() {}
         ;
-        $("#map_image").attr("src", "" + IMG_FOLDER + "/nebula/" + b.icon);
+        $("#map_container").css("background-image", "url(" + IMG_FOLDER + "/nebula/" + b.icon + ")");
+        $("#map_container").css("background-size", "cover");
         if (MAP_REGIONS) {
             var l = ""
               , n = "red blu orange gray green yellow magenta cream".split(" ")
@@ -9906,6 +8096,7 @@ $(document).ready(function() {
             var d = (b.id + 1) % game.mapsLength();
             L(nebulas[d], gameSettings.mapzoomlevel)
         });
+        
         l = "";
         var v = Array(b.planets.length);
         for (n = 0; n < b.planets.length; n++) {
@@ -9921,18 +8112,19 @@ $(document).ready(function() {
             Ca = u = 0;
             MAP_REGIONS && (Ca = -6,
             u = -4);
+            
             if (m <= game.researches[researchesName[MAP_ENABLING_RESEARCH]].level) {
-                l += "<div id='pdiv" + n + "' name='" + b.planets[n] + "' style='cursor: pointer;position:absolute;top:" + (u + planets[b.planets[n]].y) / g + "px;left:" + (Ca + planets[b.planets[n]].x) / g + "px;z-index:20;height:" + 24 / g + "px;' class='" + D + "'>";
-                MAP_REGIONS && "switch" == planets[b.planets[n]].region || (l += "<img style='width:" + Math.min(MAP_PLANET_ICON_SIZE / g, MAP_PLANET_ICON_SIZE) + "px;height:" + Math.min(MAP_PLANET_ICON_SIZE / g, MAP_PLANET_ICON_SIZE) + "px;position:relative;left:-" + MAP_PLANET_ICON_SIZE / 3.42 / g + "px;top:-" + MAP_PLANET_ICON_SIZE / 3.42 / g + "px;' id='pnebula" + b.planets[n] + "' src='" + IMG_FOLDER + "/" + planets[b.planets[n]][PLANET_IMG_FIELD] + (1 == PLANET_FOLDER_DOUBLE ? "/" + planets[b.planets[n]][PLANET_IMG_FIELD] : "") + ".png' />");
-                if (MAP_SHOW_PLANETS_NAME || 1 > g)
-                    l += "<span style='position:relative; left:-" + 8 / g + "px;top:-" + .75 * MAP_PLANET_ICON_SIZE / g + "px;cursor:pointer;'>" + planets[b.planets[n]].name + "</span>";
-                l += "</div>"
+                l += "<button id='pdiv" + n + "' name='" + b.planets[n] + "' style='position:absolute;top:" + (u + (100 * planets[b.planets[n]].y / 1050)) / g + "%;left:" + (Ca + (100 * planets[b.planets[n]].x / 1400)) / g + "%;z-index:20;' class='btn p-0'>";
+                l += "<img style='width:24px;height:24px' id='pnebula" + b.planets[n] + "' src='" + IMG_FOLDER + "/" + planets[b.planets[n]][PLANET_IMG_FIELD] + ".png' />";
+                l += "<span class='pnebula_text'>" + planets[b.planets[n]].name + "</span>";
+                l += "</button>"
             }
+            
             v[n] = Array(planets[b.planets[n]].routes.length);
             for (D = 0; D < planets[b.planets[n]].routes.length; D++)
                 if (planets[b.planets[n]].routes[D].planet1 == planets[b.planets[n]].id && "sea" != planets[b.planets[n]].routes[D].type) {
-                    var y = planets[b.planets[n]].routes[D].cx()
-                      , Ea = planets[b.planets[n]].routes[D].cy()
+                    var y = 100 * planets[b.planets[n]].routes[D].cx() / 1400
+                      , Ea = 100 * planets[b.planets[n]].routes[D].cy() / 1050
                       , va = parseInt(planets[b.planets[n]].routes[D].distance() * distanceBon);
                     v[n][D] = va;
                     if (m <= game.researches[researchesName[MAP_ENABLING_RESEARCH]].level) {
@@ -9942,14 +8134,16 @@ $(document).ready(function() {
                         Da = Math.max(planets[Da].shortestPath[planets[b.planets[n]].routes[D].planet1].hops, planets[Da].shortestPath[planets[b.planets[n]].routes[D].planet2].hops);
                         1 == b.id && (Da += 11);
                         2 == b.id && (Da += 19);
-                        Da <= researches[researchesName[MAP_ENABLING_RESEARCH]].level && (y = 180 * Math.atan(Ea / y) / Math.PI,
+                        Da <= researches[researchesName[MAP_ENABLING_RESEARCH]].level && (y = 180 * Math.atan(Ea / y) / Math.PI, y >= -45 ? y *= 0.75 : y >= 45 ? y *= 1.33 : y *= 1,
                         0 > Ea && 0 > y && (y += 180),
-                        l += "<div id='route" + n + "_" + D + "' name='" + n + "_" + D + "' style='position:absolute;top:" + parseInt((8 + u + planets[b.planets[n]].y) / g) + "px;left:" + parseInt((12 + Ca + planets[b.planets[n]].x) / g) + "px;z-index:8;'>",
-                        l += "<img src='" + UI_FOLDER + "/" + UI_LINE_ROUTE + "' style='width:" + va / g + "px;height:" + UI_ROUTE_LINE_HEIGHT + "px;-ms-transform:rotate(" + y + "deg);-webkit-transform:rotate(" + y + "deg);transform:rotate(" + y + "deg);transform-origin: top left;' /></div>")
+                        l += "<div id='route" + n + "_" + D + "' name='" + n + "_" + D + "' style='position:absolute;top:" + (100 * (planets[b.planets[n]].y + 6) / 1050) + "%;left:" + (Ca + (100 * (planets[b.planets[n]].x + 18) / 1400)) + "%;z-index:8;'>",
+                        l += "<img src='" + UI_FOLDER + "/" + UI_LINE_ROUTE + "' style='width:" + (4.15 * va) + "%;height:3px;-ms-transform:rotate(" + y + "deg);-webkit-transform:rotate(" + y + "deg);transform:rotate(" + y + "deg);transform-origin: top left;' /></div>")
                     }
                 }
         }
-        document.getElementById("map_icon_container") && (document.getElementById("map_icon_container").innerHTML = l);
+        
+        document.getElementById("map_container") && (document.getElementById("map_container").innerHTML = l);
+        
         for (n = 0; n < b.planets.length; n++)
             if ($("#pdiv" + n).click(function() {
                 C(planets[parseInt($(this).attr("name"))])
@@ -12955,19 +11149,6 @@ $(document).ready(function() {
     exportTravelingShipInterface = ba;
     exportShipInterface = S;
     exportMarketInterface = fa;
-    exportRaceInterface = function(b, d) {
-        currentInterface = "raceInterface";
-        $("#race_interface").html("<img src='img/racers/'");
-        currentUpdater = function() {}
-        ;
-        K();
-        $("#race_interface").show();
-        game.searchPlanet(currentPlanet.id) && ($("#bottom_build_menu").show(),
-        5 <= game.researches[3].level ? ($("#b_market_icon").show(),
-        $("#b_shipyard_icon").show()) : (1 <= game.researches[3].level && $("#b_shipyard_icon").show(),
-        $("#b_market_icon").hide()))
-    }
-    ;
     exportTournamentInterface = M;
     overviewPlanetExpand = Array(planets.length);
     overviewResourceExpand = Array(planets.length);
@@ -13078,18 +11259,6 @@ $(document).ready(function() {
                             tutorialsNames[v] && (tutorials[tutorialsNames[v]].done = !0);
                     console.log(game.planets.length);
                     setIdleBonus();
-                    setTimeout(function() {
-                        //submitNumber("Number of planets", game.planets.length);
-                        //submitNumber("Infuence", game.influence());
-                        var d = b();
-                        //submitNumber("Military Value", d);
-                        //submitNumber("Number of time travels", game.timeTravelNum);
-                        //submitNumber("Tournament Rank", qurisTournament.points + 1);
-                        d = parseInt(Math.floor(game.days / 365));
-                        //submitNumber("Total years", d);
-                        //submitNumber("totaltp", parseInt(game.totalTPspent()));
-                        //submitNumber("Total Population", parseInt(game.totalPopulation()))
-                    }, 5E3)
                 } else
                     console.log("No data to load"),
                     d = !0;
@@ -13330,7 +11499,7 @@ $(document).ready(function() {
     var ea = {
         axis: "y",
         theme: "minimal",
-        scrollInertia: 0,
+        scrollInertia: 0.25,
         autoHideScrollbar: !1
     };
     $("#building_list_container").mCustomScrollbar(ea);
@@ -13338,11 +11507,6 @@ $(document).ready(function() {
     $("#market_list_container").mCustomScrollbar(ea);
     $("#ship_list_container").mCustomScrollbar(ea);
     $("#planet_selection_interface").mCustomScrollbar(ea);
-    $("#map_container").mCustomScrollbar({
-        axis: "xy",
-        theme: "minimal",
-        scrollInertia: 0
-    });
     $("#tech_container").mCustomScrollbar({
         axis: "xy",
         theme: "minimal",

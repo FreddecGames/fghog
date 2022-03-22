@@ -294,29 +294,32 @@
 			</div>
 			
 			<div id="planet_building_interface" class="interface">
-				<div id="building_list_container">
-					<ul id="building_list">
-					</ul>
-				</div>
-				<div id="planet_mini" class="menu">
-					<img id="arrow_mini_left" src="ui/arrow_small_left.png" style="position:absolute;top:16px;width:24px;height:24px;left:16px;top:88px;z-index:100;cursor:pointer;"/>
-					<img id="arrow_mini_right" src="ui/arrow_small.png" style="position:absolute;top:16px;width:24px;height:24px;left:168px;top:88px;z-index:100;cursor:pointer;"/>
-					<span id="planet_mini_name" class='blue_text'></span>
-					<img id="planet_mini_image">
-					<ul id="mini_list">
-						
-					</ul>
-					<ul id ="info_mini_placeholder" style="height:1024px;">
-					</ul>
-				</div>
-				<div id="building_info" class="menu">
-					<span id="building_info_name" class='blue_text'></span>
-					<ul id="building_info_list">
-						
-					</ul>
-					<ul id ="building_info_placeholder" style="height:600px;">
-					</ul>
-				</div>
+                <div class="h-100 d-flex align-items-stretch">
+                    <div id="planet_mini" class="h-100 col-auto bg-bar border-end p-3" style="width:300px;overflow-y:auto;">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div id="planet_mini_name" class="h5 text-center"></div>
+                                <div class="row gx-0 align-items-center">
+                                    <button type="button" class="col-auto btn" id="arrow_mini_left"><i class="fas fa-fw fa-chevron-left"></i></button>
+                                    <div class="col text-center"><img id="planet_mini_image" width="160px" /></div>
+                                    <button type="button" class="col-auto btn" id="arrow_mini_right"><i class="fas fa-fw fa-chevron-right"></i></button>
+                                </div>
+                            </div>
+                            <div id="mini_list" class="col-12"></div>
+                        </div>
+                    </div>
+                    <div id="building_list_container" class="h-100 col p-3">
+                        <div id="building_list"></div>
+                    </div>
+                    <div id="building_info" class="h-100 col-auto bg-bar border-start p-3" style="width:300px;overflow-y:auto;">
+                        <span id="building_info_name" class='blue_text'></span>
+                        <ul id="building_info_list">
+                            
+                        </ul>
+                        <ul id ="building_info_placeholder" style="height:600px;">
+                        </ul>
+                    </div>
+                </div>
 			</div>
 			
 			<div id="planet_interface" class="interface"></div>
@@ -356,13 +359,8 @@
 				</div>
 			</div>
 			
-			<div id="map_interface">
-				<div id="map_container">
-					<img id="map_image" src='ui/void.png' />
-					<div id="map_icon_container">
-						
-					</div>
-				</div>
+			<div id="map_interface" class="interface">
+				<div id="map_container" class="h-100 w-100 position-relative"></div>
 			</div>
 			
 			<div id="tech_interface">
