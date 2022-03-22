@@ -483,23 +483,6 @@ li {
 	width:1200px;
 }
 
-/* ========================== PROFILE INTERFACE ==================== */
-
-#profile_interface {
-	overflow-x:hidden;
-	overflow-y:auto;
-}
-
-#profile_info_list {
-	
-	width:96%;
-}
-
-#profile_info_list li {
-	cursor:default;
-}
-
-
 /* ========================== PERMANENT MENU ======================= */
 
 #permanent_menu {
@@ -821,6 +804,7 @@ a:active {color: #80c0ff;}
 .bg-bar { background-color: rgba(22, 38, 46, .5); }
 .bg-bar-dark { background-color: rgba(22, 38, 46, .75); }
 
+.border { border: 1px solid #20363b!important; }
 .border-top { border-top: 1px solid #20363b!important; }
 .border-end { border-right: 1px solid #20363b!important; }
 .border-start { border-left: 1px solid #20363b!important; }

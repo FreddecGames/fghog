@@ -5825,62 +5825,54 @@ function resourceRequest(b) {
 }
 game.routes = routes;
 function save() {
-    if (MOBILE_LANDSCAPE && window.JsJavaInterface) {
-        var b = exportExportString().str;
-        window.JsJavaInterface.saveGame(b);
-        b = new exportPopup(210,0,"<span class='blue_text text_shadow'>Game Saved!<br>If it doesn't work, try exporting the save.</span>","info");
+    try {
+        for (var e = 0; e < civis.length; e++)
+            civis[e].lastSaved = (new Date).getTime();
+        localStorage.setItem(SAVESTR_HEAD + "sv0cpt", btoa(capital));
+        localStorage.setItem(SAVESTR_HEAD + "sv0vers", btoa(GAME_VERSION));
+        localStorage.setItem(SAVESTR_HEAD + "sv0first", firstTime);
+        localStorage.setItem(SAVESTR_HEAD + "sv0plt", btoa(encodeURIComponent(JSON.stringify(planetArraySaver(planets)))));
+        localStorage.setItem(SAVESTR_HEAD + "sv0civ", btoa(encodeURIComponent(JSON.stringify(civisArraySaver(civis)))));
+        var d = {};
+        for (e = 0; e < fleetSchedule.fleets.length; e++)
+            d[e] = fleetSchedule.fleets[e];
+        e = {};
+        for (var g = 0; g < artifacts.length; g++)
+            artifacts[g].possessed && (e[artifacts[g].id] = !0);
+        var h = {};
+        for (g = 0; g < characters.length; g++)
+            characters[g].unlocked && (h[characters[g].id] = !0);
+        var l = {};
+        for (g = 0; g < quests.length; g++)
+            quests[g].done && (l[quests[g].id] = !0);
+        var u = {};
+        for (g = 0; g < places.length; g++)
+            places[g].done && (u[places[g].id] = !0);
+        var v = {};
+        for (g = 0; g < tutorials.length; g++)
+            tutorials[g].done && (v[tutorials[g].id] = !0);
+        var y = {
+            schedule: fleetSchedule.toArray(),
+            fleets: d,
+            count: fleetSchedule.count,
+            m: market.toobj(),
+            st: gameSettings,
+            qur: {
+                points: qurisTournament.points,
+                lose: qurisTournament.lose
+            },
+            art: e,
+            chr: h,
+            qst: l,
+            plc: u,
+            tuts: v
+        };
+        localStorage.setItem(SAVESTR_HEAD + "sv0sch", btoa(encodeURIComponent(JSON.stringify(y))));
+    } catch (A) {
+        console.log(A),
+        b = new exportPopup(210,0,"<span class='red_text'>Error during save! Check your localStorage settings/quota, or try exporting the game</span>","info"),
         b.drawToast()
-    } else if (!cloudLoadingGoingOn)
-        try {
-            for (var e = 0; e < civis.length; e++)
-                civis[e].lastSaved = (new Date).getTime();
-            localStorage.setItem(SAVESTR_HEAD + "sv0cpt", btoa(capital));
-            localStorage.setItem(SAVESTR_HEAD + "sv0vers", btoa(GAME_VERSION));
-            localStorage.setItem(SAVESTR_HEAD + "sv0first", firstTime);
-            localStorage.setItem(SAVESTR_HEAD + "sv0plt", btoa(encodeURIComponent(JSON.stringify(planetArraySaver(planets)))));
-            localStorage.setItem(SAVESTR_HEAD + "sv0civ", btoa(encodeURIComponent(JSON.stringify(civisArraySaver(civis)))));
-            var d = {};
-            for (e = 0; e < fleetSchedule.fleets.length; e++)
-                d[e] = fleetSchedule.fleets[e];
-            e = {};
-            for (var g = 0; g < artifacts.length; g++)
-                artifacts[g].possessed && (e[artifacts[g].id] = !0);
-            var h = {};
-            for (g = 0; g < characters.length; g++)
-                characters[g].unlocked && (h[characters[g].id] = !0);
-            var l = {};
-            for (g = 0; g < quests.length; g++)
-                quests[g].done && (l[quests[g].id] = !0);
-            var u = {};
-            for (g = 0; g < places.length; g++)
-                places[g].done && (u[places[g].id] = !0);
-            var v = {};
-            for (g = 0; g < tutorials.length; g++)
-                tutorials[g].done && (v[tutorials[g].id] = !0);
-            var y = {
-                schedule: fleetSchedule.toArray(),
-                fleets: d,
-                count: fleetSchedule.count,
-                m: market.toobj(),
-                st: gameSettings,
-                qur: {
-                    points: qurisTournament.points,
-                    lose: qurisTournament.lose
-                },
-                art: e,
-                chr: h,
-                qst: l,
-                plc: u,
-                tuts: v
-            };
-            localStorage.setItem(SAVESTR_HEAD + "sv0sch", btoa(encodeURIComponent(JSON.stringify(y))));
-            b = new exportPopup(210,0,"<span class='blue_text text_shadow'>Game Saved in local!<br>If it doesn't work, try exporting the save.</span>","info");
-            b.drawToast()
-        } catch (A) {
-            console.log(A),
-            b = new exportPopup(210,0,"<span class='red_text'>Error during save! Check your localStorage settings/quota, or try exporting the game</span>","info"),
-            b.drawToast()
-        }
+    }
 }
 function saveBase() {
     try {
@@ -9716,62 +9708,103 @@ $(document).ready(function() {
     }
     function T() {
         currentInterface = "profileInterface";
-        var b = "<li style='height:64px;><div style='position:absolute; top:8px; left:8px; width:98%'></div></li><li style='height:64px;'><div style='position:absolute;  left: 8px; width:98%;'><span id='span_wipe' class='red_text' style='font-size:100%; width: 98%; float:left; text-align:center;cursor:pointer;'>Wipe Data<br>(BE SURE BEFORE CLICKING!!)</span><br><br></div></li><li style='height:64px;'><div style='position:absolute;  left: 8px; width:98%;'><span id='queue_wipe' class='red_text' style='font-size:100%; width: 98%; float:left; text-align:center;cursor:pointer;'>Reset queues and shipping<br></span></div></li><li style='height:100px;'><div style='position:absolute;  left: 8px; width:98%;'><span id='span_logs' class='blue_text' style='font-size:100%; width: 98%; float:left; text-align:center;cursor:pointer;'>Change logs<br></span><br><br></div></li><li style='height:48px;><div style='position:absolute; top:8px; left:40%; width:98%'><span class='blue_text' style='font-size:130%; width: 98%; float:left; text-align:center;cursor:pointer;'>Sound Settings</span></div></li>" + ("<li style='height:32px;'><span style='position:absolute;left:33%;' class='blue_text'><input style='width:320px' id='slide_master' type='range' min='0' max='100' value='" + gameSettings.masterVolume + "' step='1'>Master Volume</input></span></li>");
-        b += "<li style='height:32px;'><span style='position:absolute;left:33%;' class='blue_text'><input style='width:320px' id='slide_music' type='range' min='0' max='100' value='" + gameSettings.musicVolume + "' step='1'>Music Volume</input></span></li>";
-        b += "<li style='height:32px;'><span style='position:absolute;left:33%;' class='blue_text'><input style='width:320px' id='slide_effects' type='range' min='0' max='100' value='" + gameSettings.soundVolume + "' step='1'>Effects Volume</input></span></li>";
-        b += "<li style='height:48px;><div style='position:absolute; top:8px; left:40%; width:98%'><span class='blue_text' style='font-size:130%; width: 98%; float:left; text-align:center;cursor:pointer;'>UI Settings</span></div></li>";
-        var d = "<input type='checkbox' id='tech_check' value='false'>Tech Tree visualization</input>;<input type='checkbox' id='notation_check' value='false'>Scientific Notation</input>;<input type='checkbox' id='engnotation_check' value='false'>Engineering Notation</input>;<input type='checkbox' id='hpleft_check' value='false'>Show hp left in battle report</input>;<input type='checkbox' id='sortresname_check' value='false'>Sort resources by name</input>;<input type='checkbox' id='toastright_check' value='false'>Show toast popups on the right</input>;<input type='checkbox' id='showBuildingAid_check' value='false'>Show graphical info on building hover</input>;<input type='checkbox' id='showMultipliers_check' value='false'>Show cost multipliers</input>;<input type='checkbox' id='rpspent_check' value='false'>Show total RP and TP earned</input>".split(";");
-        MOBILE_LANDSCAPE || d.push("<input type='checkbox' id='advauto_check' value='false'>Show advanced options for autoroutes</input>");
-        d.push("<input type='checkbox' id='shipsort_check' value='false'>Sort ships by shipyard level</input>");
-        d.push("<input style='width:33%' id='slide_textsize' type='range' min='" + MIN_TEXT_SIZE + "' max='" + MAX_TEXT_SIZE + "' value='" + gameSettings.textSize + "' step='0.01'>Text size</input>");
-        d.push("<input type='checkbox' id='allshipres_check' value='false'>Show all resources in shipyard</input>");
-        MOBILE_LANDSCAPE || d.push("");
-        MOBILE_LANDSCAPE || d.push("");
-        d.push("<input style='width:33%' id='slide_techuiscale' type='range' min='0.5' max='2' value='" + gameSettings.techuiScale + "' step='0.1'>Tech interface scale</input>");
-        b += uiScheduler.settingsGroup(d);
-        MOBILE_LANDSCAPE || (b = b + "<li style='height:48px;><div style='position:absolute; top:8px; left:40%; width:98%'><span class='blue_text' style='font-size:130%; width: 98%; float:left; text-align:center;cursor:pointer;'>Game Settings</span></div></li>" + uiScheduler.settingsGroup(["<input type='checkbox' id='idle10_check' value='false'>10 minutes idle bonus</input>", "<input type='checkbox' id='hidetut_check' value='false'>Hide tutorial</input>", 0 < userID ? "<input type='checkbox' id='cloud_check' value='false'>Enable cloud save (ALPHA - export before using it!)</input>" : ""]));
-        b += "<li style='height:48px;><div style='position:absolute; top:8px; left:40%; width:98%'><span class='blue_text' style='font-size:130%; width: 98%; float:left; text-align:center;cursor:pointer;'>Shipping & Deliveries</span></div></li>";
-        d = [];
-        d.push("<input type='checkbox' id='usequeue_check' value='false'>Enable building queue</input>");
-        d.push("<input type='checkbox' id='autoqueue_check' value='false'>Automatic construction for building queue</input>");
-        MOBILE_LANDSCAPE || d.push("<input type='checkbox' id='resreq_check' value='false'>Automatic shipping for queue (BETA)</input>");
-        MOBILE_LANDSCAPE || d.push("<input type='checkbox' id='showqd_check' value='false'>Show automatic delivery fleets</input>");
-        MOBILE_LANDSCAPE || d.push("<input type='checkbox' id='overcharge_check' value='false'>Autoshipping will deliver 5% surplus</input>");
-        MOBILE_LANDSCAPE || d.push("<input type='checkbox' id='autorcorrection_check' value='false'>Correction for autoroutes calculation</input>");
-        MOBILE_LANDSCAPE || d.push("<input type='checkbox' id='autoover_check' value='false'>Ignore storage on autoroutes creation</input>");
-        b += uiScheduler.settingsGroup(d);
-        b += "<span id='span_copyright' class='white_text' style='position:absolute;font-size:80%; width: 98%; text-align:left;cursor:pointer;top:8%;left:2%'>\u00a9 2017 - version " + GAME_VERSION + GAME_SUB_VERSION + "</span><br><br>";
-        b += "<span id='span_developer' class='white_text' style='position:absolute;font-size:80%; width: 98%; text-align:left;cursor:pointer;top:12%;left:2%'>Developed by Cheslava";
-        MOBILE_LANDSCAPE || (b += " - <a target='_blank' href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MXNTJWKX3GYJY&source=url'><img src='" + UI_FOLDER + "/donate.png' style='height:22px;width:100px;position:relative;top:7px;'/></a>");
-        b += "</span><br><br><br><br>";
-        b = MOBILE_LANDSCAPE ? b + "<span id='span_website' class='white_text' style='position:absolute;font-size:80%; width: 98%; text-align:left;cursor:pointer;top:16%;left:2%'><a target='_blank' href='javascript:window.JsJavaInterface.showPrivacyPolicy();'>Privacy policy</a></span><br><br>" : b + "<span id='span_website' class='white_text' style='position:absolute;font-size:80%; width: 98%; text-align:left;cursor:pointer;top:16%;left:2%'><a target='_blank' href='https://www.heartofgalaxy.com'>heartofgalaxy.com</a></span><br><br><span id='span_android' class='white_text' style='position:absolute;font-size:80%; width: 98%; text-align:left;cursor:pointer;top:20%;left:2%'><a target='_blank' href='https://play.google.com/store/apps/details?id=com.cheslavasoft.hog'><img style='width:10%;' src='https://play.google.com/intl/en/badges/images/generic/en_badge_web_generic.png'/></a></span><br><br>";
-        MOBILE_LANDSCAPE && (b += "<span id='span_savedata' class='green_text' style='position:absolute;font-size:100%; width: 98%; text-align:left;cursor:pointer;top:20%;left:2%'><img style='position:relative;top:0px;width:32px;height:32px;' src='ui/save.png' class='icon' /> <span style='position:relative;top:-8px;'>Save game</span></span><br><br><span id='span_exportdata' class='green_text' style='position:absolute;font-size:100%; width: 98%; text-align:left;cursor:pointer;top:26%;left:2%'><img style='position:relative;top:0px;width:32px;height:32px;' src='ui/export.png' class='icon' /> <span style='position:relative;top:-8px;'>Import/Export game</span></span><br><br><span id='span_tuto' class='blue_text' style='position:absolute;font-size:100%; width: 98%; text-align:left;cursor:pointer;top:32%;left:2%'><img style='position:relative;top:0px;width:32px;height:32px;' src='ui/t.png' class='icon' /> <span style='position:relative;top:-8px;'>Tutorial</span></span><br><br>");
+        
+        var e = ka()
+        e = e.str
+        
+        var b = ""
+        b += "<div class='row g-4 justify-content-center'>"
+            b += "<div class='col-5 mb-4'>"
+                b += "<div class='row g-2'>"
+                    b += "<div class='col-12 text-center h5 blue_text'>About</div>"
+                    b += "<div class='col-12 text-center blue_text'>This is a rewriting/remake of the original game created by <span class='white_text'>Cheslava</span> (<a target='_blank' href='https://www.heartofgalaxy.com' class='text-white'>heartofgalaxy.com</a>).</div>"
+                    b += "<div class='col-12 text-center text-danger'>This is still under development with bugs and maybe data lost!</div>"
+                    b += "<div class='col-12 text-center blue_text mb-2'>To support the dev and to stay informed</div>"
+                    b += "<div class='col-3'>"
+                        b += "<a href='https://www.patreon.com/bePatron?u=61283131' target='_blank' class='btn bg-bar border' style='width:78px;'>"
+                           b += "<img src='ui/patreon.png' width='24px' height='24px' />"
+                           b += "<div class='small lh-sm mt-2'>Become a supporter</div>"
+                        b += "</a>"
+                    b += "</div>"
+                    b += "<div class='col-3'>"
+                        b += "<a href='https://ko-fi.com/freddecgames' target='_blank' class='btn bg-bar border' style='width:78px;'>"
+                           b += "<img src='ui/kofi.png' width='24px' height='24px' />"
+                           b += "<div class='small lh-sm mt-2'>Buy me a Ko-fi</div>"
+                        b += "</a>"
+                    b += "</div>"
+                    b += "<form class='col-3' action='https://www.paypal.com/cgi-bin/webscr' method='post' target='_blank'>"
+                        b += "<input type='hidden' name='cmd' value='_s-xclick'>"
+                        b += "<input type='hidden' name='hosted_button_id' value='7XYD7SJFKQ8M4'>"
+                        b += "<button type='submit' class='btn bg-bar border' style='width:78px;'>"
+                            b += "<img src='ui/paypal.png' width='24px' height='24px' />"
+                            b += "<div class='small lh-sm mt-2'>Make a donation</div>"
+                        b += "</button>"
+                    b += "</form>"
+                    b += "<div class='col-3'>"
+                        b += "<a href='https://discord.gg/3UkgeeT9CV' target='_blank' class='btn bg-bar border' style='width:78px;'>"
+                            b += "<img src='ui/discord.png' width='24px' height='24px' alt='Discord' />"
+                            b += "<div class='small lh-sm mt-2'>News and information</div>"
+                        b += "</a>"
+                    b += "</div>"
+                b += "</div>"
+            b += "</div>"
+            b += "<div class='col-5 mb-4'>"
+                b += "<div class='row g-3'>"
+                    b += "<div class='col-12 text-center h5 blue_text pb-4'>Sound</div>"
+                    b += "<div class='col-12'>"
+                        b += "<div class='row gx-2'>"
+                            b += "<input id='slide_master' type='range' min='0' max='100' value='" + gameSettings.masterVolume + "' step='1' class='col' />"
+                            b += "<div class='col-auto blue_text' style='width:100px;'>Master Volume</div>"
+                        b += "</div>"
+                    b += "</div>"
+                    b += "<div class='col-12'>"
+                        b += "<div class='row gx-2'>"
+                            b += "<input id='slide_music' type='range' min='0' max='100' value='" + gameSettings.musicVolume + "' step='1' class='col' />"
+                            b += "<div class='col-auto blue_text' style='width:100px;'>Music Volume</div>"
+                        b += "</div>"
+                    b += "</div>"
+                    b += "<div class='col-12'>"
+                        b += "<div class='row gx-2'>"
+                            b += "<input id='slide_effects' type='range' min='0' max='100' value='" + gameSettings.soundVolume + "' step='1' class='col' />"
+                            b += "<div class='col-auto blue_text' style='width:100px;'>Effects Volume</div>"
+                        b += "</div>"
+                    b += "</div>"
+                b += "</div>"
+            b += "</div>"
+            b += "<div class='col-5 mb-4'>"
+                b += "<div class='row g-3'>"
+                    b += "<div class='col-12 text-center h5 blue_text'>Export</div>"
+                    b += "<div class='col-12'><textarea id='saveexport' spellcheck='false' rows='5' class='w-100 rounded bg-bar border blue_text p-2'>" + e + "</textarea></div>"
+                b += "</div>"
+            b += "</div>"
+            b += "<div class='col-5 mb-4'>"
+                b += "<div class='row g-3'>"
+                    b += "<div class='col-12 text-center h5 blue_text'>Import</div>"
+                    b += "<div class='col-12'><textarea id='saveimport' spellcheck='false' rows='5' class='w-100 rounded bg-bar border blue_text p-2'></textarea></div>"
+                    b += "<div class='col-12 text-end mt-2'><button type='button' id='impsave' class='btn bg-bar border'>Import Save</button></div>"
+                b += "</div>"
+            b += "</div>"
+            b += "<div class='col-5 mb-4'>"
+                b += "<div class='row g-3'>"
+                    b += "<div class='col-12 text-center h5 blue_text'>Hard Reset</div>"
+                    b += "<div class='col-6 text-end'>"
+                        b += "<button type='button' id='span_wipe' class='btn bg-bar border' style='width:85px;'>"
+                            b += "<div class='text-center text-danger h5'><i class='fas fa-fw fa-skull'></i></div>"
+                            b += "<div class='small text-danger lh-sm mt-2'>Wipe Locale Data</div>"
+                        b += "</button>"
+                    b += "</div>"
+                    b += "<div class='col-6 text-start'>"
+                        b += "<button type='button' id='queue_wipe' class='btn bg-bar border' style='width:85px;'>"
+                            b += "<div class='text-center text-danger h5'><i class='fas fa-fw fa-exclamation-triangle'></i></div>"
+                            b += "<div class='small text-danger lh-sm mt-2'>Reset Queues & Shipping</div>"
+                        b += "</button>"
+                    b += "</div>"
+                b += "</div>"
+            b += "</div>"
+        b += "</div>"
+            
         document.getElementById("profile_info_list") && (document.getElementById("profile_info_list").innerHTML = b);
-        addSettingCheck("tech_check", "techTree");
-        addSettingCheck("notation_check", "scientificNotation");
-        addSettingCheck("engnotation_check", "engineeringNotation");
-        addSettingCheck("hidetut_check", "hideTutorial");
-        addSettingCheck("allshipres_check", "allShipres");
-        addSettingCheck("hpleft_check", "hpreport");
-        addSettingCheck("resreq_check", "resourceRequest");
-        addSettingCheck("usequeue_check", "useQueue");
-        addSettingCheck("autoqueue_check", "autoQueue");
-        addSettingCheck("showqd_check", "showqd");
-        addSettingCheck("sortresname_check", "sortResName");
-        addSettingCheck("showBuildingAid_check", "showBuildingAid");
-        addSettingCheck("showMultipliers_check", "showMultipliers", "Shows cost multipliers for buildings and researches");
-        addSettingCheck("rpspent_check", "showRPSpent");
-        addSettingCheck("toastright_check", "toastRight");
-        addSettingCheck("idle10_check", "idle10");
-        addSettingCheck("overcharge_check", "overchargeShipping");
-        addSettingCheck("advauto_check", "advancedAutoroute");
-        addSettingCheck("shipsort_check", "shipSorted");
-        addSettingCheck("autorcorrection_check", "autorcorrection");
-        addSettingCheck("autoover_check", "autoover");
-        addSettingCheck("cloud_check", "cloudSave");
-        MOBILE_LANDSCAPE && ($("#span_exportdata").click(wa),
-        $("#span_savedata").click(save),
-        $("#span_tuto").click(startTutorial));
+        
         $("#slide_master").change(function() {
             gameSettings.masterVolume = $(this).val();
             oa()
@@ -9811,8 +9844,77 @@ $(document).ready(function() {
         $("#span_logs").click(function() {
             V()
         });
+        
+        $("#impsave").click(function() {
+            var d = document.getElementById("saveimport").value;
+            d = d.split("@")[0];
+            var e;
+            (e = "hg" == d.substring(0, 2) ? decodeURIComponent(LZString.decompressFromUTF16(LZString.decompressFromBase64(d.substring(2)))) : LZString.decompressFromUTF16(LZString.decompressFromBase64(d))) || (e = "hg" == d.substring(0, 2) ? decodeURIComponent(LZString.decompressFromUTF16(atob(d.substring(2)))) : LZString.decompressFromUTF16(atob(d)));
+            if (e)
+                try {
+                    var h = e.split("@DIVIDER@");
+                    console.log(h[2]);
+                    if (3 <= h.length) {
+                        for (d = 0; d < game.researches.length; d++)
+                            for (var l = game.researches[d].level, n = 0; n < l; n++)
+                                game.researches[d].unbonus(),
+                                game.researches[d].level--;
+                        governmentList[game.chosenGovern].unbonus();
+                        g();
+                        firstTime = !1;
+                        var m = JSON.parse(h[1])
+                          , u = JSON.parse(h[0])
+                          , v = JSON.parse(h[2]);
+                        console.log("iMPORT");
+                        clearTimeout(idleTimeout);
+                        idleBon = staticBon;
+                        for (d = 0; d < m.length; d++)
+                            civisLoader(civis[d], m[d], civis[d].name);
+                        governmentList[game.chosenGovern].bonus();
+                        fleetSchedule.count = v.count;
+                        n = 0;
+                        for (var w in v.fleets)
+                            n++;
+                        fleetSchedule.load(v.schedule, v.fleets, n);
+                        v.m && market.load(v.m);
+                        v.st && settingsLoader(v.st);
+                        v.qur && (qurisTournament.points = 0,
+                        v.qur.points && (qurisTournament.points = v.qur.points || 0),
+                        qurisTournament.lose = 0,
+                        v.qur.lose && (qurisTournament.lose = v.qur.lose || 0));
+                        if (v.art)
+                            for (var y in v.art)
+                                artifacts[artifactsName[y]].collect();
+                        if (v.qst)
+                            for (var x in v.qst)
+                                quests[questNames[x]].done = !0;
+                        if (v.plc)
+                            for (x in v.plc)
+                                places[placesNames[x]].done = !0;
+                        if (v.tuts)
+                            for (x in v.tuts)
+                                tutorialsNames[x] && (tutorials[tutorialsNames[x]].done = !0);
+                        game = civis[gameSettings.civis];
+                        for (d = 0; d < u.length; d++)
+                            u[d] && planetLoader(planets[d], u[d]);
+                        setIdleBonus();
+                        qurisTournament.fleet = null;
+                        generateQurisTournamentFleet();
+                        var z = b();
+                        var A = parseInt(Math.floor(game.days / 365));
+                        planets[game.planets[0]] && C(planets[game.planets[0]])
+                    } else
+                        document.getElementById("impsave") && (document.getElementById("impsave").innerHTML = "Import Save: <span class='red_text'>Corrupted data</span>")
+                } catch (Ka) {
+                    console.log(Ka.message),
+                    document.getElementById("impsave") && (document.getElementById("impsave").innerHTML = "Import Save: <span class='red_text'>Error</span>")
+                }
+            else
+                document.getElementById("impsave") && (document.getElementById("impsave").innerHTML = "Import Save: <span class='red_text'>Invalid data</span>")
+        });
+
         currentUpdater = function() {}
-        ;
+        
         K();
         $("#profile_interface").show();
         game.searchPlanet(currentPlanet.id) && $("#bottom_build_menu").show()
@@ -10576,110 +10678,6 @@ $(document).ready(function() {
             return "<span class='red_text'>Invalid data</span>";
         return ""
     }
-    function wa() {
-        currentInterface = "exportInterface";
-        currentUpdater = function() {}
-        ;
-        var d = "<div style='position:relative;left:16px;width:1168px'><br><span class='blue_text' id='expsave' style='font-size:100%;cursor:pointer;'>Exported Save - Copy and save</span>";
-        var e = ka()
-          , h = e.decom
-          , l = e.finalJ;
-        e = e.str;
-        h == l && (d = d + "<textarea id='saveexport' spellcheck='false' rows='5' style='width:95%'>" + e + "</textarea>");
-        d += "<br><br><br><br><span class='button blue_text' id='impsave' style='position:absolute;left:150px;font-size:100%;cursor:pointer;'>Import Save</span><span class='button blue_text' id='impsave2' style='position:absolute;left:800px;font-size:100%;cursor:pointer;'>Alternative Import</span><br><br><textarea id='saveimport' spellcheck='false' rows='4' style='width:95%'></textarea><br><br><span class='button blue_text' id='metadata_cloud' style='position:absolute;left:150px;font-size:100%;cursor:pointer;'></span><br><br></div>";
-        document.getElementById("profile_info_list") && (document.getElementById("profile_info_list").innerHTML = d);
-        document.getElementById("expsave") && (document.getElementById("expsave").innerHTML = "Export Save: (Data could be huge, so it could be slow!)<span class='white_text'>(Loading...)</span>");
-        h == l ? (document.queryCommandSupported("copy") && document.getElementById("exportCopy") && document.getElementById("exportCopy").addEventListener("click", function(b) {
-            document.getElementById("saveexport").select();
-            try {
-                document.execCommand("copy")
-            } catch (Ga) {
-                document.getElementById("exportCopy").innerHTML = "<span class='red_text'>Error during copy, please retry again</span>"
-            }
-        }),
-        document.getElementById("expsave") && (document.getElementById("expsave").innerHTML = "Export Save: (Data could be huge, so it could be slow!) <span class='green_text'>Done</span>")) : document.getElementById("expsave") && (document.getElementById("expsave").innerHTML = "Export Save: <span class='red_text'> ERROR EXPORTING</span>");
-        $("#impsave").unbind();
-        $("#impsave").click(function() {
-            var d = document.getElementById("saveimport").value;
-            d = d.split("@")[0];
-            var e;
-            (e = "hg" == d.substring(0, 2) ? decodeURIComponent(LZString.decompressFromUTF16(LZString.decompressFromBase64(d.substring(2)))) : LZString.decompressFromUTF16(LZString.decompressFromBase64(d))) || (e = "hg" == d.substring(0, 2) ? decodeURIComponent(LZString.decompressFromUTF16(atob(d.substring(2)))) : LZString.decompressFromUTF16(atob(d)));
-            if (e)
-                try {
-                    var h = e.split("@DIVIDER@");
-                    console.log(h[2]);
-                    if (3 <= h.length) {
-                        for (d = 0; d < game.researches.length; d++)
-                            for (var l = game.researches[d].level, n = 0; n < l; n++)
-                                game.researches[d].unbonus(),
-                                game.researches[d].level--;
-                        governmentList[game.chosenGovern].unbonus();
-                        g();
-                        firstTime = !1;
-                        var m = JSON.parse(h[1])
-                          , u = JSON.parse(h[0])
-                          , v = JSON.parse(h[2]);
-                        console.log("iMPORT");
-                        clearTimeout(idleTimeout);
-                        idleBon = staticBon;
-                        for (d = 0; d < m.length; d++)
-                            civisLoader(civis[d], m[d], civis[d].name);
-                        governmentList[game.chosenGovern].bonus();
-                        fleetSchedule.count = v.count;
-                        n = 0;
-                        for (var w in v.fleets)
-                            n++;
-                        fleetSchedule.load(v.schedule, v.fleets, n);
-                        v.m && market.load(v.m);
-                        v.st && settingsLoader(v.st);
-                        v.qur && (qurisTournament.points = 0,
-                        v.qur.points && (qurisTournament.points = v.qur.points || 0),
-                        qurisTournament.lose = 0,
-                        v.qur.lose && (qurisTournament.lose = v.qur.lose || 0));
-                        if (v.art)
-                            for (var y in v.art)
-                                artifacts[artifactsName[y]].collect();
-                        if (v.qst)
-                            for (var x in v.qst)
-                                quests[questNames[x]].done = !0;
-                        if (v.plc)
-                            for (x in v.plc)
-                                places[placesNames[x]].done = !0;
-                        if (v.tuts)
-                            for (x in v.tuts)
-                                tutorialsNames[x] && (tutorials[tutorialsNames[x]].done = !0);
-                        game = civis[gameSettings.civis];
-                        for (d = 0; d < u.length; d++)
-                            u[d] && planetLoader(planets[d], u[d]);
-                        setIdleBonus();
-                        qurisTournament.fleet = null;
-                        generateQurisTournamentFleet();
-                        var z = b();
-                        var A = parseInt(Math.floor(game.days / 365));
-                        planets[game.planets[0]] && C(planets[game.planets[0]])
-                    } else
-                        document.getElementById("impsave") && (document.getElementById("impsave").innerHTML = "Import Save: <span class='red_text'>Corrupted data</span>")
-                } catch (Ka) {
-                    console.log(Ka.message),
-                    document.getElementById("impsave") && (document.getElementById("impsave").innerHTML = "Import Save: <span class='red_text'>Error</span>")
-                }
-            else
-                document.getElementById("impsave") && (document.getElementById("impsave").innerHTML = "Import Save: <span class='red_text'>Invalid data</span>")
-        });
-        $("#impsave2").unbind();
-        $("#impsave2").click(function() {
-            var b = pa(document.getElementById("saveimport").value);
-            "" != b && document.getElementById("impsave2") && (document.getElementById("impsave2").innerHTML = "Alternative Import: " + b)
-        });
-        MOBILE_LANDSCAPE && ($("#impsave").unbind(),
-        $("#impsave").click(function() {
-            var b = pa(document.getElementById("saveimport").value);
-            "" != b && document.getElementById("impsave2") && (document.getElementById("impsave2").innerHTML = "Alternative Import: " + b)
-        }));
-        K();
-        $("#profile_interface").show();
-        game.searchPlanet(currentPlanet.id) && $("#bottom_build_menu").show()
-    }
     function oa() {
         N[na].volume = Math.floor(N.v * gameSettings.masterVolume / 100) / 100
     }
@@ -11110,20 +11108,6 @@ $(document).ready(function() {
         $("#profile_interface").show();
         game.searchPlanet(currentPlanet.id) && $("#bottom_build_menu").show()
     }
-    if (MAP_REGIONS)
-        for (var ma = [], U = "white red blu aqua cyan orange darkorange gray darkgray green lightgreen yellow ocra magenta pink violet cream lightcream brown lightbrown lightlightbrown sand".split(" "), xa = 0 * regionsDefinition.length, W = 0; W < xa; W++)
-            for (var za = 0; za < U.length; za++) {
-                var Ba = new Image;
-                Ba.onload = function() {
-                    var b = ma.indexOf(this);
-                    -1 !== b && ma.splice(b, 1);
-                    console.log("loaded")
-                }
-                ;
-                ma.push(Ba);
-                Ba.src = IMG_FOLDER + "/" + REGIONS_FOLDER + "/" + U[za] + "_" + regionsDefinition[W].icon
-            }
-    console.log("[Version] " + GAME_VERSION + GAME_SUB_VERSION);
     loadReset = g;
     document.getElementById("l_info") && (document.getElementById("l_info").innerHTML = "Loading engine...");
     $("#loading_bar").css("width", "33%");
@@ -11169,7 +11153,6 @@ $(document).ready(function() {
     overviewResourceExpand.empire.research = !1;
     exportExportString = ka;
     exportSaveCloud = ta;
-    exportExpInterface = wa;
     document.getElementById("l_info") && (document.getElementById("l_info").innerHTML = "Loading interface...");
     if (!MOBILE_LANDSCAPE)
         try {
@@ -11328,21 +11311,6 @@ $(document).ready(function() {
         soundSetting = $("#sound_check").prop("checked") ? !0 : !1;
         musicSetting = $("#music_check").prop("checked") ? !0 : !1
     });
-    $("#settings_icon").click(function() {
-        currentInterface = "settingsInterface";
-        autosave ? $("#autosave_check").prop("checked", !0) : $("#autosave_check").prop("checked", !1);
-        soundSetting ? $("#sound_check").prop("checked", !0) : $("#sound_check").prop("checked", !1);
-        musicSetting ? $("#music_check").prop("checked", !0) : $("#music_check").prop("checked", !1);
-        K();
-        $("#settings_interface").show();
-        $("#back_button").unbind();
-        $("#back_button").click(I);
-        $("#back_button").show();
-        game.searchPlanet(currentPlanet.id) && $("#bottom_build_menu").show()
-    });
-    $("#export_icon").click(function() {
-        wa()
-    });
     $("#pause_button").click(function() {
         if (gameSettings.gamePaused) {
             gameSettings.gamePaused = !1;
@@ -11360,6 +11328,8 @@ $(document).ready(function() {
     });
     $("#save_icon").click(function() {
         save();
+        let b = new exportPopup(210,0,"<span class='blue_text text_shadow'>Game Saved in local!<br>If it doesn't work, try exporting the save.</span>","info");
+        b.drawToast()
     });
     var Q = new function(b, d, e) {
         this.a = this.t = b;

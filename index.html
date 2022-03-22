@@ -142,10 +142,6 @@
                             <div class="h5"><i class="fas fa-fw fa-save"></i></div>
                             <div class="small">Save</div>
                         </button>
-                        <button id="export_icon" type="button" class="col-auto btn lh-1" style="width:66px;">
-                            <div class="h5"><i class="fas fa-fw fa-file-export"></i></div>
-                            <div class="small">Export</div>
-                        </button>
                         <button id="info_icon" type="button" class="col-auto btn lh-1" style="width:66px;">
                             <div class="h5"><i class="fas fa-fw fa-cogs"></i></div>
                             <div class="small">Settings</div>
@@ -156,17 +152,6 @@
                         </button>
                     </div>
                 </div>
-			</div>
-			
-			<div id="settings_interface" class="interface">
-				<span class='blue_text' style='position: absolute; top: 8px; float:left; text-align:center; font-size:120%; width:500px'>Settings</span>
-				<div id="settings_fields" style='position:absolute; top:32px; left:16px;'>
-					<span class='blue_text'>Autosave <input type="checkbox" id="autosave_check" value=""/></span><br><br>
-					<span class='blue_text'>Sound <input type="checkbox" id="sound_check" value=""/></span><br>
-					<span class='blue_text'>Music <input type="checkbox" id="music_check" value=""/></span><br><br>
-					<span class='blue_text' style='color: #f00; cursor: pointer;' onClick='javascript:wipeData(); loadReset();'>Wipe Data</span>
-					<span class='blue_text' id="settings_save" style="float:left;width:500px;text-align:center;cursor:pointer;">Save settings</span>
-				</div>
 			</div>
 			
 			<div id="permanent_menu" class="interface" style="position:relative;">
@@ -378,9 +363,7 @@
 			</div>
 			
 			<div id="profile_interface" class="interface">
-				<ul id="profile_info_list">
-					
-				</ul>
+				<div id="profile_info_list" class="p-4"></div>
 			</div>
 
 		</div>				
