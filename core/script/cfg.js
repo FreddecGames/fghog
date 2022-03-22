@@ -13376,71 +13376,31 @@ var researchesDefinition = [{
 }
   , tutorialsDefinition = [{
     id: "tut0",
-    description: "<br>Welcome Commander!<br>You finally woke up after a long cryosleep",
-    check: baseCheckTut,
-    extraAction: function() {
-        exportPlanetInterface(planets[0])
-    }
-}, {
-    id: "tut1",
-    description: "<br>232 years have passed since you boarded the Vitha, but finally you reached your new home Promision!",
+    description: "<div class='text-center h5 mb-2'>Welcome Commander</div><div class='text-center'>You finally woke up after a long cryosleep. 232 years have passed since you boarded the Vitha, but finally you reached your new home <span class='text-white'>Promision</span>.</div><div class='mt-3 text-danger text-center'>This version is a rewriting/remake of the original game. It is still under development so bugs and data lost could happen!</div>",
     check: baseCheckTut,
     extraAction: function() {
         exportPlanetInterface(planets[0])
     }
 }, {
     id: "tut2",
-    description: "<br>Let's do a little briefing.<br>In this interface you can see basic infos about your planet.",
+    description: "<div class='text-center h5 mb-2'>Let's do a little briefing</div><div class='text-center text-warning'>You could close and open this tutorial at any time. To open this tutorial again, click on the icon <i class='fas fa-fw fa-question-circle'></i> in the bottom-right corner of the screen.</div><div class='mt-3 text-center'>You are on the planet overview page. In this interface you can see basic infos about your planet.</div><div class='mt-3 text-center'>On the left you can see a list of resources that can be <span class='text-white'>extracted</span> on this planet, like <span class='text-white'>Iron</span>.",
     check: baseCheckTut,
     extraAction: function() {
         exportPlanetInterface(planets[0])
     }
 }, {
-    id: "tut3",
-    description: "<br>On the left you can see a list of resources that can be <span class='white_text' style='font-size:100%'>extracted</span> on this planet, like <span class='white_text' style='font-size:100%'>Iron</span>",
+    id: "tut4",
+    description: "<div class='text-center h5 mb-2'>Let's extract <span class='white_text'>Iron</span></div><div class='text-center'>Click on the <i class='fas fa-fw fa-dice-d20'></i> icon in the bottom menu to access the <span class='white_text'>Extraction</span> page</div>",
     check: baseCheckTut,
     extraAction: function() {
         exportPlanetInterface(planets[0]);
     },
-    drop: function() {
-    }
-}, {
-    id: "tut4",
-    description: "To open this tutorial again, click on the <img src='" + UI_FOLDER + "/t.png' style='height:26px;width:26px;position:relative;top:6px' /> icon in the bottom-right corner of the screen",
-    check: baseCheckTut
-}, {
-    id: "tut4",
-    description: "Let's extract <span class='white_text'>Iron</span>! Click on the <img src='" + UI_FOLDER + "/extraction.png' style='height:26px;width:26px;position:relative;top:6px' /> icon in the bottom menu to access the <span class='white_text'>Extraction Tab</span>",
-    check: baseCheckTut,
-    extraAction: function() {
-        exportPlanetInterface(planets[0]);
-    },
-    drop: function() {
-    }
 }, {
     id: "tut6",
-    description: "<br>In this interface, you can construct buildings to extract resources. By clicking on the desired building, you can see more details about it",
+    description: "<div class='text-center h5 mb-2'>Let's extract <span class='white_text'>Iron</span></div><div class='text-center'>In this page, you can construct buildings to extract resources. By clicking on the desired building, you can see more details about it.</div><div class='mt-3 text-center'>On the left you can see how many resources are being produced every second.</div><div class='mt-3 text-center'>Now click on the icon <i class='fas fa-fw fa-plus-circle'></i> 1 on the left on <span class='white_text'>Mining Plant</span> to build 1 more.</div>",
     check: function() {
         return "planetBuildingInterface_mining" == currentInterface && currentPlanet == planets[0]
     },
-    extraAction: function() {
-        exportPlanetBuildingInterface("mining", planets[0])
-    }
-}, {
-    id: "tut7",
-    description: "<br>On the left you can see how many resources are being produced every second.",
-    check: baseCheckTut,
-    extraAction: function() {
-        exportPlanetBuildingInterface("mining", planets[0]);
-        $("#planet_mini").css("z-index", 1E3)
-    },
-    drop: function() {
-        $("#planet_mini").css("z-index", 0)
-    }
-}, {
-    id: "tut8",
-    description: "Now click on the <img src='" + UI_FOLDER + "/add2.png' style='height:26px;width:26px;position:relative;top:6px' /> icon below the <span class='white_text'>Mining Plant</span> to build 1 more",
-    check: baseCheckTut,
     extraAction: function() {
         exportPlanetBuildingInterface("mining", planets[0])
     }

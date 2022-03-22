@@ -3118,11 +3118,13 @@ function getAvailableTutorial() {
             return b;
     return tutorials.length
 }
+
 function tutorialChecker(b) {
     var e = tutorials[getAvailableTutorial()];
     !e || currentPopup && "tutorial" == currentPopup.type && !b || !e.check() || gameSettings.hideTutorial || ((new exportPopup(360,96,"<span class='blue_text text_shadow'>" + e.description + "</span>","tutorial",e.action)).draw(),
     e.extraAction())
 }
+
 function startTutorial() {
     gameSettings.hideTutorial = !1;
     var b = 0 <= getAvailableTutorial() - 1 ? tutorials[getAvailableTutorial() - 1] : tutorials[getAvailableTutorial()];
@@ -6122,7 +6124,10 @@ $(document).ready(function() {
                 d.addClass("button")) : (avBuilding[b] = !1,
                 d.removeClass("button"),
                 d.addClass("red_button"));
-                currentPlanet.structure[b].active ? $("#b_shut_" + b).attr("src", "" + UI_FOLDER + "/act.png") : $("#b_shut_" + b).attr("src", "" + UI_FOLDER + "/shut.png");
+                
+                var elmt = document.getElementById("b_shut_" + b)
+                if (elmt) currentPlanet.structure[b].active ? elmt.innerHTML = "<i class='fas fa-fw fa-power-off text-success'></i>" : elmt.innerHTML = "<i class='fas fa-fw fa-power-off text-danger'></i>"
+                
                 d = !1;
                 for (var e = 0, g = ""; !d && e < resNum; )
                     d = currentPlanet.globalNoRes[b][e],
@@ -6880,16 +6885,21 @@ $(document).ready(function() {
         case "confirm":
             this.content = POPUP_VERTICAL ? this.content + ("<br><br><ul style='width: " + this.width + "px; float:left; text-align:center;'><li id='popup_ok_button' class='button text_shadow' style='width: " + this.width + "px;'><span class='blue_text'>Ok</span></li><li id='popup_close_button' class='button text_shadow' style='width: " + this.width + "px;'><span class='blue_text'>Cancel</span></li></ul>") : this.content + ("<br><br><ul style='width: " + this.width + "px; float:left; text-align:center;'><li id='popup_close_button' class='button text_shadow' style='width: " + this.width / 2 + "px;position:absolute;left:0%;'><span class='blue_text'>Cancel</span></li><li id='popup_ok_button' class='button text_shadow' style='width: " + this.width / 2 + "px;position:absolute;left:50%;'><span class='blue_text'>Ok</span></li></ul>");
             break;
+            
         case "tutorial":
-            this.content = POPUP_VERTICAL ? this.content + ("<br><br><ul style='width: " + this.width + "px; float:left; text-align:center;'><li id='popup_ok_button' class='button text_shadow' style='width: " + this.width + "px;'><span class='blue_text'>Continue</span></li><li id='popup_disable_tutorial' class='button text_shadow' style='width: " + this.width + "px;'><span class='blue_text'>Disable Tutorial</span></li><li style='height:4px'></li></ul>") : this.content + ("<br><br><ul style='width: " + this.width + "px; float:left; text-align:center;'><li id='popup_disable_tutorial' class='button text_shadow' style='width: " + this.width / 2 + "px;position:absolute;left:0%;'><span class='blue_text'>Disable Tutorial</span></li><li id='popup_ok_button' class='button text_shadow' style='width: " + this.width / 2 + "px;position:absolute;left:50%;'><span class='blue_text'>Continue</span></li><li style='height:4px'></li></ul>");
+            this.content += "<div class='mt-3 row align-items-center justify-content-between'>"
+                this.content += "<div class='col-auto'><button type='button' id='popup_disable_tutorial' class='btn p-0'>Disable Tutorial</button></div>"
+                this.content += "<div class='col-auto'><button type='button' id='popup_ok_button' class='btn bg-bar-dark border'>Continue</button></div>"
+            this.content += "</div>"
             break;
+            
         default:
             this.content += "<br><br><ul style='width: " + this.width + "px; float:left; text-align:center;'><li id='popup_ok_button' class='button text_shadow' style='width: " + this.width + "px;'><span class='blue_text'>Ok</span></li></ul>"
         }
         this.draw = function() {
             currentPopup && currentPopup.drop();
             currentPopup = this;
-            document.getElementById("popup_content") && (document.getElementById("popup_content").innerHTML = "<span style='float:left; text-align:center;'>" + this.content + "</span>");
+            document.getElementById("popup_content") && (document.getElementById("popup_content").innerHTML = this.content);
             switch (this.type) {
             case "prompt":
                 this.promptValue = function() {
@@ -7173,16 +7183,12 @@ $(document).ready(function() {
                 $("#popup_ok_button").click(this.drop)
             }
             $("#popup_info").hide();
-            $("#popup").css("top", "" + parseInt(($(window).height() - d) / 2) + "px");
-            $("#popup").css("left", "" + parseInt(($(window).width() - b) / 2) + "px");
             $("#popup_content").css("width", "" + b + "px");
             $("#line_top").css("width", "" + b + "px");
             $("#line_down").css("width", "" + b + "px");
-            $("#popup_content").css("height", "" + (d + 12) + "px");
             $("#popup_content").mCustomScrollbar(ea);
             "info" == this.type && ($("#popup_container").css("z-index", 0),
             $("#popup_container").css("background-color", "rgba(2, 4, 5, 0.0)"));
-            "tutorial" == this.type && $("#popup_container").css("background-color", "rgba(2, 4, 5, 0.7)");
             $("#popup_container").show();
             playAudio("confirm")
         }
@@ -7397,9 +7403,6 @@ $(document).ready(function() {
         
         K();
         $("#planet_interface").show();
-        $("#back_button").unbind();
-        $("#back_button").click(O);
-        $("#back_button").show();
         game.searchPlanet(b.id) && ($("#bottom_build_menu").show(),
         5 <= game.researches[3].level ? ($("#b_market_icon").show(),
         $("#b_shipyard_icon").show()) : (1 <= game.researches[3].level ? $("#b_shipyard_icon").show() : $("#b_shipyard_icon").hide(),
@@ -7410,11 +7413,6 @@ $(document).ready(function() {
         K();
         $("#building_selection_planet_icon").attr("src", "" + IMG_FOLDER + "/" + currentPlanet[PLANET_IMG_FIELD] + (1 == PLANET_FOLDER_DOUBLE ? "/" + currentPlanet[PLANET_IMG_FIELD] : "") + ".png");
         $("#building_selection_interface").show();
-        $("#back_button").unbind();
-        $("#back_button").click(function() {
-            C(currentPlanet)
-        });
-        $("#back_button").show();
         $("#bottom_build_menu").show();
         5 <= game.researches[3].level ? ($("#b_market_icon").show(),
         $("#b_shipyard_icon").show()) : (1 <= game.researches[3].level && $("#b_shipyard_icon").show(),
@@ -7422,7 +7420,6 @@ $(document).ready(function() {
     }
     function z(b, d) {
         currentInterface = "planetBuildingInterface_" + b;
-        currentInterfaceCategory = "planet";
         currentPlanet = d;
         currentUpdater = function() {}
                 
@@ -7658,9 +7655,6 @@ $(document).ready(function() {
         $("#arrow_mini_right").show()) : ($("#arrow_mini_left").hide(),
         $("#arrow_mini_right").hide());
         $("#planet_building_interface").show();
-        $("#back_button").unbind();
-        $("#back_button").click(B);
-        $("#back_button").show();
         game.searchPlanet(currentPlanet.id) && ($("#bottom_build_menu").show(),
         5 <= game.researches[3].level ? ($("#b_market_icon").show(),
         $("#b_shipyard_icon").show()) : (1 <= game.researches[3].level && $("#b_shipyard_icon").show(),
@@ -7837,9 +7831,6 @@ $(document).ready(function() {
         K();
         E();
         $("#shipyard_interface").show();
-        $("#back_button").unbind();
-        $("#back_button").click(B);
-        $("#back_button").show();
         game.searchPlanet(currentPlanet.id) && ($("#bottom_build_menu").show(),
         5 <= game.researches[3].level ? ($("#b_market_icon").show(),
         $("#b_shipyard_icon").show()) : (1 <= game.researches[3].level && $("#b_shipyard_icon").show(),
@@ -7941,9 +7932,6 @@ $(document).ready(function() {
             currentUpdater();
             K();
             $("#tech_interface").show();
-            $("#back_button").unbind();
-            $("#back_button").click(I);
-            $("#back_button").show();
             $("#nebula_name").show();
             game.searchPlanet(currentPlanet.id) && ($("#bottom_build_menu").show(),
             5 <= game.researches[3].level ? ($("#b_market_icon").show(),
@@ -8038,9 +8026,6 @@ $(document).ready(function() {
             currentUpdater();
             K();
             $("#research_interface").show();
-            $("#back_button").unbind();
-            $("#back_button").click(I);
-            $("#back_button").show();
             game.searchPlanet(currentPlanet.id) && ($("#bottom_build_menu").show(),
             5 <= game.researches[3].level ? ($("#b_market_icon").show(),
             $("#b_shipyard_icon").show()) : (1 <= game.researches[3].level && $("#b_shipyard_icon").show(),
@@ -8181,9 +8166,6 @@ $(document).ready(function() {
         K();
         $("#map_interface").show();
         $("#nebula_name").show();
-        $("#back_button").unbind();
-        $("#back_button").click(I);
-        $("#back_button").show();
         n = Date.now();
         console.log("Map loading time: " + (n - e) + "ms")
     }
@@ -8991,9 +8973,6 @@ $(document).ready(function() {
         ;
         K();
         $("#ship_interface").show();
-        $("#back_button").unbind();
-        $("#back_button").click(I);
-        $("#back_button").show();
         game.searchPlanet(currentPlanet.id) && ($("#bottom_build_menu").show(),
         5 <= game.researches[3].level ? ($("#b_market_icon").show(),
         $("#b_shipyard_icon").show()) : (1 <= game.researches[3].level && $("#b_shipyard_icon").show(),
@@ -9591,9 +9570,6 @@ $(document).ready(function() {
         K();
         x();
         $("#market_interface").show();
-        $("#back_button").unbind();
-        $("#back_button").click(B);
-        $("#back_button").show();
         game.searchPlanet(currentPlanet.id) && ($("#bottom_build_menu").show(),
         5 <= game.researches[3].level ? ($("#b_market_icon").show(),
         $("#b_market_icon").show()) : (1 <= game.researches[3].level && $("#b_market_icon").show(),
@@ -10549,9 +10525,6 @@ $(document).ready(function() {
         K();
         $("#bottom_build_menu").show();
         $("#planet_selection_interface").show();
-        $("#back_button").unbind();
-        $("#back_button").click(I);
-        $("#back_button").show()
     }
     function ka() {
         btoa(capital);

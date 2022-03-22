@@ -60,7 +60,6 @@ li {
 
 #popup_container {
 	position:absolute;
-	border:none;
 	top: 0px;
 	left: 0px;
 	right: 0px;
@@ -69,7 +68,7 @@ li {
 	padding: 0;
 	width: 100%;
 	height: 100%;
-	background-color: rgba(2, 4, 5, 0.7);
+	background-color: rgba(2, 4, 5, 0.75);
 	z-index:100;
 	visibility: visible;
 }
