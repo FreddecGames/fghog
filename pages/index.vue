@@ -29,12 +29,12 @@
                 <div class="bg-2 rounded border p-3" style="width:380px;">
                     <div class="row g-3">
                         <div class="col-12 text-center" v-html="popupText"></div>
-                        <div class="col-6 text-start">
-                            <button v-if="popupCancelText" type="button" class="btn" @click="popupCancelAction()">
+                        <div v-if="popupCancelText" class="col-6 text-start">
+                            <button type="button" class="btn" @click="popupCancelAction()">
                                 <span>{{ popupCancelText }}</span>
                             </button>
                         </div>
-                        <div class="col-6 text-end">
+                        <div v-if="popupOkText" class="col-6 text-end">
                             <button type="button" class="btn" @click="popupOkAction()">
                                 <span>{{ popupOkText }}</span>
                             </button>
@@ -772,14 +772,32 @@ class Quest {
 var tutorialsDef = [
     {
         id: "tut0",
-        text: "<div class='text-primary text-center h5 mb-4'>Welcome Commander</div><div class='text-normal text-center'>You finally woke up after a long cryosleep. 232 years have passed since you boarded the Vitha, but finally you reached your new home <span class='text-white'>Promision</span>.</div><div class='mt-2 text-danger text-center'>This version is a rewriting/remake of the original game. It is still under development so bugs and data lost could happen!</div>",
-        check: function() { return true },
-        action: function(state) { state.showPlanetPage(state.planets['promision'] ) },
+        text: "<div class='text-primary text-center h5 mb-4'>Welcome Commander</div><div class='text-normal text-center'>You finally woke up after a long cryosleep. 232 years have passed since you boarded the Vitha, but finally you reached your new home <span class='text-white'>Promision</span>.</div><div class='mt-2 text-danger text-center'>This version is a rewriting/remake of the original game. It is still under development so bugs and data lost could happen!</div><div class='mt-2 text-warning text-center'>You could disable this tutorial. To open it again, click on the icon <i class='fas fa-fw fa-question-circle'></i> in the bottom-right corner of the screen</div>",
+        check: function(state) { return true },
+        action: function(state) { if (state.currentPage != "planet" && state.currentPlanet.id != "promision") state.showPlanetPage(state.planets['promision'] ) },
     },
     {
         id: "tut1",
+        text: "<div class='text-primary text-center h5 mb-4'>Let's do a little briefing</div><div class='text-normal text-center'>In this page you can see basic infos about your planet.</div><div class='mt-2 text-normal text-center'>On the left you can see a list of resources that can be <span class='text-white'>extracted</span> on this planet, like <span class='text-white'>Iron</span>.</div><div class='mt-2 text-normal text-center'>Click on the icon <i class='fas fa-fw fa-dice-d20'></i> in the bottom menu to access the <span class='text-white'>Extraction</span> page.</div>",
+        check: function(state) { return true },
+        action: function(state) { },
+    },
+    {
+        id: "tut2",
+        text: "<div class='text-primary text-center h5 mb-4'>Let's extract Iron</div><div class='text-normal text-center'>In this page, you can construct buildings to extract resources. By clicking on the desired building, you can see more details about it.</div><div class='mt-2 text-normal text-center'>On the left you can see how many resources are being produced every second.</div><div class='mt-2 text-normal text-center'>Now click on the icon <i class='fas fa-fw fa-plus-circle'></i>1 on the right of <span class='text-white'>Mining Plant</span> to build 1 more.</div>",
+        check: function(state) { return state.currentPage == "extraction" && state.currentPlanet.id == "promision" },
+        action: function(state) { },
+    },
+    {
+        id: "tut3",
+        text: "<div class='text-primary text-center h5 mb-4'>Let's extract Iron</div><div class='text-normal text-center'>Perfect! You can now see on the right how <span class='text-white'>Iron</span> production has doubled!</div><div class='mt-2 text-normal text-center'>Keep building <span class='text-white'>Mining Plants</span>, until you reach 10 of them. Should only take few seconds!</div>",
+        check: function(state) { return state.currentPlanet.buildings["mine"].count > 1 },
+        action: function(state) { },
+    },
+    {
+        id: "tut4",
         text: "<div class='text-primary text-center h5 mb-4'>Tutorial in progress</div><div class='text-normal text-center'>Next steps of tutorial are under development.</div><div class='mt-2 text-normal text-center'>To be informed when new steps and new features will be ready, please join Discord server.</div><div class='mt-2 text-normal text-center'><a href='https://discord.gg/3UkgeeT9CV' target='_blank' class='btn text-white'>Join Discord server</a></div>",
-        check: function() { return true },
+        check: function(state) { return true },
         action: function(state) { },
     },
 ]
@@ -1067,7 +1085,7 @@ export default {
                     break
             
             let tut = this.tutorials[tutId]
-            if (tut.check() == true && this.popupText == null) {
+            if (tut.check(this) == true && this.popupText == null) {
             
                 tut.action(this)
                 
@@ -1080,7 +1098,12 @@ export default {
                     this.closePopup();
                 }
                 
-                if (tut.id == "tutLast") {
+                if (tut.id == "tut4") {
+                
+                    this.popupOkText = null
+                    this.popupCancelText = "Got it"
+                }
+                else if (tut.id == "tutLast") {
                 
                     this.popupOkText = "End Tutorial"
                     this.popupCancelText = null
