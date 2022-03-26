@@ -1,0 +1,83 @@
+$white:                       #fff !default;  
+$danger:                      #f00 !default;
+$normal:                      #80c0ff !default;
+$primary:                     #80c0ff !default;
+$success:                     #0f0 !default;
+
+$font-family-sans-serif:      'Oxanium' !default;
+$font-size-base:              .75rem !default;
+
+$font-weight-normal:          700 !default;
+
+$small-font-size:             .75em !default;
+
+$border-color:                #20363b !default;
+
+$body-bg:                     #333 !default;
+
+$headings-margin-bottom:      0 !default;
+
+$input-btn-focus-box-shadow:  none !default;
+
+@import 'node_modules/bootstrap/scss/bootstrap.scss';
+
+////////////////////////////////////////////////////////////////////////////////
+
+@keyframes flicker {
+  0%   { opacity: .9; }
+  50%  { opacity: .1; }
+  100% { opacity: .9; }
+}
+@-o-keyframes flicker{
+  0%   { opacity: .9; }
+  50%  { opacity: .1; }
+  100% { opacity: .9; }
+}
+@-moz-keyframes flicker{
+  0%   { opacity: .9; }
+  50%  { opacity: .1; }
+  100% { opacity: .9; }
+}
+@-webkit-keyframes flicker{
+  0%   { opacity: .9; }
+  50%  { opacity: .1; }
+  100% { opacity: .9; }
+}
+
+.flicker {
+   -webkit-animation: flicker 2s infinite;
+   -moz-animation: flicker 2s infinite;
+   -o-animation: flicker 2s infinite;
+    animation: flicker 2s infinite;
+}    
+
+////////////////////////////////////////////////////////////////////////////////
+
+html, #__nuxt { width:100%; height:100%; overflow:hidden; }
+
+body { width:100%; height:100%; overflow:hidden; }
+
+#__layout { width:100%; height:100%; overflow:hidden; }
+
+////////////////////////////////////////////////////////////////////////////////
+
+.h5, h5 { font-size: 1.25rem; font-weight: $font-weight-normal; }
+
+.bg-1 { background-color: rgba(22, 38, 46, .5); }
+.bg-2 { background-color: rgba(22, 38, 46, .75); }
+.bg-3 { background-color: rgba(2, 4, 5, .7); }
+
+.bg-grid { background-image: url('~@/assets/ui/background.png'); }
+
+.text-gray { color: #aaa!important; }
+.text-normal { color: $normal!important; }
+
+.btn { color: $normal; }
+.btn.text-danger { color: $danger!important; }
+.btn.text-success { color: $success!important; }
+.btn:hover { color: $white!important; }
+.btn-hover:hover { background: rgba(75, 129, 156, .3); }
+
+.toast { font-size: .65rem; }
+
+.page { position: absolute; top: 50px; right: 0; bottom: 50px; margin: 0; width: 100%; }
