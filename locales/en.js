@@ -17,4 +17,5 @@ export default {
     'civName_human': 'New Human Horizons',
     
     'buildingName_mine': 'Mining Plant',
+    'buildingName_methaneExtractor': 'Methane Extractor',
 }

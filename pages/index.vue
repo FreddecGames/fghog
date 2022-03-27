@@ -211,15 +211,14 @@
                     <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
                         <div class="row g-3">
                             <div class="col-12 text-center">
-                                <div class="h5" :class="{ 'text-warning':currentPlanet.capital == true && currentPlanet.civId == 'human', 'text-normal':currentPlanet.capital == false && currentPlanet.civId == 'human', 'text-danger':currentPlanet.civId != null && currentPlanet.civId != 'human', 'text-gray':currentPlanet.civId == null }" >{{ $t('planetName_' + currentPlanet.id) }}</div>
-                                <div :if="currentPlanet.capital == true && currentPlanet.civId == 'human'" class="text-warning small">Capital</div>
+                                <div class="h5" :class="{ 'text-normal':currentPlanet.civId == 'human', 'text-danger':currentPlanet.civId != null && currentPlanet.civId != 'human', 'text-gray':currentPlanet.civId == null }" >{{ $t('planetName_' + currentPlanet.id) }}</div>
                             </div>
                             <PlanetInfo :planet="currentPlanet" class="col-12" />
                             <PlanetEnergy :planet="currentPlanet" class="col-12" />
                             <div class="col-12">
-                                <div v-for="(res, key) of currentPlanetProds" :key="key" class="row gx-2">
+                                <div v-for="(prod, key) of currentPlanetProds" :key="key" class="row gx-2">
                                     <span class="col text-normal">{{ $t('resName_' + key) }}</span>
-                                    <span class="col-auto" :class="{ 'text-white':res.count == 1, 'text-danger':res.count < 1, 'text-success':res.count > 1 }"><small class="opacity-75">x</small> {{ res.count.toFixed(2) }}</span>
+                                    <span class="col-auto" :class="{ 'text-white':prod == 1, 'text-danger':prod < 1, 'text-success':prod > 1 }"><small class="opacity-75">x</small> {{ prod.toFixed(2) }}</span>
                                 </div>
                             </div>
                         </div>
@@ -262,7 +261,7 @@
                     <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
                         <div class="row g-3">
                             <div class="col-12 text-center">
-                                <div class="h5" :class="{ 'text-warning':currentPlanet.capital == true && currentPlanet.civId == 'human', 'text-normal':currentPlanet.capital == false && currentPlanet.civId == 'human', 'text-danger':currentPlanet.civId != null && currentPlanet.civId != 'human', 'text-gray':currentPlanet.civId == null }" >{{ $t('planetName_' + currentPlanet.id) }}</div>
+                                <div class="h5" :class="{ 'text-normal':currentPlanet.civId == 'human', 'text-danger':currentPlanet.civId != null && currentPlanet.civId != 'human', 'text-gray':currentPlanet.civId == null }" >{{ $t('planetName_' + currentPlanet.id) }}</div>
                                 <div class="row gx-0 align-items-center">
                                     <button v-if="currentPlanet.civId == 'human' && humanPlanetCount > 1" type="button" class="col-auto btn"><i class="fas fa-fw fa-chevron-left"></i></button>
                                     <button type="button" class="col btn py-0" @click="showPlanetPage(currentPlanet)"><img width="160px" :src="require(`~/assets/planets/${currentPlanet.id}.png`)" /></button>
@@ -274,14 +273,14 @@
                         </div>
                     </div>
                     <div class="h-100 col p-3">
-                        <div v-for="(building, key) of currentPlanet.buildings" :key="key">
-                            <button v-if="isBuildingUnlocked(key) && building.type == 'extraction'" type="button" class="w-100 btn btn-hover border-bottom rounded-0" :class="{ 'bg-2':currentBuilding && currentBuilding.id == building.id }" @click="setCurrentBuilding(building)">
+                        <div v-for="(building, key) of currentPlanetExtractionBuildings" :key="key">
+                            <button type="button" class="w-100 btn btn-hover border-bottom rounded-0" :class="{ 'bg-2':currentBuilding && currentBuilding.id == building.id }" @click="setCurrentBuilding(building)">
                                 <div class="row gx-2 align-items-center">
                                     <button type="button" class="col-auto btn btn-sm" @click="building.toggleActive()">
                                         <i class="fas fa-fw fa-power-off" :class="{ 'text-danger':building.active == false, 'text-success': building.active == true }"></i>
                                     </button>
                                     <span class="col-auto text-primary">{{ $t('buildingName_' + key) }}</span>
-                                    <span class="col-auto text-white">{{ building.count.toLocaleString() }}</span>
+                                    <span class="col-auto" :class="{ 'text-white':building.count > 0, 'text-gray':building.count <= 0 }">{{ building.count.toLocaleString() }}</span>
                                     <span class="col"></span>
                                     <div v-if="building.queue > 0" class="col-auto">
                                         <button type="button" class="col-auto btn btn-sm" @click="currentPlanet.emptyQueue(building.id)">
@@ -290,9 +289,9 @@
                                         </button>
                                     </div>
                                     <div class="col-auto">
-                                        <button type="button" class="btn btn-sm" @click="currentPlanet.queueBuilding(building.id, 1)"><i class="fas fa-fw fa-plus-circle"></i>1</button>
-                                        <button type="button" class="btn btn-sm" @click="currentPlanet.queueBuilding(building.id, 10)"><i class="fas fa-fw fa-plus-circle"></i>10</button>
-                                        <button type="button" class="btn btn-sm" @click="currentPlanet.queueBuilding(building.id, 50)"><i class="fas fa-fw fa-plus-circle"></i>50</button>
+                                        <button type="button" class="btn btn-sm" :class="{ 'text-success':currentPlanet.canBuy(currentPlanet.getBuildingCost(building.id, 1)) }" @click="currentPlanet.queueBuilding(building.id, 1)"><i class="fas fa-fw fa-plus-circle"></i>1</button>
+                                        <button type="button" class="btn btn-sm" :class="{ 'text-success':currentPlanet.canBuy(currentPlanet.getBuildingCost(building.id, 10)) }" @click="currentPlanet.queueBuilding(building.id, 10)"><i class="fas fa-fw fa-plus-circle"></i>10</button>
+                                        <button type="button" class="btn btn-sm" :class="{ 'text-success':currentPlanet.canBuy(currentPlanet.getBuildingCost(building.id, 50)) }" @click="currentPlanet.queueBuilding(building.id, 50)"><i class="fas fa-fw fa-plus-circle"></i>50</button>
                                     </div>
                                 </div>
                             </button>
@@ -312,17 +311,27 @@
                                 </button>
                             </div>
                             <div class="col-12">
-                                <div class="text-gray mb-1">Production</div>
+                                <div class="row align-items-center gx-2 mb-1">
+                                    <div class="col-auto text-gray">Production</div>
+                                    <div class="col-auto" :class="{ 'text-white':currentBuilding.count > 0, 'text-gray':currentBuilding.count <= 0 }">{{ currentBuilding.count.toLocaleString() }}</div>
+                                </div>
                                 <div v-for="(res, key) of currentPlanet.getProductionArray(currentBuilding)" :key="key">
-                                    <div v-if="res > 0" class="row gx-2">
+                                    <div class="row gx-2">
                                         <span class="col text-normal">{{ $t('resName_' + key) }}</span>
                                         <span class="col-auto" :class="{ 'text-success':res > 0, 'text-gray':res == 0, 'text-danger':res < 0 }"><span v-if="res > 0">+</span><FormatNumber :value="res" /> <small class="opacity-75">/s</small></span>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-12">
-                                <div class="text-gray mb-1">Costs</div>
-                                <div v-for="(res, key) of currentPlanet.getBuildingCost(currentBuilding.id)" :key="key">
+                                <div class="row align-items-center gx-2 mb-1">
+                                    <div class="col-auto text-gray">Costs</div>
+                                    <div class="col-auto btn-group btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-sm py-0" :class="{ 'text-white':currentBuildCount == 1 }" @click="currentBuildCount = 1">1</button>
+                                        <button type="button" class="btn btn-sm py-0" :class="{ 'text-white':currentBuildCount == 10 }" @click="currentBuildCount = 10">10</button>
+                                        <button type="button" class="btn btn-sm py-0" :class="{ 'text-white':currentBuildCount == 50 }" @click="currentBuildCount = 50">50</button>
+                                    </div>
+                                </div>
+                                <div v-for="(res, key) of currentPlanet.getBuildingCost(currentBuilding.id, currentBuildCount)" :key="key">
                                     <div v-if="res >= 1" class="row gx-2">
                                         <span class="col text-normal">{{ $t('resName_' + key) }}</span>
                                         <span class="col-auto" :class="{ 'text-white':res <= currentPlanet.resources[key].count, 'text-danger':res > currentPlanet.resources[key].count }"><FormatNumber :value="res" /></span>
@@ -514,6 +523,8 @@ class Resource {
 var buildingsDef = [
 
     { id: "mine", type: "extraction", costs:{ iron:{ count: 10, mult: 1.2 }, steel:{ count: 9.75e-4, mult: 1.3 }, titanium:{ count: 2.1e-12, mult: 1.5 }}, prods:{ iron: 2 }, },
+    { id: "methaneExtractor", type: "extraction", costs:{ iron:{ count: 100, mult: 1.2 }, steel:{ count: .1, mult: 1.3 }, titanium:{ count: 3e-5, mult: 1.5 }}, prods:{ methane: 1 }, },
+    
     { id: "tradehub", },
 ]
 
@@ -524,12 +535,9 @@ class Building {
         this.id = def.id
         this.type = def.type
         this.costs = def.costs
+        this.prods = def.prods
         this.energy = def.energy || 0
-        this.researchPoint = def.researchPoint || 0
-        
-        this.prods = {}
-        resourcesDef.forEach(def => { this.prods[def.id] = { count: 0, notEnough: false } })
-        for (let rId in def.prods) this.prods[rId].count = def.prods[rId]
+        this.researchPoint = def.researchPoint || 0        
                 
         this.count = 0
         this.queue = 0
@@ -541,8 +549,8 @@ class Building {
 
 var planetsDef = [
     {
-        id: "promision", civId: "human", nebula: "perseus", capital:true, influence: 1, x: 64, y: 64, type: "terrestrial", radius: 6833, temp: 22, atmos: "oxygen", orbit: 1,
-        bases:{ biomass: 1, iron: 1, graphite: 1, titanium: 1, silicon: 1, oil: 1, uranium: 1, water: 1, methane: 1, sand: .5 },
+        id: "promision", civId: "human", nebula: "perseus", influence: 1, x: 64, y: 64, type: "terrestrial", radius: 6833, temp: 22, atmos: "oxygen", orbit: 1,
+        prods:{ biomass: 1, iron: 1, graphite: 1, titanium: 1, silicon: 1, oil: 1, uranium: 1, water: 1, methane: 1, sand: .5 },
     }, 
 ]
 
@@ -553,13 +561,15 @@ class Planet {
         this.id = def.id
         this.civId = def.civId
         this.nebula = def.nebula
-        this.capital = def.capital || false
         this.influence = def.influence
+        this.x = def.x
+        this.y = def.y
         this.type = def.type
         this.radius = def.radius
         this.temp = def.temp
         this.atmos = def.atmos
         this.orbit = def.orbit
+        this.prods = def.prods
         
         this.resources = {}
         resourcesDef.forEach(def => { this.resources[def.id] = new Resource(def) })
@@ -567,11 +577,7 @@ class Planet {
         this.researchPoint = { prod: 0, }
         
         this.buildings = {}
-        buildingsDef.forEach(def => { this.buildings[def.id] = new Building(def) })
-        
-        this.prods = {}
-        resourcesDef.forEach(def => { this.prods[def.id] = { count: 0 } })
-        for (let rId in def.bases) this.prods[rId].count = def.bases[rId]        
+        buildingsDef.forEach(def => { this.buildings[def.id] = new Building(def) })        
     }
     
     emptyQueue(bId) { this.buildings[bId].queue = 0 }
@@ -586,9 +592,9 @@ class Planet {
         for (let bId in this.buildings)
             if (this.buildings[bId].count > 0 && this.buildings[bId].active) {
                 let prodArray = this.getProductionArray(this.buildings[bId])
-                for (let rId in this.resources)
+                for (let rId in prodArray)
                     this.resources[rId].prod += prodArray[rId]
-                this.researchPoint.prod += prodArray.researchPoint
+                if (prodArray.researchPoint) this.researchPoint.prod += prodArray.researchPoint
             }
             
         for (let rId in this.resources)
@@ -598,39 +604,33 @@ class Planet {
     getProductionArray(building) {
     
         let ret = {}
-        for (let rId in this.resources) ret[rId] = 0
-        ret.researchPoint = 0
         
         let energyCoeff = this.getEnergyCoeff()
         if (building.energy >= 0) energyCoeff = 1
         
         if (building.type == "extractor") {
         
-            for (let rId in this.resources)
-                ret[rId] = building.prods[rId].count * this.prods[rId].count * energyCoeff
+            for (let rId in building.prods)
+                ret[rId] = building.prods[rId].count * this.prods[rId] * energyCoeff
         }
         else {
             
             let canProduce = true
-            for (let rId in this.resources) {
-                if (this.resources[rId].count + building.count * building.prods[rId].count < 0) {
+            for (let rId in building.prods) {
+                if (this.resources[rId].count + building.count * building.prods[rId] < 0) {
                     canProduce = false
-                    building.prods[rId].notEnough = true                   
+                    break
                 }
-                else building.prods[rId].notEnough = false
             }
             
             if (canProduce) {
             
-                for (let rId in this.resources)
-                    ret[rId] = building.prods[rId].count * this.prods[rId].count * energyCoeff
-                    
-                ret.researchPoint = building.researchPoint * energyCoeff
+                for (let rId in building.prods)
+                    ret[rId] = building.prods[rId] * this.prods[rId] * energyCoeff
             }
         }
         
-        for (let rId in this.resources) ret[rId] *= building.count
-        ret.researchPoint *= building.count
+        for (let rId in building.prods) ret[rId] *= building.count
         
         return ret
     }
@@ -677,7 +677,7 @@ class Planet {
         
             let canProduce = true
             for (let rId in this.resources)
-                if (this.resources[rId].count + building.count * building.prods[rId].count < 0) {
+                if (this.resources[rId].count + building.count * building.prods[rId] < 0) {
                     canProduce = false
                     break
                 }
@@ -689,15 +689,22 @@ class Planet {
         return ret
     }
     
-    getBuildingCost(bId) {
+    getBuildingCost(bId, count) {
     
         let ret = {}
+        
         let building = this.buildings[bId]
+        for (let rId in building.costs) {
         
-        for (let rId in this.resources) ret[rId] = 0
-        
-        for (let rId in building.costs)
-            ret[rId] += building.costs[rId].count * Math.pow(building.costs[rId].mult, building.count)
+            let t1 = Math.pow(building.costs[rId].mult, building.count)
+            ret[rId] = building.costs[rId].count * t1
+            
+            for (let i = 1; i < count; i++) {
+            
+                t1 *= building.costs[rId].mult
+                ret[rId] += building.costs[rId].count * t1
+            }
+        }
         
         return ret
     }
@@ -707,8 +714,7 @@ class Planet {
         let ret = true
         
         for (let rId in costs)
-            if (costs[rId] >= 1 && this.resources[rId].count < costs[rId]) {
-            
+            if (costs[rId] >= 1 && this.resources[rId].count < costs[rId]) {            
                 ret = false
                 break
             }
@@ -772,30 +778,62 @@ class Quest {
 var tutorialsDef = [
     {
         id: "tut0",
-        text: "<div class='text-primary text-center h5 mb-4'>Welcome Commander</div><div class='text-normal text-center'>You finally woke up after a long cryosleep. 232 years have passed since you boarded the Vitha, but finally you reached your new home <span class='text-white'>Promision</span>.</div><div class='mt-2 text-danger text-center'>This version is a rewriting/remake of the original game. It is still under development so bugs and data lost could happen!</div><div class='mt-2 text-warning text-center'>You could disable this tutorial. To open it again, click on the icon <i class='fas fa-fw fa-question-circle'></i> in the bottom-right corner of the screen</div>",
+        text: "<div class='text-primary text-center h5 mb-4'>Welcome Commander</div>" +
+              "<div class='text-normal text-center'>You finally woke up after a long cryosleep. 232 years have passed since you boarded the Vitha, but finally you reached your new home <span class='text-white'>Promision</span>.</div>" +
+              "<div class='mt-2 text-danger text-center'>This version is a rewriting/remake of the original game. It is still under development so bugs and data lost could happen!</div>" +
+              "<div class='mt-2 text-warning text-center'>You could disable this tutorial. To open it again, click on the icon <i class='fas fa-fw fa-question-circle'></i> in the bottom-right corner of the screen</div>",
         check: function(state) { return true },
-        action: function(state) { if (state.currentPage != "planet" && state.currentPlanet.id != "promision") state.showPlanetPage(state.planets['promision'] ) },
+        action: function(state) { if (state.currentPage != "planet" || state.currentPlanet.id != "promision") state.showPlanetPage(state.planets['promision'] ) },
     },
     {
         id: "tut1",
-        text: "<div class='text-primary text-center h5 mb-4'>Let's do a little briefing</div><div class='text-normal text-center'>In this page you can see basic infos about your planet.</div><div class='mt-2 text-normal text-center'>On the left you can see a list of resources that can be <span class='text-white'>extracted</span> on this planet, like <span class='text-white'>Iron</span>.</div><div class='mt-2 text-normal text-center'>Click on the icon <i class='fas fa-fw fa-dice-d20'></i> in the bottom menu to access the <span class='text-white'>Extraction</span> page.</div>",
+        text: "<div class='text-primary text-center h5 mb-4'>Let's do a little briefing</div>" +
+              "<div class='text-normal text-center'>In this page you can see basic infos about your planet.</div>" +
+              "<div class='mt-2 text-normal text-center'>On the left you can see a list of resources that can be <span class='text-white'>extracted</span> on this planet, like <span class='text-white'>Iron</span>.</div>" +
+              "<div class='mt-2 text-normal text-center'>Click on the icon <i class='fas fa-fw fa-dice-d20'></i> in the bottom menu to access the <span class='text-white'>Extraction</span> page.</div>",
         check: function(state) { return true },
-        action: function(state) { },
+        action: function(state) { if (state.currentPage != "planet" || state.currentPlanet.id != "promision") state.showPlanetPage(state.planets['promision'] ) },
     },
     {
         id: "tut2",
-        text: "<div class='text-primary text-center h5 mb-4'>Let's extract Iron</div><div class='text-normal text-center'>In this page, you can construct buildings to extract resources. By clicking on the desired building, you can see more details about it.</div><div class='mt-2 text-normal text-center'>On the left you can see how many resources are being produced every second.</div><div class='mt-2 text-normal text-center'>Now click on the icon <i class='fas fa-fw fa-plus-circle'></i>1 on the right of <span class='text-white'>Mining Plant</span> to build 1 more.</div>",
+        text: "<div class='text-primary text-center h5 mb-4'>Let's extract Iron</div>" +
+              "<div class='text-normal text-center'>In this page, you can construct buildings to extract resources. By clicking on the desired building, you can see more details about it.</div>" +
+              "<div class='mt-2 text-normal text-center'>On the left you can see how many resources are being produced every second.</div>" +
+              "<div class='mt-2 text-normal text-center'>Now click on the icon <i class='fas fa-fw fa-plus-circle'></i>1 on the right of <span class='text-white'>Mining Plant</span> to build 1 more.</div>",
         check: function(state) { return state.currentPage == "extraction" && state.currentPlanet.id == "promision" },
         action: function(state) { },
     },
     {
         id: "tut3",
-        text: "<div class='text-primary text-center h5 mb-4'>Let's extract Iron</div><div class='text-normal text-center'>Perfect! You can now see on the right how <span class='text-white'>Iron</span> production has doubled!</div><div class='mt-2 text-normal text-center'>Keep building <span class='text-white'>Mining Plants</span>, until you reach 10 of them. Should only take few seconds!</div>",
+        text: "<div class='text-primary text-center h5 mb-4'>Let's extract Iron</div>" +
+              "<div class='text-normal text-center'>Perfect! You can now see on the right how <span class='text-white'>Iron</span> production has doubled!</div>" +
+              "<div class='mt-2 text-normal text-center'>Keep building <span class='text-white'>Mining Plants</span>, until you reach 10 of them. Should only take few seconds!</div>",
         check: function(state) { return state.currentPlanet.buildings["mine"].count > 1 },
-        action: function(state) { },
+        action: function(state) { if (state.currentPage != "extraction" || state.currentPlanet.id != "promision") { state.currentPlanet = state.planets["promision"]; state.showExtractionPage(); } },
     },
     {
         id: "tut4",
+        text: "<div class='text-primary text-center h5 mb-4'>Let's go further</div>" +
+              "<div class='text-normal text-center'>Perfect! But <span class='text-white'>Iron</span> is not the only resource you will need.</div>" +
+              "<div class='mt-2 text-normal text-center'>Let's build a <span class='text-white'>Methane Extractor</span> to extract <span class='text-white'>Methane</span>.</div>",
+        check: function(state) { return state.currentPlanet.buildings["mine"].count > 9 },
+        action: function(state) { if (state.currentPage != "extraction" || state.currentPlanet.id != "promision") { state.currentPlanet = state.planets["promision"]; state.showExtractionPage(); } },
+    },
+    {
+        id: "tut5",
+        text: "<div class='text-primary text-center h5 mb-4'>Let's go further</div>" +
+              "<div class='text-normal text-center'>Great! But <span class='text-white'>Methane</span> alone is not that useful, we need <span class='text-white'>Fuel</span>.</div>" +
+              "<div class='mt-2 text-normal text-center'>Click on the icon <i class='fas fa-fw fa-industry'></i> in the bottom menu to access the <span class='text-white'>Production</span> page.</div>",
+        check: function(state) { return state.currentPlanet.buildings["methaneExtractor"].count > 0 },
+        action: function(state) { if (state.currentPage != "extraction" || state.currentPlanet.id != "promision") { state.currentPlanet = state.planets["promision"]; state.showExtractionPage(); } },
+    },
+
+//    "<div class='text-primary text-center h5 mb-4'>Let's go further</div>" +
+//    "In this interface you can construct buildings that transform raw resources, like iron and methane, into more useful and advanced resources."
+//    "Let's construct a <span class='white_text'>Methane Processer</span> to convert methane into fuel.",
+    
+    {
+        id: "tut6",
         text: "<div class='text-primary text-center h5 mb-4'>Tutorial in progress</div><div class='text-normal text-center'>Next steps of tutorial are under development.</div><div class='mt-2 text-normal text-center'>To be informed when new steps and new features will be ready, please join Discord server.</div><div class='mt-2 text-normal text-center'><a href='https://discord.gg/3UkgeeT9CV' target='_blank' class='btn text-white'>Join Discord server</a></div>",
         check: function(state) { return true },
         action: function(state) { },
@@ -855,6 +893,7 @@ export default {
             currentPage:'planet',
             currentPlanet: null,
             currentBuilding: null,
+            currentBuildCount: 1,
             
             quests: {},
             planets: {},
@@ -900,8 +939,19 @@ export default {
             let ret = {}
             
             for (let rId in this.currentPlanet.prods)
-                if (this.isResUnlocked(rId) && this.currentPlanet.prods[rId].count > 0)
+                if (this.isResUnlocked(rId) && this.currentPlanet.prods[rId] > 0)
                     ret[rId] = this.currentPlanet.prods[rId]
+            
+            return ret
+        },
+        
+        currentPlanetExtractionBuildings() {
+        
+            let ret = {}
+            
+            for (let bId in this.currentPlanet.buildings)
+                if (this.isBuildingUnlocked(bId) && this.currentPlanet.buildings[bId].type == 'extraction')
+                    ret[bId] = this.currentPlanet.buildings[bId]
             
             return ret
         },
@@ -1065,7 +1115,7 @@ export default {
                     for (let bId in this.planets[pId].buildings)
                         for (let i = 0; i < this.planets[pId].buildings[bId].queue; i++) {
                         
-                            let costs = this.planets[pId].getBuildingCost(bId)
+                            let costs = this.planets[pId].getBuildingCost(bId, 1)
                             if (this.planets[pId].canBuy(costs) == true) {
                                 
                                 this.planets[pId].buildings[bId].count += 1
@@ -1098,7 +1148,7 @@ export default {
                     this.closePopup();
                 }
                 
-                if (tut.id == "tut4") {
+                if (tut.id == "tut6") {
                 
                     this.popupOkText = null
                     this.popupCancelText = "Got it"
@@ -1186,8 +1236,6 @@ export default {
         },
 
         save() {
-            
-            console.log("coucou")
             
             let saveddata = {
             
