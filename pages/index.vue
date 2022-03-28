@@ -260,92 +260,35 @@
                 <div class="h-100 d-flex align-items-stretch">
                     <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
                         <div class="row g-3">
-                            <div class="col-12 text-center">
-                                <div class="h5" :class="{ 'text-normal':currentPlanet.civId == 'human', 'text-danger':currentPlanet.civId != null && currentPlanet.civId != 'human', 'text-gray':currentPlanet.civId == null }" >{{ $t('planetName_' + currentPlanet.id) }}</div>
-                                <div class="row gx-0 align-items-center">
-                                    <button v-if="currentPlanet.civId == 'human' && humanPlanetCount > 1" type="button" class="col-auto btn"><i class="fas fa-fw fa-chevron-left"></i></button>
-                                    <button type="button" class="col btn py-0" @click="showPlanetPage(currentPlanet)"><img width="160px" :src="require(`~/assets/planets/${currentPlanet.id}.png`)" /></button>
-                                    <button v-if="currentPlanet.civId == 'human' && humanPlanetCount > 1" type="button" class="col-auto btn"><i class="fas fa-fw fa-chevron-right"></i></button>
-                                </div>                                
-                            </div>
+                            <PlanetVignet :planet="currentPlanet" class="col-12" />
                             <PlanetEnergy :planet="currentPlanet" class="col-12" />
                             <PlanetResources :planet="currentPlanet" class="col-12" />
                         </div>
                     </div>
                     <div class="h-100 col p-3">
-                        <div v-for="(building, key) of currentPlanetExtractionBuildings" :key="key">
-                            <button type="button" class="w-100 btn btn-hover border-bottom rounded-0" :class="{ 'bg-2':currentBuilding && currentBuilding.id == building.id }" @click="setCurrentBuilding(building)">
-                                <div class="row gx-2 align-items-center">
-                                    <button type="button" class="col-auto btn btn-sm" @click="building.toggleActive()">
-                                        <i class="fas fa-fw fa-power-off" :class="{ 'text-danger':building.active == false, 'text-success': building.active == true }"></i>
-                                    </button>
-                                    <span class="col-auto text-primary">{{ $t('buildingName_' + key) }}</span>
-                                    <span class="col-auto" :class="{ 'text-white':building.count > 0, 'text-gray':building.count <= 0 }">{{ building.count.toLocaleString() }}</span>
-                                    <span class="col"></span>
-                                    <div v-if="building.queue > 0" class="col-auto">
-                                        <button type="button" class="col-auto btn btn-sm" @click="currentPlanet.emptyQueue(building.id)">
-                                            <span>+{{ building.queue }} in queue</span>
-                                            <i class="fas fa-fw fa-times-circle"></i>
-                                        </button>
-                                    </div>
-                                    <div class="col-auto">
-                                        <button type="button" class="btn btn-sm" :class="{ 'text-success':currentPlanet.canBuy(currentPlanet.getBuildingCost(building.id, 1)) }" @click="currentPlanet.queueBuilding(building.id, 1)"><i class="fas fa-fw fa-plus-circle"></i>1</button>
-                                        <button type="button" class="btn btn-sm" :class="{ 'text-success':currentPlanet.canBuy(currentPlanet.getBuildingCost(building.id, 10)) }" @click="currentPlanet.queueBuilding(building.id, 10)"><i class="fas fa-fw fa-plus-circle"></i>10</button>
-                                        <button type="button" class="btn btn-sm" :class="{ 'text-success':currentPlanet.canBuy(currentPlanet.getBuildingCost(building.id, 50)) }" @click="currentPlanet.queueBuilding(building.id, 50)"><i class="fas fa-fw fa-plus-circle"></i>50</button>
-                                    </div>
-                                </div>
-                            </button>
-                        </div>
+                        <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('extraction')" :key="key" :building="building" />
                     </div>
                     <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
-                        <div v-if="currentBuilding" class="row g-3">
-                            <div class="col-12 text-center">
-                                <div class="h5 text-primary">{{ $t('buildingName_' + currentBuilding.id) }}</div>
-                                <button v-if="currentBuilding.active == true" type="button" class="btn text-success" @click="currentBuilding.toggleActive()">
-                                    <i class="fas fa-fw fa-power-off"></i>
-                                    <span>Active</span>
-                                </button>
-                                <button v-if="currentBuilding.active == false" type="button" class="btn text-danger" @click="currentBuilding.toggleActive()">
-                                    <i class="fas fa-fw fa-power-off"></i>
-                                    <span>Inactive</span>
-                                </button>
-                            </div>
-                            <div class="col-12">
-                                <div class="row align-items-center gx-2 mb-1">
-                                    <div class="col-auto text-gray">Production</div>
-                                    <div class="col-auto" :class="{ 'text-white':currentBuilding.count > 0, 'text-gray':currentBuilding.count <= 0 }">{{ currentBuilding.count.toLocaleString() }}</div>
-                                </div>
-                                <div v-for="(res, key) of currentPlanet.getProductionArray(currentBuilding)" :key="key">
-                                    <div class="row gx-2">
-                                        <span class="col text-normal">{{ $t('resName_' + key) }}</span>
-                                        <span class="col-auto" :class="{ 'text-success':res > 0, 'text-gray':res == 0, 'text-danger':res < 0 }"><span v-if="res > 0">+</span><FormatNumber :value="res" /> <small class="opacity-75">/s</small></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="row align-items-center gx-2 mb-1">
-                                    <div class="col-auto text-gray">Costs</div>
-                                    <div class="col-auto btn-group btn-group-sm" role="group">
-                                        <button type="button" class="btn btn-sm py-0" :class="{ 'text-white':currentBuildCount == 1 }" @click="currentBuildCount = 1">1</button>
-                                        <button type="button" class="btn btn-sm py-0" :class="{ 'text-white':currentBuildCount == 10 }" @click="currentBuildCount = 10">10</button>
-                                        <button type="button" class="btn btn-sm py-0" :class="{ 'text-white':currentBuildCount == 50 }" @click="currentBuildCount = 50">50</button>
-                                    </div>
-                                </div>
-                                <div v-for="(res, key) of currentPlanet.getBuildingCost(currentBuilding.id, currentBuildCount)" :key="key">
-                                    <div v-if="res >= 1" class="row gx-2">
-                                        <span class="col text-normal">{{ $t('resName_' + key) }}</span>
-                                        <span class="col-auto" :class="{ 'text-white':res <= currentPlanet.resources[key].count, 'text-danger':res > currentPlanet.resources[key].count }"><FormatNumber :value="res" /></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
                     </div>
                 </div>
             </div>
-                                    
+            
             <div v-if="currentPage == 'production'" class="page">
-                <div class="pt-4 text-center">
-                    <span class="text-danger">Page not implemented yet</span>
+                <div class="h-100 d-flex align-items-stretch">
+                    <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                        <div class="row g-3">
+                            <PlanetVignet :planet="currentPlanet" class="col-12" />
+                            <PlanetEnergy :planet="currentPlanet" class="col-12" />
+                            <PlanetResources :planet="currentPlanet" class="col-12" />
+                        </div>
+                    </div>
+                    <div class="h-100 col p-3">
+                        <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('production')" :key="key" :building="building" />
+                    </div>
+                    <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                        <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
+                    </div>
                 </div>
             </div>
             
@@ -421,7 +364,7 @@
                             <div class="col-auto">
                                 <button type="button" class="btn bg-bar border text-danger" style="width:85px;" @click="showHardResetPopup()">
                                     <div class="text-center h5"><i class="fas fa-fw fa-skull"></i></div>
-                                    <div class="small lh-sm mt-2">Wipe Locale Data</div>
+                                    <div class="small lh-sm mt-2">Wipe Local Data</div>
                                 </button>
                             </div>
                         </div>
@@ -524,6 +467,10 @@ var buildingsDef = [
 
     { id: "mine", type: "extraction", costs:{ iron:{ count: 10, mult: 1.2 }, steel:{ count: 9.75e-4, mult: 1.3 }, titanium:{ count: 2.1e-12, mult: 1.5 }}, prods:{ iron: 2 }, },
     { id: "methaneExtractor", type: "extraction", costs:{ iron:{ count: 100, mult: 1.2 }, steel:{ count: .1, mult: 1.3 }, titanium:{ count: 3e-5, mult: 1.5 }}, prods:{ methane: 1 }, },
+    { id: "graphiteExtractor", type: "extraction", costs:{ iron:{ count: 500, mult: 1.2 }, steel:{ count: 4e-4, mult: 1.3 }, titanium:{ count: 3e-5, mult: 1.5 }}, prods:{ graphite: 1 }, },
+    
+    { id: "methaneProcesser", type: "production", costs:{ iron:{ count: 100, mult: 1.1 }, steel:{ count: .25, mult: 1.2 }, titanium:{ count: 2e-4, mult: 1.3 }}, prods:{ fuel: 1, methane: -2 }, },
+    { id: "foundry", type: "production", costs:{ iron:{ count: 1e3, mult: 1.1 }, steel:{ count: .48, mult: 1.2 }, titanium:{ count: .01, mult: 1.3 }}, prods:{ steel: 2, iron: -1, graphite: -1, fuel: -1 }, },
     
     { id: "tradehub", },
 ]
@@ -538,13 +485,22 @@ class Building {
         this.prods = def.prods
         this.energy = def.energy || 0
         this.researchPoint = def.researchPoint || 0        
-                
+        
+        this.needs = {}
+        for (let rId in this.prods) this.needs[rId] = false
+        
         this.count = 0
         this.queue = 0
         this.active = true
     }
     
     toggleActive() { this.active = !this.active }
+    
+    hasNeeds() {
+    
+        for (let rId in this.needs) if (this.needs[rId] == true) return true
+        return false
+    }
 }
 
 var planetsDef = [
@@ -584,6 +540,15 @@ class Planet {
     
     queueBuilding(bId, count) { this.buildings[bId].queue += count }
     
+    destroyBuilding(bId, count) {
+    
+        this.buildings[bId].count -= count
+        
+        let refunds = this.getBuildingRefund(bId, count)
+        for (let rId in refunds)
+            this.resources[rId].count += refunds[rId]
+    }
+    
     produce(delta) {
     
         for (let rId in this.resources) this.resources[rId].prod = 0        
@@ -591,42 +556,68 @@ class Planet {
         
         for (let bId in this.buildings)
             if (this.buildings[bId].count > 0 && this.buildings[bId].active) {
-                let prodArray = this.getProductionArray(this.buildings[bId])
+                let prodArray = this.getProductionArray(bId)
                 for (let rId in prodArray)
                     this.resources[rId].prod += prodArray[rId]
                 if (prodArray.researchPoint) this.researchPoint.prod += prodArray.researchPoint
             }
             
-        for (let rId in this.resources)
-            this.resources[rId].count += this.resources[rId].prod * delta            
+        for (let rId in this.resources) {
+            this.resources[rId].count += this.resources[rId].prod * delta
+            if (this.resources[rId].count < 0) this.resources[rId].count = 0
+        }
     }
     
-    getProductionArray(building) {
+    getRawProduction(bId, count) {
     
         let ret = {}
+        
+        let building = this.buildings[bId]
+        
+        for (let rId in building.prods) {
+            ret[rId] = building.prods[rId] * count
+            if (this.prods[rId]) ret[rId] *= this.prods[rId]
+        }
+        
+        return ret
+    }
+    
+    getProductionArray(bId) {
+    
+        let ret = {}
+        
+        let building = this.buildings[bId]
         
         let energyCoeff = this.getEnergyCoeff()
         if (building.energy >= 0) energyCoeff = 1
         
-        if (building.type == "extractor") {
-        
-            for (let rId in building.prods)
-                ret[rId] = building.prods[rId].count * this.prods[rId] * energyCoeff
-        }
+        if (building.type == "extraction") {        
+            for (let rId in building.prods) {
+                ret[rId] = building.prods[rId] * energyCoeff
+                if (this.prods[rId]) ret[rId] *= this.prods[rId]
+            }
+        }        
         else {
             
             let canProduce = true
             for (let rId in building.prods) {
-                if (this.resources[rId].count + building.count * building.prods[rId] < 0) {
+                if (this.resources[rId].count + (building.count * building.prods[rId]) < 0) {
                     canProduce = false
-                    break
+                    building.needs[rId] = true
                 }
+                else building.needs[rId] = false
             }
             
-            if (canProduce) {
+            if (canProduce) {            
+                for (let rId in building.prods) {
+                    ret[rId] = building.prods[rId] * energyCoeff
+                    if (this.prods[rId]) ret[rId] *= this.prods[rId]
+                }
+            }
+            else {
             
                 for (let rId in building.prods)
-                    ret[rId] = building.prods[rId] * this.prods[rId] * energyCoeff
+                    ret[rId] = 0
             }
         }
         
@@ -705,6 +696,21 @@ class Planet {
                 ret[rId] += building.costs[rId].count * t1
             }
         }
+        
+        return ret
+    }
+    
+    getBuildingRefund(bId, count) {
+    
+        let ret = {}
+        
+        for (let rId in this.buildings[bId].costs) {
+            ret[rId] = 0
+            for (let n = 0; n < count; n++)
+                ret[rId] += (this.buildings[bId].costs[rId].count * Math.pow(this.buildings[bId].costs[rId].mult, this.buildings[bId].count - n - 1))
+        }
+
+        for (let rId in ret) ret[rId] /= 2
         
         return ret
     }
@@ -894,6 +900,7 @@ export default {
             currentPlanet: null,
             currentBuilding: null,
             currentBuildCount: 1,
+            currentDestroyCount: 1,
             
             quests: {},
             planets: {},
@@ -941,17 +948,6 @@ export default {
             for (let rId in this.currentPlanet.prods)
                 if (this.isResUnlocked(rId) && this.currentPlanet.prods[rId] > 0)
                     ret[rId] = this.currentPlanet.prods[rId]
-            
-            return ret
-        },
-        
-        currentPlanetExtractionBuildings() {
-        
-            let ret = {}
-            
-            for (let bId in this.currentPlanet.buildings)
-                if (this.isBuildingUnlocked(bId) && this.currentPlanet.buildings[bId].type == 'extraction')
-                    ret[bId] = this.currentPlanet.buildings[bId]
             
             return ret
         },
@@ -1065,6 +1061,17 @@ export default {
         
             this.save()
             this.showToast("Game saved in local storage!", "info")
+        },
+        
+        getCurrentPlanetBuildings(type) {
+        
+            let ret = {}
+            
+            for (let bId in this.currentPlanet.buildings)
+                if (this.isBuildingUnlocked(bId) && this.currentPlanet.buildings[bId].type == type)
+                    ret[bId] = this.currentPlanet.buildings[bId]
+            
+            return ret
         },
         
         //---

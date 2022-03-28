@@ -1,3 +1,4 @@
+$black:                       #000 !default;  
 $white:                       #fff !default;  
 $danger:                      #f00 !default;
 $normal:                      #80c0ff !default;
@@ -72,12 +73,25 @@ body { width:100%; height:100%; overflow:hidden; }
 .text-gray { color: #aaa!important; }
 .text-normal { color: $normal!important; }
 
+.medium { font-size: 0.65625rem; line-height: 1.2; }
+
 .btn { color: $normal; }
 .btn.text-danger { color: $danger!important; }
 .btn.text-success { color: $success!important; }
 .btn:hover { color: $white!important; }
 .btn-hover:hover { background: rgba(75, 129, 156, .3); }
 
+.btn-primary { color: $black; }
+
+.btn-outline-primary { color: $primary; }
+.btn-check:focus + .btn-outline-primary, .btn-outline-primary:focus { box-shadow: none; }
+
+.btn-outline-success { color: $success; }
+.btn-check:focus + .btn-outline-success, .btn-outline-success:focus { box-shadow: none; }
+
+.btn-outline-danger { color: $danger; }
+.btn-check:focus + .btn-outline-danger, .btn-outline-danger:focus { box-shadow: none; }
+    
 .toast { font-size: .65rem; }
 
 .page { position: absolute; top: 50px; right: 0; bottom: 50px; margin: 0; width: 100%; }

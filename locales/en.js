@@ -18,4 +18,7 @@ export default {
     
     'buildingName_mine': 'Mining Plant',
     'buildingName_methaneExtractor': 'Methane Extractor',
+    'buildingName_methaneProcesser': 'Methane Processer',
+    'buildingName_graphiteExtractor': 'Graphite Extractor',
+    'buildingName_foundry': 'Foundry',
 }
