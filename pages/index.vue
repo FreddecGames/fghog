@@ -492,6 +492,7 @@ class Building {
         this.count = 0
         this.queue = 0
         this.active = true
+        this.stoppedDelay = 0
     }
     
     toggleActive() { this.active = !this.active }
@@ -556,10 +557,16 @@ class Planet {
         
         for (let bId in this.buildings)
             if (this.buildings[bId].count > 0 && this.buildings[bId].active) {
-                let prodArray = this.getProductionArray(bId)
-                for (let rId in prodArray)
-                    this.resources[rId].prod += prodArray[rId]
-                if (prodArray.researchPoint) this.researchPoint.prod += prodArray.researchPoint
+                
+                if (this.buildings[bId].stoppedDelay > 10) this.buildings[bId].stoppedDelay = 0
+                else if (this.buildings[bId].stoppedDelay > 0) this.buildings[bId].stoppedDelay += delta
+                
+                if (this.buildings[bId].stoppedDelay <= 0) {
+                    let prodArray = this.getProductionArray(bId)
+                    for (let rId in prodArray)
+                        this.resources[rId].prod += prodArray[rId]
+                    if (prodArray.researchPoint) this.researchPoint.prod += prodArray.researchPoint
+                }
             }
             
         for (let rId in this.resources) {
@@ -599,13 +606,16 @@ class Planet {
         }        
         else {
             
-            let canProduce = true
+            let canProduce = true            
             for (let rId in building.prods) {
                 if (this.resources[rId].count + (building.count * building.prods[rId]) < 0) {
                     canProduce = false
                     building.needs[rId] = true
+                    building.stoppedDelay = 1
                 }
-                else building.needs[rId] = false
+                else {
+                    building.needs[rId] = false
+                }
             }
             
             if (canProduce) {            
@@ -615,7 +625,7 @@ class Planet {
                 }
             }
             else {
-            
+                
                 for (let rId in building.prods)
                     ret[rId] = 0
             }
