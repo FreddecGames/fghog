@@ -3,7 +3,7 @@
         <div class="col-12 text-center">
             <div class="h5 text-primary">{{ $t('buildingName_' + building.id) }}</div>
         </div>
-        <div v-if="building.count <= 0" class="col-12 mt-4">
+        <div v-if="building.count <= 0 && (building.prods || building.energy || building.researchPoint)" class="col-12 mt-4">
             <div class="row align-items-center gx-2 mb-1">
                 <div class="col-auto text-gray">
                     <i class="text-success medium fas fa-fw fa-power-off me-2 opacity-75"></i>
@@ -17,7 +17,7 @@
                 </div>
             </div>
         </div>
-        <div v-if="building.count > 0" class="col-12 mt-4">
+        <div v-if="building.count > 0 && (building.prods || building.energy || building.researchPoint)" class="col-12 mt-4">
             <div class="row align-items-center gx-2 mb-1">
                 <div class="col-auto text-gray">
                     <i v-if="building.active == true" class="text-success medium fas fa-fw fa-power-off me-2"></i>
@@ -83,7 +83,7 @@
                     <span class="col-auto text-white"><FormatNumber :value="res" /></span>
                 </div>
             </div>
-            <div class="text-end mt-1">
+            <div v-if="building.count >= $parent.currentDestroyCount" class="text-end mt-1">
                 <button type="button" class="btn btn-sm btn-outline-primary" style="width:75px;" @click="$parent.currentPlanet.destroyBuilding(building.id, $parent.currentDestroyCount)"><i class="fas fa-fw fa-minus-circle"></i> Destroy</button>
             </div>
             <div v-if="building.count < $parent.currentDestroyCount" class="mt-1 text-end">

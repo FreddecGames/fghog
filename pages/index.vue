@@ -183,8 +183,198 @@
             </div>
             
             <div v-if="currentPage == 'research'" class="page">
-                <div class="pt-4 text-center">
-                    <span class="text-danger">Page not implemented yet</span>
+                <div class="h-100 d-flex align-items-stretch">
+                    <div class="h-100 col p-3" style="overflow-y:auto;">
+                        <div class="text-center mb-3 h5 text-primary">Tech Tree</div>
+                        <div class="row g-1">
+                            <div class="col-12">
+                                <div class="row g-1 align-items-center">
+                                    <div class="col">
+                                        <ResearchSummary :research="researches['astronomy']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;">
+                                        <i class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                    </div>
+                                    <div class="col">
+                                        <ResearchSummary :research="researches['science']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;"></div>
+                                    <div class="col"></div>
+                                    <div class="col-auto text-center" style="width:20px;"></div>
+                                    <div class="col">
+                                        <ResearchSummary :research="researches['mineralogy']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;">
+                                        <i v-if="isResearchVisible('vulcan')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                    </div>
+                                    <div class="col">
+                                        <ResearchSummary v-if="isResearchVisible('vulcan')" :research="researches['vulcan']" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row g-1 align-items-center">
+                                    <div class="col text-center">
+                                        <div v-if="isResearchVisible('military')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('military')" :research="researches['military']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;"></div>
+                                    <div class="col">
+                                        <div class="text-center mb-1" style="height:15px;"></div>
+                                        <ResearchSummary v-if="isResearchVisible('artificial_intelligence')" :research="researches['artificial_intelligence']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;">
+                                        <div class="text-center mb-1" style="height:15px;"></div>
+                                        <i v-if="isResearchVisible('artificial_intelligence')" class="text-normal fas fa-fw fa-chevron-circle-left"></i>
+                                    </div>
+                                    <div class="col">
+                                        <div class="text-center mb-1" style="height:15px;"></div>
+                                        <ResearchSummary v-if="isResearchVisible('electronics')" :research="researches['electronics']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;">
+                                        <div class="text-center mb-1" style="height:15px;"></div>
+                                        <i v-if="isResearchVisible('electronics')" class="text-normal fas fa-fw fa-chevron-circle-left"></i>
+                                    </div>
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('material')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('material')" :research="researches['material']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;">
+                                        <div class="text-center mb-1" style="height:15px;"></div>
+                                        <i v-if="isResearchVisible('ice')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                    </div>
+                                    <div class="col">
+                                        <div class="text-center mb-1" style="height:15px;"></div>
+                                        <ResearchSummary v-if="isResearchVisible('ice')" :research="researches['ice']" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row g-1 align-items-center">
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('artofwar')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('artofwar')" :research="researches['artofwar']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;"></div>
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('halean')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('halean')" :research="researches['halean']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;"></div>
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('nuclear')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('nuclear')" :research="researches['nuclear']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;"></div>
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('chemical')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('chemical')" :research="researches['chemical']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;">
+                                        <div class="text-center mb-1" style="height:15px;"></div>
+                                        <i v-if="isResearchVisible('hydro')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                    </div>
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('hydro')" class="text-center mb-1" style="height:15px;"></div>
+                                        <ResearchSummary v-if="isResearchVisible('hydro')" :research="researches['hydro']" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row g-1 align-items-center">
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('karan_artofwar')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('karan_artofwar')" :research="researches['karan_artofwar']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;"></div>
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('quantum')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('quantum')" :research="researches['quantum']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;">
+                                        <div class="text-center mb-1" style="height:15px;"></div>
+                                        <i v-if="isResearchVisible('secret')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                    </div>
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('secret')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('secret')" :research="researches['secret']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;">
+                                        <div class="text-center mb-1" style="height:15px;"></div>
+                                        <i v-if="isResearchVisible('secret')" class="text-normal fas fa-fw fa-chevron-circle-left"></i>
+                                    </div>
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('mk_tech')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('mk_tech')" :research="researches['mk_tech']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;"></div>
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('environment')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('environment')" :research="researches['environment']" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row g-1 align-items-center">
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('xiran_artofwar')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('xiran_artofwar')" :research="researches['xiran_artofwar']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;"></div>
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('karan_nuclear')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('karan_nuclear')" :research="researches['karan_nuclear']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;"></div>
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('space_mining')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('space_mining')" :research="researches['space_mining']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;"></div>
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('rhodium')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('rhodium')" :research="researches['rhodium']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;"></div>
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('ammonia_chemistry')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('ammonia_chemistry')" :research="researches['ammonia_chemistry']" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row g-1 align-items-center">
+                                    <div class="col"></div>
+                                    <div class="col-auto text-center" style="width:20px;"></div>
+                                     <div class="col">
+                                        <div v-if="isResearchVisible('protohalean_science')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('protohalean_science')" :research="researches['protohalean_science']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;">
+                                        <div class="text-center mb-1" style="height:15px;"></div>
+                                        <i v-if="isResearchVisible('darkmatter_science')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                    </div>
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('darkmatter_science')" class="text-center mb-1" style="height:15px;"></div>
+                                        <ResearchSummary v-if="isResearchVisible('darkmatter_science')" :research="researches['darkmatter_science']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;">
+                                        <div class="text-center mb-1" style="height:15px;"></div>
+                                        <i v-if="isResearchVisible('osmium')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                    </div>
+                                    <div class="col">
+                                        <div v-if="isResearchVisible('osmium')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                        <ResearchSummary v-if="isResearchVisible('osmium')" :research="researches['osmium']" />
+                                    </div>
+                                    <div class="col-auto text-center" style="width:20px;"></div>
+                                    <div class="col"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                        <ResearchDetails v-if="currentResearch" :research="currentResearch" />
+                    </div>
                 </div>
             </div>
             
@@ -200,9 +390,27 @@
                 </div>
             </div>
 
-            <div v-if="currentPage == 'overview'" class="page">
-                <div class="pt-4 text-center">
-                    <span class="text-danger">Page not implemented yet</span>
+            <div v-if="currentPage == 'overview'" class="page p-3">
+                <div class="row g-3">
+                    <div class="col-12 text-center">
+                        <span class="h5 text-primary">Planets under control</span>
+                    </div>
+                    <div class="col-12">
+                        <div class="row g-1 align-items-center justify-content-center">
+                            <div v-for="(planet, key) of humanPlanets" :key="key" class="col-3">
+                                <button type="button" class="w-100 btn bg-1 rounded border" @click="showPlanetPage(planet)">
+                                    <div class="row g-2 align-items-center">
+                                        <div class="col-auto">
+                                            <img :src="require(`~/assets/planets/${key}.png`)" width="24px" />
+                                        </div>
+                                        <div class="col">
+                                            <span>{{ $t('planetName_' + key) }}</span>
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -293,20 +501,57 @@
             </div>
             
             <div v-if="currentPage == 'energy'" class="page">
-                <div class="pt-4 text-center">
-                    <span class="text-danger">Page not implemented yet</span>
+                <div class="h-100 d-flex align-items-stretch">
+                    <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                        <div class="row g-3">
+                            <PlanetVignet :planet="currentPlanet" class="col-12" />
+                            <PlanetEnergy :planet="currentPlanet" class="col-12" />
+                            <PlanetResources :planet="currentPlanet" class="col-12" />
+                        </div>
+                    </div>
+                    <div class="h-100 col p-3">
+                        <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('energy')" :key="key" :building="building" />
+                    </div>
+                    <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                        <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
+                    </div>
                 </div>
             </div>
             
             <div v-if="currentPage == 'labs'" class="page">
-                <div class="pt-4 text-center">
-                    <span class="text-danger">Page not implemented yet</span>
+                <div class="h-100 d-flex align-items-stretch">
+                    <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                        <div class="row g-3">
+                            <PlanetVignet :planet="currentPlanet" class="col-12" />
+                            <PlanetEnergy :planet="currentPlanet" class="col-12" />
+                            <PlanetResources :planet="currentPlanet" class="col-12" />
+                        </div>
+                    </div>
+                    <div class="h-100 col p-3">
+                        <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('research')" :key="key" :building="building" />
+                    </div>
+                    <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                        <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
+                    </div>
                 </div>
             </div>
             
             <div v-if="currentPage == 'others'" class="page">
-                <div class="pt-4 text-center">
-                    <span class="text-danger">Page not implemented yet</span>
+                <div class="h-100 d-flex align-items-stretch">
+                    <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                        <div class="row g-3">
+                            <PlanetVignet :planet="currentPlanet" class="col-12" />
+                            <PlanetEnergy :planet="currentPlanet" class="col-12" />
+                            <PlanetResources :planet="currentPlanet" class="col-12" />
+                        </div>
+                    </div>
+                    <div class="h-100 col p-3">
+                        <div v-if="Object.keys(getCurrentPlanetBuildings('other')).length < 1" class="text-center"><span class="text-gray">There is no building to show</span></div>
+                        <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('other')" :key="key" :building="building" />
+                    </div>
+                    <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                        <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
+                    </div>
                 </div>
             </div>
 
@@ -410,7 +655,6 @@ var resourcesDef = [
     { id: "oil", value: 2, reqs: { chemical: 1 }, },
     { id: "fuel", value: 6, },
     { id: "hydrogen", reqs: { hydro: 1, nuclear: 1 }, },
-    { id: "oxygen", reqs: { nononono: 1 }, },
     { id: "methane", },
     { id: "water", reqs: { hydro: 1 }, },
     { id: "osmium", reqs: { osmium: 1 }, },
@@ -424,7 +668,6 @@ var resourcesDef = [
     { id: "biomass", reqs: { environment: 1 } },
     { id: "ammunition", reqs: { military: 1 }, quests: { city_5: 0 }, },
     { id: "sand", reqs: { mineralogy: 4 }, },
-    { id: "empty cryocell", reqs: { nononono: 2 }, },
     { id: "coolant", reqs: { ice: 10 }, },
     { id: "robots", reqs: { artificial_intelligence: 1, halean: 1 }, },
     { id: "armor", reqs: { military: 12 }, },
@@ -440,7 +683,6 @@ var resourcesDef = [
     { id: "caesium", reqs: { karan_nuclear: 1 }, },
     { id: "thorium", reqs: { karan_nuclear: 1 }, },
     { id: "ammonia", reqs: { ammonia_chemistry: 1 }, },
-    { id: "loaded cryocell", reqs: { nononono: 2 }, },
     { id: "dark matter", reqs: { darkmatter_science: 1 }, },
     { id: "meissnerium", reqs: { electronics: 30 }, },
     { id: "meissner cell", reqs: { electronics: 35 }, },
@@ -468,10 +710,17 @@ var buildingsDef = [
     { id: "mine", type: "extraction", costs:{ iron:{ count: 10, mult: 1.2 }, steel:{ count: 9.75e-4, mult: 1.3 }, titanium:{ count: 2.1e-12, mult: 1.5 }}, prods:{ iron: 2 }, },
     { id: "methaneExtractor", type: "extraction", costs:{ iron:{ count: 100, mult: 1.2 }, steel:{ count: .1, mult: 1.3 }, titanium:{ count: 3e-5, mult: 1.5 }}, prods:{ methane: 1 }, },
     { id: "graphiteExtractor", type: "extraction", costs:{ iron:{ count: 500, mult: 1.2 }, steel:{ count: 4e-4, mult: 1.3 }, titanium:{ count: 3e-5, mult: 1.5 }}, prods:{ graphite: 1 }, },
-    
+    { id: "metalCollector", reqs:{ mineralogy: 4 }, type: "extraction", costs:{ steel:{ count: 2e3, mult: 1.25 }, titanium:{ count: .9, mult: 1.35 }}, prods:{ titanium: 10, uranium: 1 }, energy: -50 },    
+    { id: "sandQuarry", reqs:{ mineralogy: 4 }, type: "extraction", costs:{ steel:{ count: 5e3, mult: 1.25 }, titanium:{ count: 1e3, mult: 1.35 }}, prods:{ sand: 1 }, energy: -80 },
+
     { id: "methaneProcesser", type: "production", costs:{ iron:{ count: 100, mult: 1.1 }, steel:{ count: .25, mult: 1.2 }, titanium:{ count: 2e-4, mult: 1.3 }}, prods:{ fuel: 1, methane: -2 }, },
-    { id: "foundry", type: "production", costs:{ iron:{ count: 1e3, mult: 1.1 }, steel:{ count: .48, mult: 1.2 }, titanium:{ count: .01, mult: 1.3 }}, prods:{ steel: 2, iron: -1, graphite: -1, fuel: -1 }, },
+    { id: "foundry", type: "production", costs:{ iron:{ count: 1e3, mult: 1.1 }, steel:{ count: .48, mult: 1.2 }, titanium:{ count: .01, mult: 1.3 }}, prods:{ steel: 2, iron: -2, graphite: -1, fuel: -2 }, },
     
+    { id: "smallGenerator", type: "energy", costs:{ iron:{ count: 2e3, mult: 1.15 }, steel:{ count: 100, mult: 1.27 }, titanium:{ count: .17, mult: 1.35 }}, prods:{ fuel: -3 }, energy: 20 },
+    
+    { id: "laboratory", type: "research", costs:{ iron:{ count: 1e3, mult: 2 }, steel:{ count: 200, mult: 3 }, titanium:{ count: .01, mult: 4 }}, energy: -5, researchPoint: 4 },
+    
+    { id: "shipyard", reqs:{ astronomy: 1 }, type: "other", costs:{ steel:{ count: 5e3, mult: 2 }, titanium:{ count: 1e3, mult: 3.2 }}, },
     { id: "tradehub", },
 ]
 
@@ -531,6 +780,7 @@ class Planet {
         this.resources = {}
         resourcesDef.forEach(def => { this.resources[def.id] = new Resource(def) })
         
+        this.energy = { prod: 0, consum: 0, }
         this.researchPoint = { prod: 0, }
         
         this.buildings = {}
@@ -555,24 +805,43 @@ class Planet {
         for (let rId in this.resources) this.resources[rId].prod = 0        
         this.researchPoint.prod = 0
         
-        for (let bId in this.buildings)
-            if (this.buildings[bId].count > 0 && this.buildings[bId].active) {
-                
-                if (this.buildings[bId].stoppedDelay > 10) this.buildings[bId].stoppedDelay = 0
-                else if (this.buildings[bId].stoppedDelay > 0) this.buildings[bId].stoppedDelay += delta
-                
-                if (this.buildings[bId].stoppedDelay <= 0) {
-                    let prodArray = this.getProductionArray(bId)
-                    for (let rId in prodArray)
-                        this.resources[rId].prod += prodArray[rId]
-                    if (prodArray.researchPoint) this.researchPoint.prod += prodArray.researchPoint
-                }
-            }
+        let energy = { prod: 0, consum: 0 }
+        
+        for (let bId in this.buildings) {
+            let building = this.buildings[bId]
             
+            if (building.count > 0 && building.active) {
+                
+                if (building.stoppedDelay > 10) building.stoppedDelay = 0
+                else if (building.stoppedDelay > 0) building.stoppedDelay += delta
+                
+                if (building.stoppedDelay <= 0) {
+                                    
+                    if (this.canProduce(building.id) == true) {
+                    
+                        let energyCoeff = this.getEnergyCoeff()
+                        if (building.energy >= 0) energyCoeff = 1
+                        
+                        for (let rId in building.prods) {
+                            this.resources[rId].prod += building.prods[rId] * building.count * energyCoeff
+                            if (this.prods[rId]) this.resources[rId].prod *= this.prods[rId]
+                        }
+                        
+                        this.researchPoint.prod += building.researchPoint * building.count
+                        
+                        if (building.energy > 0) energy.prod += building.energy * building.count
+                        else if (building.energy < 0) energy.consum += building.energy * building.count
+                    }
+               }
+            }
+        }
+        
         for (let rId in this.resources) {
             this.resources[rId].count += this.resources[rId].prod * delta
             if (this.resources[rId].count < 0) this.resources[rId].count = 0
         }
+        
+        this.energy = energy
     }
     
     getRawProduction(bId, count) {
@@ -581,111 +850,26 @@ class Planet {
         
         let building = this.buildings[bId]
         
+        if (building.energy > 0) ret["energy"] = building.energy * count
+        if (building.researchPoint > 0) ret["researchPoint"] = building.researchPoint * count
+        
         for (let rId in building.prods) {
             ret[rId] = building.prods[rId] * count
             if (this.prods[rId]) ret[rId] *= this.prods[rId]
         }
+
+        if (building.energy < 0) ret["energy"] = building.energy * count
         
         return ret
     }
-    
-    getProductionArray(bId) {
-    
-        let ret = {}
         
-        let building = this.buildings[bId]
-        
-        let energyCoeff = this.getEnergyCoeff()
-        if (building.energy >= 0) energyCoeff = 1
-        
-        if (building.type == "extraction") {        
-            for (let rId in building.prods) {
-                ret[rId] = building.prods[rId] * energyCoeff
-                if (this.prods[rId]) ret[rId] *= this.prods[rId]
-            }
-        }        
-        else {
-            
-            let canProduce = true            
-            for (let rId in building.prods) {
-                if (this.resources[rId].count + (building.count * building.prods[rId]) < 0) {
-                    canProduce = false
-                    building.needs[rId] = true
-                    building.stoppedDelay = 1
-                }
-                else {
-                    building.needs[rId] = false
-                }
-            }
-            
-            if (canProduce) {            
-                for (let rId in building.prods) {
-                    ret[rId] = building.prods[rId] * energyCoeff
-                    if (this.prods[rId]) ret[rId] *= this.prods[rId]
-                }
-            }
-            else {
-                
-                for (let rId in building.prods)
-                    ret[rId] = 0
-            }
-        }
-        
-        for (let rId in building.prods) ret[rId] *= building.count
-        
-        return ret
-    }
-    
     getEnergyCoeff() {
     
         let ret = 1
         
-        let energyProd = this.getEnergyProd()
-        let energyConsum = this.getEnergyConsum()
-        
-        if (energyConsum != 0) ret = energyProd / energyConsum
+        if (this.energy.consum != 0) ret = Math.abs(this.energy.prod / this.energy.consum)
         if (ret > 1) ret = 1
         if (ret < 0) ret = 0
-        
-        return ret
-    }
-    
-    getEnergyProd() {
-    
-        let ret = 0;
-        
-        for (let bId in this.buildings)
-            if (this.buildings[bId].energy > 0) ret += this.getEnergyUsage(this.buildings[bId])
-        
-        return ret
-    }
-    
-    getEnergyConsum() {
-    
-        let ret = 0
-        
-        for (let bId in this.buildings)
-            if (this.buildings[bId].energy < 0) ret += this.getEnergyUsage(this.buildings[bId])
-        
-        return ret
-    }
-    
-    getEnergyUsage(building) {
-    
-        let ret = 0
-        
-        if (building.active == true && building.count > 0) {
-        
-            let canProduce = true
-            for (let rId in this.resources)
-                if (this.resources[rId].count + building.count * building.prods[rId] < 0) {
-                    canProduce = false
-                    break
-                }
-            
-            if (canProduce == true) ret = building.energy
-            ret *= building.count
-        }        
         
         return ret
     }
@@ -737,33 +921,136 @@ class Planet {
             
         return ret
     }
+
+    canProduce(bId) {
+    
+        let ret = true
+        
+        let building = this.buildings[bId]
+        
+        if (building.type != "extraction") {
+            for (let rId in building.prods) {
+                if (this.resources[rId].count + (building.count * building.prods[rId]) < 0) {
+                    ret = false
+                    building.needs[rId] = true
+                    building.stoppedDelay = 1
+                }
+                else {
+                    building.needs[rId] = false
+                }
+            }
+        }
+        
+        return ret
+    }
 }
 
 var researchesDef = [
 
-    { id: "astronomy", },
-    { id: "chemical", },
-    { id: "hydro", },
-    { id: "nononono", },
-    { id: "osmium", },
-    { id: "halean", },
-    { id: "rhodium", },
-    { id: "mineralogy", },
-    { id: "electronics", },
-    { id: "material", },
-    { id: "ice", },
-    { id: "environment", },
-    { id: "military", },
-    { id: "artificial_intelligence", },
-    { id: "artofwar", },
-    { id: "vulcan", },
-    { id: "quantum", },
-    { id: "karan_nuclear", },
-    { id: "ammonia_chemistry", },
-    { id: "darkmatter_science", },
-    { id: "protohalean_science", },
-    { id: "xiran_artofwar", },
-    { id: "mk_tech", },
+    { id: "astronomy", desc: true, researchPoint: 3e3, mult: 4.3,
+      shipBonuses: [
+        { id:"vitha", stats:[{ id: "speed", minLevel: 1, value: 12, }], },
+      ],
+      unlocks: [
+        { level:1, buildings:["shipyard"], },
+      ],
+      isVisible(state) { return true },
+    },
+    { id: "science", researchPoint: 4e4, mult: 2.5, reqs:{ astronomy: 1 }, max: 64,
+      buildingBonuses: [
+        { id:"laboratory", researchPoint:{ minLevel: 1, value: 11, }, },
+      ],
+      isVisible(state) { return true },
+    },
+    
+    { id: "mineralogy", researchPoint: 125, mult: 2.2,
+      buildingBonuses: [
+        { id:"mine", prods:[{ id: "iron", minLevel: 1, value: 25, maxLevel: 125, reduction: .2, }], },
+        { id:"graphiteExtractor", prods:[{ id: "graphite", minLevel: 1, value: 12, }], },
+      ],
+      unlocks: [
+        { level:4, buildings:["metalCollector", "sandQuarry"], },
+      ],
+      isVisible(state) { return true },
+    },
+    { id: "material", researchPoint: 500, mult: 1.4, reqs:{ mineralogy: 1 },
+      isVisible(state) { return true },
+      unlocks: [
+        { level:8, buildings:["plasticFactory", "polymerizer"], },
+        { level:15, buildings:["nanotubesFactory"], },
+        { level:35, buildings:["ceramicFoundry"], },
+      ],
+    },
+
+    { id: "chemical",
+      isVisible(state) { return false },
+    },    
+    { id: "ice",
+      isVisible(state) { return false },
+    },
+    { id: "military",
+      isVisible(state) { return false },
+    },
+    { id: "electronics",
+      isVisible(state) { return false },
+    },
+    { id: "nuclear",
+      isVisible(state) { return false },
+    },
+    { id: "environment",
+      isVisible(state) { return false },
+    },
+    { id: "halean",
+      isVisible(state) { return false },
+    },
+    { id: "artofwar",
+      isVisible(state) { return false },
+    },
+    { id: "artificial_intelligence",
+      isVisible(state) { return false },
+    },
+    { id: "vulcan",
+      isVisible(state) { return false },
+    },    
+    { id: "hydro",
+      isVisible(state) { return false },
+    },
+    { id: "rhodium",
+      isVisible(state) { return false },
+    },
+    { id: "osmium",
+      isVisible(state) { return false },
+    },
+    { id: "quantum",
+      isVisible(state) { return false },
+    },
+    { id: "secret",
+      isVisible(state) { return false },
+    },
+    { id: "karan_artofwar",
+      isVisible(state) { return false },
+    },
+    { id: "space_mining",
+      isVisible(state) { return false },
+    },
+    { id: "karan_nuclear",
+      isVisible(state) { return false },
+    },
+    { id: "ammonia_chemistry",
+      isVisible(state) { return false },
+    },
+    { id: "protohalean_science",
+      isVisible(state) { return false },
+    },
+    { id: "mk_tech",
+      isVisible(state) { return false },
+    },
+    { id: "darkmatter_science",
+      isVisible(state) { return false },
+    },
+    { id: "xiran_artofwar",
+      isVisible(state) { return false },
+    },
 ]
 
 class Research {
@@ -771,8 +1058,87 @@ class Research {
     constructor(def) {
     
         this.id = def.id
+        this.desc = def.desc
+        this.reqs = def.reqs
+        this.unlocks = def.unlocks
+        this.shipBonuses = def.shipBonuses
+        this.researchPoint = def.researchPoint
+        this.buildingBonuses = def.buildingBonuses
         
+        this.mult = Math.floor(100 * (1 + (def.mult - 1))) / 100
         this.level = 0
+        this.bonusLevel = 0
+    }
+    
+    getCost() { return this.researchPoint * Math.pow(this.mult, this.level - this.bonusLevel) }
+    
+    getBuildingBonuses() {
+        
+        if (!this.buildingBonuses) return null
+        
+        let ret = {}
+        
+        this.buildingBonuses.forEach(bonus => {
+            ret[bonus.id] = {}
+            
+            if (bonus.prods) {
+                ret[bonus.id].prods = {}
+                
+                bonus.prods.forEach(prod => {
+                
+                    if (prod.minLevel - 1 <= this.level) {
+                    
+                        let value = prod.value
+                        if (prod.reduction) {
+                            value -= prod.reduction * ((this.level + 1) - prod.minLevel)
+                            if (this.level > prod.maxLevel) value = 0
+                            if (value < 0) value = 0
+                        }
+                        
+                        if (value != 0) ret[bonus.id].prods[prod.id] = value
+                    }
+                })
+            }
+            
+            if (bonus.researchPoint && bonus.researchPoint.minLevel - 1 <= this.level) ret[bonus.id].researchPoint = bonus.researchPoint.value
+        })
+        
+        return ret
+    }
+    
+    getShipBonuses() {
+        
+        if (!this.shipBonuses) return null
+        
+        let ret = {}
+
+        this.shipBonuses.forEach(bonus => {
+            ret[bonus.id] = {}
+
+            if (bonus.stats) {
+                ret[bonus.id].stats = {}
+                
+                bonus.stats.forEach(stat => {
+                
+                    if (stat.minLevel - 1 <= this.level)
+                        ret[bonus.id].stats[stat.id] = stat.value
+                })
+            }
+        })
+        
+        return ret
+    }
+    
+    getNextUnlock() {
+        
+        if (!this.unlocks) return null
+        return this.unlocks.find(unlock => unlock.level == this.level + 1)
+    }
+    
+    getFutureUnlocks() {
+    
+        if (!this.unlocks) return null
+        return this.unlocks.filter(unlock => unlock.level > this.level + 1)
     }
 }
 
@@ -797,7 +1163,7 @@ var tutorialsDef = [
         text: "<div class='text-primary text-center h5 mb-4'>Welcome Commander</div>" +
               "<div class='text-normal text-center'>You finally woke up after a long cryosleep. 232 years have passed since you boarded the Vitha, but finally you reached your new home <span class='text-white'>Promision</span>.</div>" +
               "<div class='mt-2 text-danger text-center'>This version is a rewriting/remake of the original game. It is still under development so bugs and data lost could happen!</div>" +
-              "<div class='mt-2 text-warning text-center'>You could disable this tutorial. To open it again, click on the icon <i class='fas fa-fw fa-question-circle'></i> in the bottom-right corner of the screen</div>",
+              "<div class='mt-2 text-warning text-center'>You can disable this tutorial. To open it again, click on the icon <i class='fas fa-fw fa-question-circle'></i> in the bottom-right corner of the screen</div>",
         check: function(state) { return true },
         action: function(state) { if (state.currentPage != "planet" || state.currentPlanet.id != "promision") state.showPlanetPage(state.planets['promision'] ) },
     },
@@ -909,6 +1275,8 @@ export default {
             currentPage:'planet',
             currentPlanet: null,
             currentBuilding: null,
+            currentResearch: null,
+            
             currentBuildCount: 1,
             currentDestroyCount: 1,
             
@@ -935,15 +1303,17 @@ export default {
         
         day() { return parseInt(this.days) - 365 * this.year },
         
-        humanPlanetCount() {
+        humanPlanets() {
         
-            let ret = 0
+            let ret = {}
             
             for (let pId in this.planets)
-                if (this.planets[pId].civId == 'human') ret += 1
+                if (this.planets[pId].civId == 'human') ret[pId] = this.planets[pId]
                 
             return ret
         },
+        
+        humanPlanetCount() { return Object.keys(this.humanPlanets).length },
 
         exportGameData() {
 
@@ -1028,6 +1398,8 @@ export default {
         
         setCurrentBuilding(building) { this.currentBuilding = building },
         
+        setCurrentResearch(research) { this.currentResearch = research },
+        
         showToast(text, type) {
         
             this.toastText = text
@@ -1084,6 +1456,46 @@ export default {
             return ret
         },
         
+        levelUpResearch(rId) {
+        
+            if (this.canLevelUp(rId)) {
+                
+                this.applyResearch(rId)
+                
+                let research = this.researches[rId]
+                this.researchPoint.count -= research.getCost()
+            }
+        },
+        
+        canLevelUp(rId) {
+        
+            let ret = true
+            
+            let research = this.researches[rId]
+            if (research.getCost() > this.researchPoint.count) ret = false
+                
+            return ret
+        },
+        
+        applyResearch(rId) {
+        
+            let research = this.researches[rId]
+            
+            let bonuses = research.getBuildingBonuses()
+            for (let bId in bonuses) {
+            
+                for (let rId in bonuses[bId].prods)
+                    for (let pId in this.planets)
+                        this.planets[pId].buildings[bId].prods[rId] *= (100 + bonuses[bId].prods[rId]) / 100
+                        
+                if (bonuses[bId].researchPoint)
+                    for (let pId in this.planets)
+                        this.planets[pId].buildings[bId].researchPoint *= (100 + bonuses[bId].researchPoint) / 100
+            }
+            
+            research.level += 1
+        },
+        
         //---
         
         isResUnlocked(rId) {
@@ -1110,6 +1522,25 @@ export default {
                     return false
                     
             return true
+        },
+        
+        isResearchUnlocked(rId) {
+            
+            let ret = true
+            
+            let def = researchesDef.find(def => def.id == rId)
+            if (def.reqs)
+                for (let rId in def.reqs)
+                    if (this.researches[rId].level < def.reqs[rId])
+                        ret = false
+            
+            return ret
+        },
+        
+        isResearchVisible(rId) {
+        
+            let def = researchesDef.find(def => def.id == rId)                    
+            return def.isVisible(this)
         },
         
         produceResources(delta) {
@@ -1247,7 +1678,9 @@ export default {
                 
                 for (let rId in this.researches) {            
                     let research = loadeddata.researches[rId]
-                    if (research) this.researches[rId].level = research.level
+                    if (research)
+                        for (let i = 0; i < research.level; i++)
+                            this.applyResearch(rId)
                 }
             }
         },

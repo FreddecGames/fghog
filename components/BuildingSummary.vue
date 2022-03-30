@@ -1,7 +1,7 @@
 <template>
     <button type="button" class="w-100 btn btn-hover border-bottom rounded-0" :class="{ 'bg-2':$parent.currentBuilding && $parent.currentBuilding.id == building.id }" @click="$parent.setCurrentBuilding(building)">
         <div class="row gx-2 align-items-center">
-            <button type="button" class="col-auto btn btn-sm" :class="{ 'disabled':building.count < 1 }" @click="building.toggleActive()">
+            <button v-if="building.prods || building.energy || building.researchPoint" type="button" class="col-auto btn btn-sm" :class="{ 'disabled':building.count < 1 }" @click="building.toggleActive()">
                 <i class="fas fa-fw fa-power-off" :class="{ 'text-danger':building.active == false, 'text-success': building.active == true }"></i>
             </button>
             <span class="col-auto text-primary">{{ $t('buildingName_' + building.id) }}</span>
