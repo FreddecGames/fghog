@@ -753,6 +753,17 @@ class Building {
     }
 }
 
+var shipsDef = [
+]
+
+class Ship {
+
+    constructor(def) {
+    
+        this.id = def.id
+    }
+}
+
 var planetsDef = [
     {
         id: "promision", civId: "human", nebula: "perseus", influence: 1, x: 64, y: 64, type: "terrestrial", radius: 6833, temp: 22, atmos: "oxygen", orbit: 1,
@@ -785,6 +796,9 @@ class Planet {
         
         this.buildings = {}
         buildingsDef.forEach(def => { this.buildings[def.id] = new Building(def) })        
+        
+        this.ships = {}
+        shipsDef.forEach(def => { this.ships[def.id] = new Ship(def) })        
     }
     
     emptyQueue(bId) { this.buildings[bId].queue = 0 }
@@ -1460,10 +1474,10 @@ export default {
         
             if (this.canLevelUp(rId)) {
                 
-                this.applyResearch(rId)
-                
                 let research = this.researches[rId]
                 this.researchPoint.count -= research.getCost()
+                
+                this.applyResearch(rId)
             }
         },
         
