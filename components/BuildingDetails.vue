@@ -68,6 +68,14 @@
                     <span class="col-auto" :class="{ 'text-success':res > 0, 'text-danger':res < 0 }"><span v-if="res > 0">+</span><FormatNumber :value="res * $parent.currentBuildCount" /> <small class="opacity-75">/s</small></span>
                 </div>
             </div>
+            <div v-if="building.researchPoint != 0" class="row gx-2">
+                <span class="col text-normal">{{ $t('resName_researchPoint') }}</span>
+                <span class="col-auto text-success">+<FormatNumber :value="building.researchPoint * $parent.currentBuildCount" /> <small class="opacity-75">/s</small></span>
+            </div>
+            <div v-if="building.energy != 0" class="row gx-2">
+                <span class="col text-normal">{{ $t('resName_energy') }}</span>
+                <span class="col-auto" :class="{ 'text-success':building.energy > 0, 'text-danger':building.energy < 0 }"><span v-if="building.energy > 0">+</span><FormatNumber :value="building.energy * $parent.currentBuildCount" /> <small class="opacity-75">/s</small></span>
+            </div>
             <div v-if="$parent.currentPlanet.canBuy($parent.currentPlanet.getBuildingCost(building.id, $parent.currentBuildCount))" class="text-end mt-2">
                 <button type="button" class="btn btn-sm btn-outline-primary" style="width:75px;" @click="$parent.currentPlanet.queueBuilding(building.id, $parent.currentBuildCount)"><i class="fas fa-fw fa-plus-circle"></i> Build</button>
             </div>
