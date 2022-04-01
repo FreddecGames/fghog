@@ -52,597 +52,610 @@
 			</div>
             
             <div class="w-100 h-100 d-flex align-items-center justify-content-center">
-            <div class="w-100 h-100 position-relative border rounded" style="max-width:1160px; max-height:728px;">
-            
-            <div class="position-absolute top-0 start-0 end-0 border-bottom bg-1 d-flex align-items-center" style="height:50px;">
-				<div class="col-auto px-3" style="width:300px;">
-                    <div class="row gx-2">
-                        <span class="col-auto text-normal">Influence</span>
-                        <span class="col-auto text-white">{{ influence.toLocaleString() }}</span>
-                    </div>
-                </div>
-				<div class="col">
-                    <div class="row justify-content-center">
-                        <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'fleets' }" style="width:85px;" @click="showFleetsPage()">
-                            <div class="h5"><i class="fas fa-fw fa-space-shuttle"></i></div>
-                            <div class="small">Fleets</div>
-                        </button>
-                        <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'map' }" style="width:85px;" @click="showMapPage()">
-                            <div class="h5"><i class="fas fa-fw fa-map"></i></div>
-                            <div class="small">Map</div>
-                        </button>
-                        <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'research' }" style="width:85px;" @click="showResearchPage()">
-                            <div class="h5"><i class="fas fa-fw fa-atom"></i></div>
-                            <div class="small">Research</div>
-                        </button>
-                        <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'diplomacy' }" style="width:85px;" @click="showDiplomacyPage()">
-                            <div class="h5"><i class="fas fa-fw fa-hands-helping"></i></div>
-                            <div class="small">Diplomacy</div>
-                        </button>
-                        <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'tournament' }" style="width:85px;" @click="showTournamentPage()">
-                            <div class="h5"><i class="fas fa-fw fa-trophy"></i></div>
-                            <div class="small">Tournament</div>
-                        </button>
-                        <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'overview' }" style="width:85px;" @click="showOverviewPage()">
-                            <div class="h5"><i class="fas fa-fw fa-globe"></i></div>
-                            <div class="small">Overview</div>
-                        </button>
-                    </div>				
-				</div>				
-				<div class="col-auto px-3" style="width:300px;">
-                    <div class="row align-items-center">
+                <div class="w-100 h-100 position-relative border rounded" style="max-width:1160px; max-height:728px;">
+                    
+                    <div class="position-absolute top-0 start-0 end-0 border-bottom bg-1 d-flex align-items-center" style="height:50px;">
+                        <div class="col-auto px-3" style="width:300px;">
+                            <div class="row gx-2">
+                                <span class="col-auto text-normal">Influence</span>
+                                <span class="col-auto text-white">{{ influence.toLocaleString() }}</span>
+                            </div>
+                        </div>
                         <div class="col">
-                            <div class="row gx-2 justify-content-end">
-                                <span class="col-auto text-normal">Player Name</span>
-                                <span class="col-auto text-white">Player</span>
-                            </div>
-                            <div class="row gx-2 justify-content-end">
-                                <span class="col-auto text-normal">Year</span>
-                                <span class="col-auto text-white">{{ year }}</span>
-                                <span class="col-auto text-normal">Day</span>
-                                <span class="col-auto text-white">{{ day }}</span>
-                            </div>
-                        </div>
-                        <button v-if="paused == false" type="button" class="col-auto btn lh-1" style="width:65px;" @click="togglePause()">
-                            <div class="h5"><i class="fas fa-fw fa-pause"></i></div>
-                            <div class="small">Pause</div>
-                        </button>
-                        <button v-if="paused == true" type="button" class="col-auto btn lh-1" style="width:65px;" @click="togglePause()">
-                            <div class="h5"><i class="fas fa-fw fa-play"></i></div>
-                            <div class="small">Resume</div>
-                        </button>
-                    </div>
-				</div>
-			</div>
-            
-            <div class="position-absolute bottom-0 start-0 end-0 border-top bg-1 d-flex align-items-center" style="height:50px;">
-                <div class="col-auto px-3" style="width:300px;">
-                    <div class="row gx-2 align-items-baseline">
-                        <span class="col-auto text-normal">Research Points</span>
-                        <span class="col-auto text-white"><FormatNumber :value="researchPoint.count" /></span>
-                        <span class="col-auto small text-success">+<FormatNumber :value="researchPoint.prod" /> <small class="opacity-75">/s</small></span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="row justify-content-center" style="display: flex;">
-                        <button id="b_extraction_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'extraction' }" style="width:80px;" @click="showExtractionPage()">
-                            <div class="h5"><i class="fas fa-fw fa-dice-d20"></i></div>
-                            <div class="small">Extraction</div>
-                        </button>
-                        <button id="b_production_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'production' }" style="width:80px;" @click="showProductionPage()">
-                            <div class="h5"><i class="fas fa-fw fa-industry"></i></div>
-                            <div class="small">Production</div>
-                        </button>
-                        <button id="b_energy_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'energy' }" style="width:80px;" @click="showEnergyPage()">
-                            <div class="h5"><i class="fas fa-fw fa-bolt"></i></div>
-                            <div class="small">Energy</div>
-                        </button>
-                        <button id="b_res_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'labs' }" style="width:80px;" @click="showLabsPage()">
-                            <div class="h5"><i class="fas fa-fw fa-flask"></i></div>
-                            <div class="small">Labs</div>
-                        </button>
-                        <button id="b_other_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'others' }" style="width:80px;" @click="showOthersPage()">
-                            <div class="h5"><i class="fas fa-fw fa-building"></i></div>
-                            <div class="small">Others</div>
-                        </button>
-                        <button id="b_other_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'shipyard' }" style="width:80px;" @click="showShipyardPage()">
-                            <div class="h5"><i class="fas fa-fw fa-rocket"></i></div>
-                            <div class="small">Shipyard</div>
-                        </button>
-                        <button id="b_other_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'market' }" style="width:80px;" @click="showMarketPage()">
-                            <div class="h5"><i class="fas fa-fw fa-store"></i></div>
-                            <div class="small">Market</div>
-                        </button>
-                    </div>
-                </div>					
-                <div class="col-auto px-3" style="width:300px;">
-                    <div class="row justify-content-end">
-                        <button type="button" class="col-auto btn lh-1" style="width:66px;" @click="manualSave()">
-                            <div class="h5"><i class="fas fa-fw fa-save"></i></div>
-                            <div class="small">Save</div>
-                        </button>
-                        <button type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'settings' }" style="width:66px;" @click="showSettingsPage()">
-                            <div class="h5"><i class="fas fa-fw fa-cogs"></i></div>
-                            <div class="small">Settings</div>
-                        </button>
-                        <button type="button" class="col-auto btn lh-1" style="width:66px;" @click="showTutorial()">
-                            <div class="h5"><i class="fas fa-fw fa-question-circle"></i></div>
-                            <div class="small">Tutorial</div>
-                        </button>
-                    </div>
-                </div>
-			</div>
-            
-            <div v-if="currentPage == 'fleets'" class="page">
-                <div class="pt-4 text-center">
-                    <span class="text-danger">Page not implemented yet</span>
-                </div>
-            </div>
-            
-            <div v-if="currentPage == 'map'" class="page">
-                <div class="pt-4 text-center">
-                    <span class="text-danger">Page not implemented yet</span>
-                </div>
-            </div>
-            
-            <div v-if="currentPage == 'research'" class="page">
-                <div class="h-100 d-flex align-items-stretch">
-                    <div class="h-100 col p-3" style="overflow-y:auto;">
-                        <div class="text-center mb-3 h5 text-primary">Tech Tree</div>
-                        <div class="row g-1">
-                            <div class="col-12">
-                                <div class="row g-1 align-items-center">
-                                    <div class="col">
-                                        <ResearchSummary :research="researches['astronomy']" />
+                            <div class="row justify-content-center">
+                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'fleets' }" style="width:85px;" @click="showFleetsPage()">
+                                    <div class="h5"><i class="fas fa-fw fa-space-shuttle"></i></div>
+                                    <div class="small">Fleets</div>
+                                </button>
+                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'map' }" style="width:85px;" @click="showMapPage()">
+                                    <div class="h5"><i class="fas fa-fw fa-map"></i></div>
+                                    <div class="small">Map</div>
+                                </button>
+                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'research' }" style="width:85px;" @click="showResearchPage()">
+                                    <div class="h5"><i class="fas fa-fw fa-atom"></i></div>
+                                    <div class="small">Research</div>
+                                </button>
+                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'diplomacy' }" style="width:85px;" @click="showDiplomacyPage()">
+                                    <div class="h5"><i class="fas fa-fw fa-hands-helping"></i></div>
+                                    <div class="small">Diplomacy</div>
+                                </button>
+                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'tournament' }" style="width:85px;" @click="showTournamentPage()">
+                                    <div class="h5"><i class="fas fa-fw fa-trophy"></i></div>
+                                    <div class="small">Tournament</div>
+                                </button>
+                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'overview' }" style="width:85px;" @click="showOverviewPage()">
+                                    <div class="h5"><i class="fas fa-fw fa-globe"></i></div>
+                                    <div class="small">Overview</div>
+                                </button>
+                            </div>				
+                        </div>				
+                        <div class="col-auto px-3" style="width:300px;">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <div class="row gx-2 justify-content-end">
+                                        <span class="col-auto text-normal">Player Name</span>
+                                        <span class="col-auto text-white">Player</span>
                                     </div>
-                                    <div class="col-auto text-center" style="width:20px;">
-                                        <i class="text-normal fas fa-fw fa-chevron-circle-right"></i>
-                                    </div>
-                                    <div class="col">
-                                        <ResearchSummary :research="researches['science']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;"></div>
-                                    <div class="col"></div>
-                                    <div class="col-auto text-center" style="width:20px;"></div>
-                                    <div class="col">
-                                        <ResearchSummary :research="researches['mineralogy']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;">
-                                        <i v-if="isResearchVisible('vulcan')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
-                                    </div>
-                                    <div class="col">
-                                        <ResearchSummary v-if="isResearchVisible('vulcan')" :research="researches['vulcan']" />
+                                    <div class="row gx-2 justify-content-end">
+                                        <span class="col-auto text-normal">Year</span>
+                                        <span class="col-auto text-white">{{ year }}</span>
+                                        <span class="col-auto text-normal">Day</span>
+                                        <span class="col-auto text-white">{{ day }}</span>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="row g-1 align-items-center">
-                                    <div class="col text-center">
-                                        <div v-if="isResearchVisible('military')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('military')" :research="researches['military']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;"></div>
-                                    <div class="col">
-                                        <div class="text-center mb-1" style="height:15px;"></div>
-                                        <ResearchSummary v-if="isResearchVisible('artificial_intelligence')" :research="researches['artificial_intelligence']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;">
-                                        <div class="text-center mb-1" style="height:15px;"></div>
-                                        <i v-if="isResearchVisible('artificial_intelligence')" class="text-normal fas fa-fw fa-chevron-circle-left"></i>
-                                    </div>
-                                    <div class="col">
-                                        <div class="text-center mb-1" style="height:15px;"></div>
-                                        <ResearchSummary v-if="isResearchVisible('electronics')" :research="researches['electronics']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;">
-                                        <div class="text-center mb-1" style="height:15px;"></div>
-                                        <i v-if="isResearchVisible('electronics')" class="text-normal fas fa-fw fa-chevron-circle-left"></i>
-                                    </div>
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('material')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('material')" :research="researches['material']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;">
-                                        <div class="text-center mb-1" style="height:15px;"></div>
-                                        <i v-if="isResearchVisible('ice')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
-                                    </div>
-                                    <div class="col">
-                                        <div class="text-center mb-1" style="height:15px;"></div>
-                                        <ResearchSummary v-if="isResearchVisible('ice')" :research="researches['ice']" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="row g-1 align-items-center">
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('artofwar')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('artofwar')" :research="researches['artofwar']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;"></div>
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('halean')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('halean')" :research="researches['halean']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;"></div>
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('nuclear')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('nuclear')" :research="researches['nuclear']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;"></div>
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('chemical')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('chemical')" :research="researches['chemical']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;">
-                                        <div class="text-center mb-1" style="height:15px;"></div>
-                                        <i v-if="isResearchVisible('hydro')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
-                                    </div>
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('hydro')" class="text-center mb-1" style="height:15px;"></div>
-                                        <ResearchSummary v-if="isResearchVisible('hydro')" :research="researches['hydro']" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="row g-1 align-items-center">
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('karan_artofwar')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('karan_artofwar')" :research="researches['karan_artofwar']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;"></div>
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('quantum')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('quantum')" :research="researches['quantum']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;">
-                                        <div class="text-center mb-1" style="height:15px;"></div>
-                                        <i v-if="isResearchVisible('secret')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
-                                    </div>
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('secret')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('secret')" :research="researches['secret']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;">
-                                        <div class="text-center mb-1" style="height:15px;"></div>
-                                        <i v-if="isResearchVisible('secret')" class="text-normal fas fa-fw fa-chevron-circle-left"></i>
-                                    </div>
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('mk_tech')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('mk_tech')" :research="researches['mk_tech']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;"></div>
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('environment')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('environment')" :research="researches['environment']" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="row g-1 align-items-center">
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('xiran_artofwar')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('xiran_artofwar')" :research="researches['xiran_artofwar']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;"></div>
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('karan_nuclear')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('karan_nuclear')" :research="researches['karan_nuclear']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;"></div>
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('space_mining')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('space_mining')" :research="researches['space_mining']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;"></div>
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('rhodium')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('rhodium')" :research="researches['rhodium']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;"></div>
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('ammonia_chemistry')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('ammonia_chemistry')" :research="researches['ammonia_chemistry']" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="row g-1 align-items-center">
-                                    <div class="col"></div>
-                                    <div class="col-auto text-center" style="width:20px;"></div>
-                                     <div class="col">
-                                        <div v-if="isResearchVisible('protohalean_science')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('protohalean_science')" :research="researches['protohalean_science']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;">
-                                        <div class="text-center mb-1" style="height:15px;"></div>
-                                        <i v-if="isResearchVisible('darkmatter_science')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
-                                    </div>
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('darkmatter_science')" class="text-center mb-1" style="height:15px;"></div>
-                                        <ResearchSummary v-if="isResearchVisible('darkmatter_science')" :research="researches['darkmatter_science']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;">
-                                        <div class="text-center mb-1" style="height:15px;"></div>
-                                        <i v-if="isResearchVisible('osmium')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
-                                    </div>
-                                    <div class="col">
-                                        <div v-if="isResearchVisible('osmium')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                        <ResearchSummary v-if="isResearchVisible('osmium')" :research="researches['osmium']" />
-                                    </div>
-                                    <div class="col-auto text-center" style="width:20px;"></div>
-                                    <div class="col"></div>
-                                </div>
+                                <button v-if="paused == false" type="button" class="col-auto btn lh-1" style="width:65px;" @click="togglePause()">
+                                    <div class="h5"><i class="fas fa-fw fa-pause"></i></div>
+                                    <div class="small">Pause</div>
+                                </button>
+                                <button v-if="paused == true" type="button" class="col-auto btn lh-1" style="width:65px;" @click="togglePause()">
+                                    <div class="h5"><i class="fas fa-fw fa-play"></i></div>
+                                    <div class="small">Resume</div>
+                                </button>
                             </div>
                         </div>
                     </div>
-                    <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
-                        <ResearchDetails v-if="currentResearch" :research="currentResearch" />
+                    
+                    <div class="position-absolute bottom-0 start-0 end-0 border-top bg-1 d-flex align-items-center" style="height:50px;">
+                        <div class="col-auto px-3" style="width:300px;">
+                            <div class="row gx-2 align-items-baseline">
+                                <span class="col-auto text-normal">Research Points</span>
+                                <span class="col-auto text-white"><FormatNumber :value="researchPoint.count" /></span>
+                                <span class="col-auto small text-success">+<FormatNumber :value="researchPoint.prod" /> <small class="opacity-75">/s</small></span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row justify-content-center" style="display: flex;">
+                                <button id="b_extraction_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'extraction' }" style="width:80px;" @click="showExtractionPage()">
+                                    <div class="h5"><i class="fas fa-fw fa-dice-d20"></i></div>
+                                    <div class="small">Extraction</div>
+                                </button>
+                                <button id="b_production_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'production' }" style="width:80px;" @click="showProductionPage()">
+                                    <div class="h5"><i class="fas fa-fw fa-industry"></i></div>
+                                    <div class="small">Production</div>
+                                </button>
+                                <button id="b_energy_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'energy' }" style="width:80px;" @click="showEnergyPage()">
+                                    <div class="h5"><i class="fas fa-fw fa-bolt"></i></div>
+                                    <div class="small">Energy</div>
+                                </button>
+                                <button id="b_res_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'labs' }" style="width:80px;" @click="showLabsPage()">
+                                    <div class="h5"><i class="fas fa-fw fa-flask"></i></div>
+                                    <div class="small">Labs</div>
+                                </button>
+                                <button id="b_other_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'others' }" style="width:80px;" @click="showOthersPage()">
+                                    <div class="h5"><i class="fas fa-fw fa-building"></i></div>
+                                    <div class="small">Others</div>
+                                </button>
+                                <button id="b_other_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'shipyard' }" style="width:80px;" @click="showShipyardPage()">
+                                    <div class="h5"><i class="fas fa-fw fa-rocket"></i></div>
+                                    <div class="small">Shipyard</div>
+                                </button>
+                                <button id="b_other_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'market' }" style="width:80px;" @click="showMarketPage()">
+                                    <div class="h5"><i class="fas fa-fw fa-store"></i></div>
+                                    <div class="small">Market</div>
+                                </button>
+                            </div>
+                        </div>					
+                        <div class="col-auto px-3" style="width:300px;">
+                            <div class="row justify-content-end">
+                                <button type="button" class="col-auto btn lh-1" style="width:66px;" @click="manualSave()">
+                                    <div class="h5"><i class="fas fa-fw fa-save"></i></div>
+                                    <div class="small">Save</div>
+                                </button>
+                                <button type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'settings' }" style="width:66px;" @click="showSettingsPage()">
+                                    <div class="h5"><i class="fas fa-fw fa-cogs"></i></div>
+                                    <div class="small">Settings</div>
+                                </button>
+                                <button type="button" class="col-auto btn lh-1" style="width:66px;" @click="showTutorial()">
+                                    <div class="h5"><i class="fas fa-fw fa-question-circle"></i></div>
+                                    <div class="small">Tutorial</div>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            
-            <div v-if="currentPage == 'diplomacy'" class="page">
-                <div class="pt-4 text-center">
-                    <span class="text-danger">Page not implemented yet</span>
-                </div>
-            </div>
-
-            <div v-if="currentPage == 'tournament'" class="page">
-                <div class="pt-4 text-center">
-                    <span class="text-danger">Page not implemented yet</span>
-                </div>
-            </div>
-
-            <div v-if="currentPage == 'overview'" class="page p-3">
-                <div class="row g-3">
-                    <div class="col-12 text-center">
-                        <span class="h5 text-primary">Planets under control</span>
+                    
+                    <div v-if="currentPage == 'fleets'" class="page">
+                        <div class="pt-4 text-center">
+                            <span class="text-danger">Page not implemented yet</span>
+                        </div>
                     </div>
-                    <div class="col-12">
-                        <div class="row g-1 align-items-center justify-content-center">
-                            <div v-for="(planet, key) of humanPlanets" :key="key" class="col-3">
-                                <button type="button" class="w-100 btn bg-1 rounded border" @click="showPlanetPage(planet)">
-                                    <div class="row g-2 align-items-center">
-                                        <div class="col-auto">
-                                            <img :src="require(`~/assets/planets/${key}.png`)" width="24px" />
-                                        </div>
-                                        <div class="col">
-                                            <span>{{ $t('planetName_' + key) }}</span>
+                    
+                    <div v-if="currentPage == 'map'" class="page">
+                        <div class="pt-4 text-center">
+                            <span class="text-danger">Page not implemented yet</span>
+                        </div>
+                    </div>
+                    
+                    <div v-if="currentPage == 'research'" class="page">
+                        <div class="h-100 d-flex align-items-stretch">
+                            <div class="h-100 col p-3" style="overflow-y:auto;">
+                                <div class="text-center mb-3 h5 text-primary">Tech Tree</div>
+                                <div class="row g-1">
+                                    <div class="col-12">
+                                        <div class="row g-1 align-items-center">
+                                            <div class="col">
+                                                <ResearchSummary :research="researches['astronomy']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;">
+                                                <i class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                            </div>
+                                            <div class="col">
+                                                <ResearchSummary :research="researches['science']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;"></div>
+                                            <div class="col"></div>
+                                            <div class="col-auto text-center" style="width:20px;"></div>
+                                            <div class="col">
+                                                <ResearchSummary :research="researches['mineralogy']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;">
+                                                <i v-if="isResearchVisible('vulcan')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                            </div>
+                                            <div class="col">
+                                                <ResearchSummary v-if="isResearchVisible('vulcan')" :research="researches['vulcan']" />
+                                            </div>
                                         </div>
                                     </div>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div v-if="currentPage == 'planet'" class="page">
-                <div class="h-100 d-flex align-items-stretch">
-                    <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
-                        <div class="row g-3">
-                            <div class="col-12 text-center">
-                                <div class="h5" :class="{ 'text-normal':currentPlanet.civId == 'human', 'text-danger':currentPlanet.civId != null && currentPlanet.civId != 'human', 'text-gray':currentPlanet.civId == null }" >{{ $t('planetName_' + currentPlanet.id) }}</div>
-                            </div>
-                            <PlanetInfo :planet="currentPlanet" class="col-12" />
-                            <PlanetEnergy :planet="currentPlanet" class="col-12" />
-                            <div class="col-12">
-                                <div v-for="(prod, key) of currentPlanetProds" :key="key" class="row gx-2">
-                                    <span class="col text-normal">{{ $t('resName_' + key) }}</span>
-                                    <span class="col-auto" :class="{ 'text-white':prod == 1, 'text-danger':prod < 1, 'text-success':prod > 1 }"><small class="opacity-75">x</small> {{ prod.toFixed(2) }}</span>
+                                    <div class="col-12">
+                                        <div class="row g-1 align-items-center">
+                                            <div class="col text-center">
+                                                <div v-if="isResearchVisible('military')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('military')" :research="researches['military']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;"></div>
+                                            <div class="col">
+                                                <div class="text-center mb-1" style="height:15px;"></div>
+                                                <ResearchSummary v-if="isResearchVisible('artificial_intelligence')" :research="researches['artificial_intelligence']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;">
+                                                <div class="text-center mb-1" style="height:15px;"></div>
+                                                <i v-if="isResearchVisible('artificial_intelligence')" class="text-normal fas fa-fw fa-chevron-circle-left"></i>
+                                            </div>
+                                            <div class="col">
+                                                <div class="text-center mb-1" style="height:15px;"></div>
+                                                <ResearchSummary v-if="isResearchVisible('electronics')" :research="researches['electronics']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;">
+                                                <div class="text-center mb-1" style="height:15px;"></div>
+                                                <i v-if="isResearchVisible('electronics')" class="text-normal fas fa-fw fa-chevron-circle-left"></i>
+                                            </div>
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('material')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('material')" :research="researches['material']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;">
+                                                <div class="text-center mb-1" style="height:15px;"></div>
+                                                <i v-if="isResearchVisible('ice')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                            </div>
+                                            <div class="col">
+                                                <div class="text-center mb-1" style="height:15px;"></div>
+                                                <ResearchSummary v-if="isResearchVisible('ice')" :research="researches['ice']" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row g-1 align-items-center">
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('artofwar')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('artofwar')" :research="researches['artofwar']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;"></div>
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('halean')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('halean')" :research="researches['halean']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;"></div>
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('nuclear')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('nuclear')" :research="researches['nuclear']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;"></div>
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('chemical')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('chemical')" :research="researches['chemical']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;">
+                                                <div class="text-center mb-1" style="height:15px;"></div>
+                                                <i v-if="isResearchVisible('hydro')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                            </div>
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('hydro')" class="text-center mb-1" style="height:15px;"></div>
+                                                <ResearchSummary v-if="isResearchVisible('hydro')" :research="researches['hydro']" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row g-1 align-items-center">
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('karan_artofwar')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('karan_artofwar')" :research="researches['karan_artofwar']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;"></div>
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('quantum')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('quantum')" :research="researches['quantum']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;">
+                                                <div class="text-center mb-1" style="height:15px;"></div>
+                                                <i v-if="isResearchVisible('secret')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                            </div>
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('secret')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('secret')" :research="researches['secret']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;">
+                                                <div class="text-center mb-1" style="height:15px;"></div>
+                                                <i v-if="isResearchVisible('secret')" class="text-normal fas fa-fw fa-chevron-circle-left"></i>
+                                            </div>
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('mk_tech')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('mk_tech')" :research="researches['mk_tech']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;"></div>
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('environment')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('environment')" :research="researches['environment']" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row g-1 align-items-center">
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('xiran_artofwar')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('xiran_artofwar')" :research="researches['xiran_artofwar']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;"></div>
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('karan_nuclear')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('karan_nuclear')" :research="researches['karan_nuclear']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;"></div>
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('space_mining')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('space_mining')" :research="researches['space_mining']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;"></div>
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('rhodium')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('rhodium')" :research="researches['rhodium']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;"></div>
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('ammonia_chemistry')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('ammonia_chemistry')" :research="researches['ammonia_chemistry']" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row g-1 align-items-center">
+                                            <div class="col"></div>
+                                            <div class="col-auto text-center" style="width:20px;"></div>
+                                             <div class="col">
+                                                <div v-if="isResearchVisible('protohalean_science')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('protohalean_science')" :research="researches['protohalean_science']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;">
+                                                <div class="text-center mb-1" style="height:15px;"></div>
+                                                <i v-if="isResearchVisible('darkmatter_science')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                            </div>
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('darkmatter_science')" class="text-center mb-1" style="height:15px;"></div>
+                                                <ResearchSummary v-if="isResearchVisible('darkmatter_science')" :research="researches['darkmatter_science']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;">
+                                                <div class="text-center mb-1" style="height:15px;"></div>
+                                                <i v-if="isResearchVisible('osmium')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                            </div>
+                                            <div class="col">
+                                                <div v-if="isResearchVisible('osmium')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="isResearchVisible('osmium')" :research="researches['osmium']" />
+                                            </div>
+                                            <div class="col-auto text-center" style="width:20px;"></div>
+                                            <div class="col"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>               
-                    <div class="col d-flex flex-column">
-                        <div class="pt-3">
-                            <div class="row gx-2 justify-content-center align-items-center">
-                                <span class="col-auto text-white">Controlled by</span>
-                                <button type="button" class="col-auto btn py-0 d-flex align-items-center">
-                                    <img :src="require(`~/assets/civis/${currentPlanet.civId}.png`)" width="32px" />
-                                    <span class="ms-3 h5">{{ $t('civName_' + currentPlanet.civId) }}</span>
-                                </button>
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                                <ResearchDetails v-if="currentResearch" :research="currentResearch" />
                             </div>
-                        </div>
-                        <div class="flex-fill d-flex align-items-center">
-                            <button v-if="currentPlanet.civId == 'human' && humanPlanetCount > 1" type="button" id="arrow_left" class="btn">
-                                <i class="fas fa-fw fa-chevron-circle-left"></i>
-                            </button>
-                            <div class="col d-flex align-items-center justify-content-center">
-                                <img :src="require(`~/assets/planets/${currentPlanet.id}.png`)" />
-                            </div>
-                            <button v-if="currentPlanet.civId == 'human' && humanPlanetCount > 1" type="button" id="arrow_right" class="btn">
-                                <i class="fas fa-fw fa-chevron-circle-right"></i>
-                            </button>
                         </div>
                     </div>
-                    <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                    
+                    <div v-if="currentPage == 'diplomacy'" class="page">
+                        <div class="pt-4 text-center">
+                            <span class="text-danger">Page not implemented yet</span>
+                        </div>
+                    </div>
+
+                    <div v-if="currentPage == 'tournament'" class="page">
+                        <div class="pt-4 text-center">
+                            <span class="text-danger">Page not implemented yet</span>
+                        </div>
+                    </div>
+
+                    <div v-if="currentPage == 'overview'" class="page p-3">
                         <div class="row g-3">
                             <div class="col-12 text-center">
-                                <span class="h5 text-primary">Status</span>
+                                <span class="h5 text-primary">Planets under control</span>
                             </div>
-                            <PlanetResources :planet="currentPlanet" class="col-12" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div v-if="currentPage == 'extraction'" class="page">
-                <div class="h-100 d-flex align-items-stretch">
-                    <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
-                        <div class="row g-3">
-                            <PlanetVignet :planet="currentPlanet" class="col-12" />
-                            <PlanetEnergy :planet="currentPlanet" class="col-12" />
-                            <PlanetResources :planet="currentPlanet" class="col-12" />
-                        </div>
-                    </div>
-                    <div class="h-100 col p-3">
-                        <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('extraction')" :key="key" :building="building" />
-                    </div>
-                    <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
-                        <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
-                    </div>
-                </div>
-            </div>
-            
-            <div v-if="currentPage == 'production'" class="page">
-                <div class="h-100 d-flex align-items-stretch">
-                    <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
-                        <div class="row g-3">
-                            <PlanetVignet :planet="currentPlanet" class="col-12" />
-                            <PlanetEnergy :planet="currentPlanet" class="col-12" />
-                            <PlanetResources :planet="currentPlanet" class="col-12" />
-                        </div>
-                    </div>
-                    <div class="h-100 col p-3">
-                        <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('production')" :key="key" :building="building" />
-                    </div>
-                    <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
-                        <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
-                    </div>
-                </div>
-            </div>
-            
-            <div v-if="currentPage == 'energy'" class="page">
-                <div class="h-100 d-flex align-items-stretch">
-                    <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
-                        <div class="row g-3">
-                            <PlanetVignet :planet="currentPlanet" class="col-12" />
-                            <PlanetEnergy :planet="currentPlanet" class="col-12" />
-                            <PlanetResources :planet="currentPlanet" class="col-12" />
-                        </div>
-                    </div>
-                    <div class="h-100 col p-3">
-                        <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('energy')" :key="key" :building="building" />
-                    </div>
-                    <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
-                        <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
-                    </div>
-                </div>
-            </div>
-            
-            <div v-if="currentPage == 'labs'" class="page">
-                <div class="h-100 d-flex align-items-stretch">
-                    <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
-                        <div class="row g-3">
-                            <PlanetVignet :planet="currentPlanet" class="col-12" />
-                            <PlanetEnergy :planet="currentPlanet" class="col-12" />
-                            <PlanetResources :planet="currentPlanet" class="col-12" />
-                        </div>
-                    </div>
-                    <div class="h-100 col p-3">
-                        <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('research')" :key="key" :building="building" />
-                    </div>
-                    <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
-                        <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
-                    </div>
-                </div>
-            </div>
-            
-            <div v-if="currentPage == 'others'" class="page">
-                <div class="h-100 d-flex align-items-stretch">
-                    <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
-                        <div class="row g-3">
-                            <PlanetVignet :planet="currentPlanet" class="col-12" />
-                            <PlanetEnergy :planet="currentPlanet" class="col-12" />
-                            <PlanetResources :planet="currentPlanet" class="col-12" />
-                        </div>
-                    </div>
-                    <div class="h-100 col p-3">
-                        <div v-if="Object.keys(getCurrentPlanetBuildings('other')).length < 1" class="text-center"><span class="text-gray">There is no building to show</span></div>
-                        <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('other')" :key="key" :building="building" />
-                    </div>
-                    <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
-                        <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
-                    </div>
-                </div>
-            </div>
-
-            <div v-if="currentPage == 'shipyard'" class="page">
-                <div class="pt-4 text-center">
-                    <span class="text-danger">Page not implemented yet</span>
-                </div>
-            </div>
-
-            <div v-if="currentPage == 'market'" class="page">
-                <div class="pt-4 text-center">
-                    <span class="text-danger">Page not implemented yet</span>
-                </div>
-            </div>
-            
-            <div v-if="currentPage == 'settings'" class="page p-4">
-                <div class="row g-4 justify-content-center">
-                    <div class="col-5 mb-4">
-                        <div class="row g-2">
-                            <div class="col-12 text-center h5 text-primary">About</div>
-                            <div class="col-12 text-center text-normal">This is a rewriting/remake of the original game created by <span class="text-white">Cheslava</span><br><a target="_blank" href="https://www.heartofgalaxy.com" class="text-white">heartofgalaxy.com</a></div>
-                            <div class="col-12 text-center text-danger">This is still under development with bugs and maybe data lost!</div>
-                            <div class="col-12 text-center text-normal mb-2">To support the dev and to stay informed</div>
-                            <div class="col-3">
-                                <a href="https://www.patreon.com/bePatron?u=61283131" target="_blank" class="btn bg-bar border" style="width:78px;">
-                                    <img :src="require(`~/assets/ui/patreon.png`)" width="24px" height="24px" />                                    
-                                    <div class="small lh-sm mt-2">Become a supporter</div>
-                                </a>
-                            </div>
-                            <div class="col-3">
-                                <a href="https://ko-fi.com/freddecgames" target="_blank" class="btn bg-bar border" style="width:78px;">
-                                    <img :src="require(`~/assets/ui/kofi.png`)" width="24px" height="24px" />
-                                    <div class="small lh-sm mt-2">Buy me a Ko-fi</div>
-                                </a>
-                            </div>
-                            <form class="col-3" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-                                <input type="hidden" name="cmd" value="_s-xclick">
-                                <input type="hidden" name="hosted_button_id" value="7XYD7SJFKQ8M4">
-                                <button type="submit" class="btn bg-bar border" style="width:78px;">
-                                    <img :src="require(`~/assets/ui/paypal.png`)" width="24px" height="24px" />
-                                    <div class="small lh-sm mt-2">Make a donation</div>
-                                </button>
-                            </form>
-                            <div class="col-3">
-                                <a href="https://discord.gg/3UkgeeT9CV" target="_blank" class="btn bg-bar border" style="width:78px;">
-                                    <img :src="require(`~/assets/ui/discord.png`)" width="24px" height="24px" alt="Discord" />
-                                    <div class="small lh-sm mt-2">News and information</div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-5 mb-4">
-                        <div class="row g-2 justify-content-center">
-                            <div class="col-12 text-center h5 text-danger">Hard reset</div>
-                            <div class="col-auto">
-                                <button type="button" class="btn bg-bar border text-danger" style="width:85px;" @click="showHardResetPopup()">
-                                    <div class="text-center h5"><i class="fas fa-fw fa-skull"></i></div>
-                                    <div class="small lh-sm mt-2">Wipe Local Data</div>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-5 mb-4">
-                        <div class="row g-2 justify-content-center">
-                            <div class="col-12 text-center h5 text-primary">Export</div>
                             <div class="col-12">
-                                <textarea spellcheck="false" rows="5" class="w-100 rounded bg-1 border text-normal p-2">{{ exportGameData }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-5 mb-4">
-                        <div class="row g-2 justify-content-center">
-                            <div class="col-12 text-center h5 text-primary">Import</div>
-                            <div class="col-12">
-                                <textarea spellcheck="false" rows="5" class="w-100 rounded bg-1 border text-normal p-2" v-model="importExportData"></textarea>
-                            </div>
-                            <div class="col-12 mt-2">
-                                <div class="row gx-2 align-items-center">
-                                    <div class="col text-warning small"><i class="fas fa-fw fa-exclamation-triangle"></i> Import save from original game is not supported for the moment</div>
-                                    <button type="button" class="col-auto btn bg-bg-1 border" @click="importGameData()">Import Save</button>
+                                <div class="row g-1 align-items-center justify-content-center">
+                                    <div v-for="(planet, key) of humanPlanets" :key="key" class="col-3">
+                                        <button type="button" class="w-100 btn bg-1 rounded border" @click="showPlanetPage(planet)">
+                                            <div class="row g-2 align-items-center">
+                                                <div class="col-auto">
+                                                    <img :src="require(`~/assets/planets/${key}.png`)" width="24px" />
+                                                </div>
+                                                <div class="col">
+                                                    <span>{{ $t('planetName_' + key) }}</span>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                    
+                    <div v-if="currentPage == 'planet'" class="page">
+                        <div class="h-100 d-flex align-items-stretch">
+                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                                <div class="row g-3">
+                                    <div class="col-12 text-center">
+                                        <div class="h5" :class="{ 'text-normal':currentPlanet.civId == 'human', 'text-danger':currentPlanet.civId != null && currentPlanet.civId != 'human', 'text-gray':currentPlanet.civId == null }" >{{ $t('planetName_' + currentPlanet.id) }}</div>
+                                    </div>
+                                    <PlanetInfo :planet="currentPlanet" class="col-12" />
+                                    <PlanetEnergy :planet="currentPlanet" class="col-12" />
+                                    <div class="col-12">
+                                        <div v-for="(prod, key) of currentPlanetProds" :key="key" class="row gx-2">
+                                            <span class="col text-normal">{{ $t('resName_' + key) }}</span>
+                                            <span class="col-auto" :class="{ 'text-white':prod == 1, 'text-danger':prod < 1, 'text-success':prod > 1 }"><small class="opacity-75">x</small> {{ prod.toFixed(2) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>               
+                            <div class="col d-flex flex-column">
+                                <div class="pt-3">
+                                    <div class="row gx-2 justify-content-center align-items-center">
+                                        <span class="col-auto text-white">Controlled by</span>
+                                        <button type="button" class="col-auto btn py-0 d-flex align-items-center">
+                                            <img :src="require(`~/assets/civis/${currentPlanet.civId}.png`)" width="32px" />
+                                            <span class="ms-3 h5">{{ $t('civName_' + currentPlanet.civId) }}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="flex-fill d-flex align-items-center">
+                                    <button v-if="currentPlanet.civId == 'human' && humanPlanetCount > 1" type="button" id="arrow_left" class="btn">
+                                        <i class="fas fa-fw fa-chevron-circle-left"></i>
+                                    </button>
+                                    <div class="col d-flex align-items-center justify-content-center">
+                                        <img :src="require(`~/assets/planets/${currentPlanet.id}.png`)" />
+                                    </div>
+                                    <button v-if="currentPlanet.civId == 'human' && humanPlanetCount > 1" type="button" id="arrow_right" class="btn">
+                                        <i class="fas fa-fw fa-chevron-circle-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                                <div class="row g-3">
+                                    <div class="col-12 text-center">
+                                        <span class="h5 text-primary">Status</span>
+                                    </div>
+                                    <PlanetResources :planet="currentPlanet" class="col-12" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-            </div>
+                    <div v-if="currentPage == 'extraction'" class="page">
+                        <div class="h-100 d-flex align-items-stretch">
+                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                                <div class="row g-3">
+                                    <PlanetVignet :planet="currentPlanet" class="col-12" />
+                                    <PlanetEnergy :planet="currentPlanet" class="col-12" />
+                                    <PlanetResources :planet="currentPlanet" class="col-12" />
+                                </div>
+                            </div>
+                            <div class="h-100 col p-3">
+                                <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('extraction')" :key="key" :building="building" />
+                            </div>
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                                <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div v-if="currentPage == 'production'" class="page">
+                        <div class="h-100 d-flex align-items-stretch">
+                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                                <div class="row g-3">
+                                    <PlanetVignet :planet="currentPlanet" class="col-12" />
+                                    <PlanetEnergy :planet="currentPlanet" class="col-12" />
+                                    <PlanetResources :planet="currentPlanet" class="col-12" />
+                                </div>
+                            </div>
+                            <div class="h-100 col p-3">
+                                <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('production')" :key="key" :building="building" />
+                            </div>
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                                <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div v-if="currentPage == 'energy'" class="page">
+                        <div class="h-100 d-flex align-items-stretch">
+                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                                <div class="row g-3">
+                                    <PlanetVignet :planet="currentPlanet" class="col-12" />
+                                    <PlanetEnergy :planet="currentPlanet" class="col-12" />
+                                    <PlanetResources :planet="currentPlanet" class="col-12" />
+                                </div>
+                            </div>
+                            <div class="h-100 col p-3">
+                                <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('energy')" :key="key" :building="building" />
+                            </div>
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                                <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div v-if="currentPage == 'labs'" class="page">
+                        <div class="h-100 d-flex align-items-stretch">
+                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                                <div class="row g-3">
+                                    <PlanetVignet :planet="currentPlanet" class="col-12" />
+                                    <PlanetEnergy :planet="currentPlanet" class="col-12" />
+                                    <PlanetResources :planet="currentPlanet" class="col-12" />
+                                </div>
+                            </div>
+                            <div class="h-100 col p-3">
+                                <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('research')" :key="key" :building="building" />
+                            </div>
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                                <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div v-if="currentPage == 'others'" class="page">
+                        <div class="h-100 d-flex align-items-stretch">
+                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                                <div class="row g-3">
+                                    <PlanetVignet :planet="currentPlanet" class="col-12" />
+                                    <PlanetEnergy :planet="currentPlanet" class="col-12" />
+                                    <PlanetResources :planet="currentPlanet" class="col-12" />
+                                </div>
+                            </div>
+                            <div class="h-100 col p-3">
+                                <div v-if="Object.keys(getCurrentPlanetBuildings('other')).length < 1" class="text-center"><span class="text-gray">There is no building to show</span></div>
+                                <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('other')" :key="key" :building="building" />
+                            </div>
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                                <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="currentPage == 'shipyard'" class="page">
+                        <div class="h-100 d-flex align-items-stretch">
+                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                                <div class="row g-3">
+                                    <PlanetVignet :planet="currentPlanet" class="col-12" />
+                                    <PlanetEnergy :planet="currentPlanet" class="col-12" />
+                                    <PlanetResources :planet="currentPlanet" class="col-12" />
+                                </div>
+                            </div>
+                            <div class="h-100 col p-3">
+                                <div v-if="Object.keys(getCurrentPlanetShips()).length < 1" class="text-center"><span class="text-gray">There is no ship to show</span></div>
+                                <ShipSummary v-for="(ship, key) of getCurrentPlanetShips()" :key="key" :ship="ship" />
+                            </div>
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                                <ShipDetails v-if="currentShip" :ship="currentShip" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="currentPage == 'market'" class="page">
+                        <div class="pt-4 text-center">
+                            <span class="text-danger">Page not implemented yet</span>
+                        </div>
+                    </div>
+                    
+                    <div v-if="currentPage == 'settings'" class="page p-4">
+                        <div class="row g-4 justify-content-center">
+                            <div class="col-5 mb-4">
+                                <div class="row g-2">
+                                    <div class="col-12 text-center h5 text-primary">About</div>
+                                    <div class="col-12 text-center text-normal">This is a rewriting/remake of the original game created by <span class="text-white">Cheslava</span><br><a target="_blank" href="https://www.heartofgalaxy.com" class="text-white">heartofgalaxy.com</a></div>
+                                    <div class="col-12 text-center text-danger">This is still under development with bugs and maybe data lost!</div>
+                                    <div class="col-12 text-center text-normal mb-2">To support the dev and to stay informed</div>
+                                    <div class="col-3">
+                                        <a href="https://www.patreon.com/bePatron?u=61283131" target="_blank" class="btn bg-bar border" style="width:78px;">
+                                            <img :src="require(`~/assets/ui/patreon.png`)" width="24px" height="24px" />                                    
+                                            <div class="small lh-sm mt-2">Become a supporter</div>
+                                        </a>
+                                    </div>
+                                    <div class="col-3">
+                                        <a href="https://ko-fi.com/freddecgames" target="_blank" class="btn bg-bar border" style="width:78px;">
+                                            <img :src="require(`~/assets/ui/kofi.png`)" width="24px" height="24px" />
+                                            <div class="small lh-sm mt-2">Buy me a Ko-fi</div>
+                                        </a>
+                                    </div>
+                                    <form class="col-3" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+                                        <input type="hidden" name="cmd" value="_s-xclick">
+                                        <input type="hidden" name="hosted_button_id" value="7XYD7SJFKQ8M4">
+                                        <button type="submit" class="btn bg-bar border" style="width:78px;">
+                                            <img :src="require(`~/assets/ui/paypal.png`)" width="24px" height="24px" />
+                                            <div class="small lh-sm mt-2">Make a donation</div>
+                                        </button>
+                                    </form>
+                                    <div class="col-3">
+                                        <a href="https://discord.gg/3UkgeeT9CV" target="_blank" class="btn bg-bar border" style="width:78px;">
+                                            <img :src="require(`~/assets/ui/discord.png`)" width="24px" height="24px" alt="Discord" />
+                                            <div class="small lh-sm mt-2">News and information</div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-5 mb-4">
+                                <div class="row g-2 justify-content-center">
+                                    <div class="col-12 text-center h5 text-danger">Hard reset</div>
+                                    <div class="col-auto">
+                                        <button type="button" class="btn bg-bar border text-danger" style="width:85px;" @click="showHardResetPopup()">
+                                            <div class="text-center h5"><i class="fas fa-fw fa-skull"></i></div>
+                                            <div class="small lh-sm mt-2">Wipe Local Data</div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-5 mb-4">
+                                <div class="row g-2 justify-content-center">
+                                    <div class="col-12 text-center h5 text-primary">Export</div>
+                                    <div class="col-12">
+                                        <textarea spellcheck="false" rows="5" class="w-100 rounded bg-1 border text-normal p-2">{{ exportGameData }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-5 mb-4">
+                                <div class="row g-2 justify-content-center">
+                                    <div class="col-12 text-center h5 text-primary">Import</div>
+                                    <div class="col-12">
+                                        <textarea spellcheck="false" rows="5" class="w-100 rounded bg-1 border text-normal p-2" v-model="importExportData"></textarea>
+                                    </div>
+                                    <div class="col-12 mt-2">
+                                        <div class="row gx-2 align-items-center">
+                                            <div class="col text-warning small"><i class="fas fa-fw fa-exclamation-triangle"></i> Import save from original game is not supported for the moment</div>
+                                            <button type="button" class="col-auto btn bg-bg-1 border" @click="importGameData()">Import Save</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
             
         </div>
@@ -653,51 +666,15 @@
 <script>
 var resourcesDef = [
 
-    { id: "iron", value: 16, },
-    { id: "steel", value: 4, },
-    { id: "titanium", value: 3, },
-    { id: "silicon", value: 11, },
-    { id: "graphite", value: 7, },
-    { id: "oil", value: 2, reqs: { chemical: 1 }, },
-    { id: "fuel", value: 6, },
-    { id: "hydrogen", reqs: { hydro: 1, nuclear: 1 }, },
-    { id: "methane", },
-    { id: "water", reqs: { hydro: 1 }, },
-    { id: "osmium", reqs: { osmium: 1 }, },
-    { id: "technetium", reqs: { halean: 1 }, },
-    { id: "rhodium", reqs: { rhodium: 1 }, },
-    { id: "uranium", reqs: { mineralogy: 4 }, },
-    { id: "plastic", value: 29, reqs: { chemical: 4 }, },
-    { id: "circuit", value: 18, reqs: { electronics: 1 }, },
-    { id: "nanotubes", reqs: { material: 14 }, },
-    { id: "ice", reqs: { ice: 1 }, },
-    { id: "biomass", reqs: { environment: 1 } },
-    { id: "ammunition", reqs: { military: 1 }, quests: { city_5: 0 }, },
-    { id: "sand", reqs: { mineralogy: 4 }, },
-    { id: "coolant", reqs: { ice: 10 }, },
-    { id: "robots", reqs: { artificial_intelligence: 1, halean: 1 }, },
-    { id: "armor", reqs: { military: 12 }, },
-    { id: "engine", reqs: { military: 16 }, },
-    { id: "empty battery", reqs: { electronics: 8 }, }, 
-    { id: "full battery", reqs: { electronics: 8 }, },
-    { id: "u-ammunition", reqs: { military: 8 }, },
-    { id: "t-ammunition", reqs: { artofwar: 1 }, },
-    { id: "sulfur", reqs: { vulcan: 1 }, },
-    { id: "antimatter", reqs: { quantum: 1 }, },
-    { id: "mk embryo", reqs: { osmium: 1 }, },
-    { id: "superconductors", reqs: { electronics: 30 }, },
-    { id: "caesium", reqs: { karan_nuclear: 1 }, },
-    { id: "thorium", reqs: { karan_nuclear: 1 }, },
-    { id: "ammonia", reqs: { ammonia_chemistry: 1 }, },
-    { id: "dark matter", reqs: { darkmatter_science: 1 }, },
-    { id: "meissnerium", reqs: { electronics: 30 }, },
-    { id: "meissner cell", reqs: { electronics: 35 }, },
-    { id: "shield capsule", reqs: { protohalean_science: 5 }, },
-    { id: "explosives", reqs: { xiran_artofwar: 1 }, },
-    { id: "biocell", reqs: { mk_tech: 30 }, },
-    { id: "biocircuit", reqs: { mk_tech: 30 }, },
-    { id: "qasers", reqs: { protohalean_science: 1 }, },
-    { id: "xirandrium", reqs: { xiran_artofwar: 1 }, },
+    { id: "iron",     value: 16, },
+    { id: "steel",    value: 4,  },
+    { id: "titanium", value: 3,  },
+    { id: "silicon",  value: 11, },
+    { id: "graphite", value: 7,  },
+    { id: "fuel",     value: 6,  },
+    { id: "methane",  },
+    { id: "uranium",  reqs: { mineralogy: 4 }, },
+    { id: "sand",     reqs: { mineralogy: 4 }, },
 ]
 
 class Resource {
@@ -713,21 +690,21 @@ class Resource {
 
 var buildingsDef = [
 
-    { id: "mine", type: "extraction", costs:{ iron:{ count: 10, mult: 1.2 }, steel:{ count: 9.75e-4, mult: 1.3 }, titanium:{ count: 2.1e-12, mult: 1.5 }}, prods:{ iron: 2 }, },
-    { id: "methaneExtractor", type: "extraction", costs:{ iron:{ count: 100, mult: 1.2 }, steel:{ count: .1, mult: 1.3 }, titanium:{ count: 3e-5, mult: 1.5 }}, prods:{ methane: 1 }, },
-    { id: "graphiteExtractor", type: "extraction", costs:{ iron:{ count: 500, mult: 1.2 }, steel:{ count: 4e-4, mult: 1.3 }, titanium:{ count: 3e-5, mult: 1.5 }}, prods:{ graphite: 1 }, },
-    { id: "metalCollector", reqs:{ mineralogy: 4 }, type: "extraction", costs:{ steel:{ count: 2e3, mult: 1.25 }, titanium:{ count: .9, mult: 1.35 }}, prods:{ titanium: 10, uranium: 1 }, energy: -50 },    
-    { id: "sandQuarry", reqs:{ mineralogy: 4 }, type: "extraction", costs:{ steel:{ count: 5e3, mult: 1.25 }, titanium:{ count: 1e3, mult: 1.35 }}, prods:{ sand: 1 }, energy: -80 },
-
-    { id: "methaneProcesser", type: "production", costs:{ iron:{ count: 100, mult: 1.1 }, steel:{ count: .25, mult: 1.2 }, titanium:{ count: 2e-4, mult: 1.3 }}, prods:{ fuel: 1, methane: -2 }, },
-    { id: "foundry", type: "production", costs:{ iron:{ count: 1e3, mult: 1.1 }, steel:{ count: .48, mult: 1.2 }, titanium:{ count: .01, mult: 1.3 }}, prods:{ steel: 2, iron: -2, graphite: -1, fuel: -2 }, },
+    { id: "mine",                                      type: "extraction", costs:{ iron:{ count: 10, mult: 1.2 }, steel:{ count: 9.75e-4, mult: 1.3 }, titanium:{ count: 2.1e-12, mult: 1.5 }}, prods:{ iron: 2 }, },
+    { id: "methaneExtractor",                          type: "extraction", costs:{ iron:{ count: 100, mult: 1.2 }, steel:{ count: .1, mult: 1.3 }, titanium:{ count: 3e-5, mult: 1.5 }}, prods:{ methane: 1 }, },
+    { id: "graphiteExtractor",                         type: "extraction", costs:{ iron:{ count: 500, mult: 1.2 }, steel:{ count: 4e-4, mult: 1.3 }, titanium:{ count: 3e-5, mult: 1.5 }}, prods:{ graphite: 1 }, },
+    { id: "metalCollector",    reqs:{ mineralogy: 4 }, type: "extraction", costs:{ steel:{ count: 2e3, mult: 1.25 }, titanium:{ count: .9, mult: 1.35 }}, prods:{ titanium: 10, uranium: 1 }, energy: -50 },    
+    { id: "sandQuarry",        reqs:{ mineralogy: 4 }, type: "extraction", costs:{ steel:{ count: 5e3, mult: 1.25 }, titanium:{ count: 1e3, mult: 1.35 }}, prods:{ sand: 1 }, energy: -80 },
     
-    { id: "smallGenerator", type: "energy", costs:{ iron:{ count: 2e3, mult: 1.15 }, steel:{ count: 100, mult: 1.27 }, titanium:{ count: .17, mult: 1.35 }}, prods:{ fuel: -3 }, energy: 20 },
+    { id: "methaneProcesser",                          type: "production", costs:{ iron:{ count: 100, mult: 1.1 }, steel:{ count: .25, mult: 1.2 }, titanium:{ count: 2e-4, mult: 1.3 }}, prods:{ fuel: 1, methane: -2 }, },
+    { id: "foundry",                                   type: "production", costs:{ iron:{ count: 1e3, mult: 1.1 }, steel:{ count: .48, mult: 1.2 }, titanium:{ count: .01, mult: 1.3 }}, prods:{ steel: 2, iron: -2, graphite: -1, fuel: -2 }, },
     
-    { id: "laboratory", type: "research", costs:{ iron:{ count: 1e3, mult: 2 }, steel:{ count: 200, mult: 3 }, titanium:{ count: .01, mult: 4 }}, energy: -5, researchPoint: 4 },
+    { id: "smallGenerator",                            type: "energy",     costs:{ iron:{ count: 2e3, mult: 1.15 }, steel:{ count: 100, mult: 1.27 }, titanium:{ count: .17, mult: 1.35 }}, prods:{ fuel: -3 }, energy: 20 },
     
-    { id: "shipyard", reqs:{ astronomy: 1 }, type: "other", costs:{ steel:{ count: 5e3, mult: 2 }, titanium:{ count: 1e3, mult: 3.2 }}, },
-    { id: "tradehub", },
+    { id: "laboratory",                                type: "research",   costs:{ iron:{ count: 1e3, mult: 2 }, steel:{ count: 200, mult: 3 }, titanium:{ count: .01, mult: 4 }}, energy: -5, researchPoint: 4 },
+    
+    { id: "shipyard",          reqs:{ astronomy: 1 },  type: "other",      costs:{ steel:{ count: 5e3, mult: 2 }, titanium:{ count: 1e3, mult: 3.2 }}, },
+    { id: "tradehub",          reqs:{ astronomy: 5 },  type: "other",      costs:{ steel:{ count: 5e4, mult: 2 }, titanium:{ count: 1e4, mult: 3.2 }}, },
 ]
 
 class Building {
@@ -760,6 +737,8 @@ class Building {
 }
 
 var shipsDef = [
+
+    { id: "vitha", shipyardLevel: 1, costs:{ iron: 5e4, steel: 8e4, titanium: 5e3 }, },
 ]
 
 class Ship {
@@ -767,13 +746,17 @@ class Ship {
     constructor(def) {
     
         this.id = def.id
+        this.costs = def.costs
+        this.shipyardLevel = def.shipyardLevel
+        
+        this.count = 0
     }
 }
 
 var planetsDef = [
     {
         id: "promision", civId: "human", nebula: "perseus", influence: 1, x: 64, y: 64, type: "terrestrial", radius: 6833, temp: 22, atmos: "oxygen", orbit: 1,
-        prods:{ biomass: 1, iron: 1, graphite: 1, titanium: 1, silicon: 1, oil: 1, uranium: 1, water: 1, methane: 1, sand: .5 },
+        prods:{ iron: 1, graphite: 1, titanium: 1, silicon: 1, uranium: 1, methane: 1, sand: .5 },
     }, 
 ]
 
@@ -963,6 +946,38 @@ class Planet {
         
         return ret
     }
+    
+    isShipUnlocked(sId) {
+    
+        let ret = true
+        
+        let ship = this.ships[sId]
+        let shipyard = this.buildings["shipyard"]
+        
+        if (shipyard.count < ship.shipyardLevel) ret = false
+        
+        return ret
+    }
+    
+    getShipCost(sId, count) {
+    
+        let ret = {}
+        
+        let ship = this.ships[sId]
+        for (let rId in ship.costs)        
+            ret[rId] = ship.costs[rId] * count
+        
+        return ret
+    }
+    
+    buildShip(sId, count) {
+    
+        let ship = this.ships[sId]
+        for (let rId in ship.costs)        
+            this.resources[rId].count -= ship.costs[rId] * count
+        
+        ship.count += count
+    }
 }
 
 var researchesDef = [
@@ -993,15 +1008,10 @@ var researchesDef = [
       ],
       isVisible(state) { return true },
     },
-    { id: "material", researchPoint: 500, mult: 1.4, reqs:{ mineralogy: 1 },
+    { id: "material", researchPoint: 500, mult: 2.2, reqs:{ mineralogy: 1 },
       isVisible(state) { return true },
       buildingBonuses: [
         { id:"foundry", prods:[{ id: "steel", minLevel: 1, value: 50, maxLevel: 100, reduction: .5, }], },
-      ],
-      unlocks: [
-        { level:8, buildings:["plasticFactory", "polymerizer"], },
-        { level:15, buildings:["nanotubesFactory"], },
-        { level:35, buildings:["ceramicFoundry"], },
       ],
     },
 
@@ -1081,19 +1091,19 @@ class Research {
     constructor(def) {
     
         this.id = def.id
+        this.max = def.max
         this.desc = def.desc
         this.reqs = def.reqs
+        this.mult = def.mult
         this.unlocks = def.unlocks
         this.shipBonuses = def.shipBonuses
         this.researchPoint = def.researchPoint
         this.buildingBonuses = def.buildingBonuses
         
-        this.mult = Math.floor(100 * (1 + (def.mult - 1))) / 100
         this.level = 0
-        this.bonusLevel = 0
     }
     
-    getCost() { return this.researchPoint * Math.pow(this.mult, this.level - this.bonusLevel) }
+    getCost() { return this.researchPoint * Math.pow(this.mult, this.level) }
     
     getBuildingBonuses() {
         
@@ -1296,10 +1306,12 @@ export default {
             timeTravelCount: 0,
             
             currentPage:'planet',
+            currentShip: null,
             currentPlanet: null,
             currentBuilding: null,
             currentResearch: null,
             
+            currentShipCount: 1,
             currentBuildCount: 1,
             currentDestroyCount: 1,
             
@@ -1423,6 +1435,8 @@ export default {
         
         setCurrentResearch(research) { this.currentResearch = research },
         
+        setCurrentShip(ship) { this.currentShip = ship },
+        
         showToast(text, type) {
         
             this.toastText = text
@@ -1476,6 +1490,17 @@ export default {
                 if (this.isBuildingUnlocked(bId) && this.currentPlanet.buildings[bId].type == type)
                     ret[bId] = this.currentPlanet.buildings[bId]
             
+            return ret
+        },
+        
+        getCurrentPlanetShips() {
+        
+            let ret = {}
+            
+            for (let sId in this.currentPlanet.ships)
+                if (this.currentPlanet.isShipUnlocked(sId))
+                    ret[sId] = this.currentPlanet.ships[sId]
+                    
             return ret
         },
         
