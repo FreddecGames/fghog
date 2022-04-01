@@ -27,7 +27,7 @@
                 <div class="col-auto text-white medium"><span class="px-1">{{ building.count.toLocaleString() }}</span></div>
             </div>
             <div v-if="building.hasNeeds() == true" class="text-danger medium my-1">
-                <i class="fas fa-fw fa-exclamation-triangle me-2"></i> Stopped due to lack of <span v-for="(res, key) of building.needs" :key="key"><span v-if="building.needs[key] == true">{{ $t('resName_' + key) }}</span></span>
+                <i class="fas fa-fw fa-exclamation-triangle me-2"></i> Stopped for 10 seconds due to lack of <span v-for="(res, key) of building.needs" :key="key"><span v-if="building.needs[key] == true">{{ $t('resName_' + key) }}</span> production</span>
             </div>
             <div v-for="(res, key) of $parent.currentPlanet.getRawProduction(building.id, building.count)" :key="key">
                 <div class="row gx-2">
@@ -35,7 +35,7 @@
                     <span class="col-auto" :class="{ 'text-success':res > 0, 'text-danger':res < 0 }"><span v-if="res > 0">+</span><FormatNumber :value="res" /> <small class="opacity-75">/s</small></span>
                 </div>
             </div>
-            <div class="mt-1 text-end">
+            <div class="mt-2 text-end">
                 <button v-if="building.active == true" type="button" class="btn btn-sm btn-outline-primary" style="width:75px;" @click="building.toggleActive()">
                     <i class="fas fa-fw fa-power-off"></i>
                     <span>Disable</span>
@@ -61,10 +61,17 @@
                     <span class="col-auto" :class="{ 'text-white':res <= $parent.currentPlanet.resources[key].count, 'text-danger':res > $parent.currentPlanet.resources[key].count }"><FormatNumber :value="res" /></span>
                 </div>
             </div>
-            <div v-if="$parent.currentPlanet.canBuy($parent.currentPlanet.getBuildingCost(building.id, $parent.currentBuildCount))" class="text-end mt-1">
+            <hr>
+            <div v-for="(res, key) of building.prods" :key="'deltaProd_' + key">
+                <div v-if="res >= 1 || res < 0" class="row gx-2">
+                    <span class="col text-normal">{{ $t('resName_' + key) }}</span>
+                    <span class="col-auto" :class="{ 'text-success':res > 0, 'text-danger':res < 0 }"><span v-if="res > 0">+</span><FormatNumber :value="res * $parent.currentBuildCount" /> <small class="opacity-75">/s</small></span>
+                </div>
+            </div>
+            <div v-if="$parent.currentPlanet.canBuy($parent.currentPlanet.getBuildingCost(building.id, $parent.currentBuildCount))" class="text-end mt-2">
                 <button type="button" class="btn btn-sm btn-outline-primary" style="width:75px;" @click="$parent.currentPlanet.queueBuilding(building.id, $parent.currentBuildCount)"><i class="fas fa-fw fa-plus-circle"></i> Build</button>
             </div>
-            <div v-if="!$parent.currentPlanet.canBuy($parent.currentPlanet.getBuildingCost(building.id, $parent.currentBuildCount))" class="text-end mt-1">
+            <div v-if="!$parent.currentPlanet.canBuy($parent.currentPlanet.getBuildingCost(building.id, $parent.currentBuildCount))" class="text-end mt-2">
                 <button type="button" class="btn btn-sm btn-outline-primary" style="width:75px;" @click="$parent.currentPlanet.queueBuilding(building.id, $parent.currentBuildCount)"><i class="fas fa-fw fa-plus-circle"></i> Queue</button>
             </div>
         </div>
@@ -83,10 +90,10 @@
                     <span class="col-auto text-white"><FormatNumber :value="res" /></span>
                 </div>
             </div>
-            <div v-if="building.count >= $parent.currentDestroyCount" class="text-end mt-1">
+            <div v-if="building.count >= $parent.currentDestroyCount" class="text-end mt-2">
                 <button type="button" class="btn btn-sm btn-outline-primary" style="width:75px;" @click="$parent.currentPlanet.destroyBuilding(building.id, $parent.currentDestroyCount)"><i class="fas fa-fw fa-minus-circle"></i> Destroy</button>
             </div>
-            <div v-if="building.count < $parent.currentDestroyCount" class="mt-1 text-end">
+            <div v-if="building.count < $parent.currentDestroyCount" class="mt-2 text-end">
                 <span class="medium text-danger">You don't have {{ $parent.currentDestroyCount }} {{ $t('buildingName_' + building.id) }}.</span>
             </div>
         </div>

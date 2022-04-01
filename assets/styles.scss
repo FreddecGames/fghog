@@ -20,6 +20,8 @@ $headings-margin-bottom:      0 !default;
 
 $input-btn-focus-box-shadow:  none !default;
 
+$hr-margin-y:                 .75rem !default;
+
 @import 'node_modules/bootstrap/scss/bootstrap.scss';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -61,6 +63,8 @@ body { width:100%; height:100%; overflow:hidden; }
 #__layout { width:100%; height:100%; overflow:hidden; }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+hr { background-color: $primary; }
 
 .h5, h5 { font-size: 1.25rem; font-weight: $font-weight-normal; }
 

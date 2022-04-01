@@ -50,7 +50,10 @@
                     </div>
                 </div>
 			</div>
-
+            
+            <div class="w-100 h-100 d-flex align-items-center justify-content-center">
+            <div class="w-100 h-100 position-relative border rounded" style="max-width:1160px; max-height:728px;">
+            
             <div class="position-absolute top-0 start-0 end-0 border-bottom bg-1 d-flex align-items-center" style="height:50px;">
 				<div class="col-auto px-3" style="width:300px;">
                     <div class="row gx-2">
@@ -639,6 +642,9 @@
                 </div>
             </div>
 
+            </div>
+            </div>
+            
         </div>
     
     </div>
@@ -841,7 +847,7 @@ class Planet {
                             if (this.prods[rId]) this.resources[rId].prod *= this.prods[rId]
                         }
                         
-                        this.researchPoint.prod += building.researchPoint * building.count
+                        this.researchPoint.prod += building.researchPoint * building.count * energyCoeff
                         
                         if (building.energy > 0) energy.prod += building.energy * building.count
                         else if (building.energy < 0) energy.consum += building.energy * building.count
@@ -989,6 +995,9 @@ var researchesDef = [
     },
     { id: "material", researchPoint: 500, mult: 1.4, reqs:{ mineralogy: 1 },
       isVisible(state) { return true },
+      buildingBonuses: [
+        { id:"foundry", prods:[{ id: "steel", minLevel: 1, value: 50, maxLevel: 100, reduction: .5, }], },
+      ],
       unlocks: [
         { level:8, buildings:["plasticFactory", "polymerizer"], },
         { level:15, buildings:["nanotubesFactory"], },
