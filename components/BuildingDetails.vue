@@ -61,7 +61,7 @@
                     <span class="col-auto" :class="{ 'text-white':res <= $parent.currentPlanet.resources[key].count, 'text-danger':res > $parent.currentPlanet.resources[key].count }"><FormatNumber :value="res" /></span>
                 </div>
             </div>
-            <hr>
+            <hr v-if="building.prods != null || building.researchPoint != 0 || building.energy != 0" />
             <div v-for="(res, key) of building.prods" :key="'deltaProd_' + key">
                 <div v-if="res >= 1 || res < 0" class="row gx-2">
                     <span class="col text-normal">{{ $t('resName_' + key) }}</span>
