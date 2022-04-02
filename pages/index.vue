@@ -126,7 +126,7 @@
                         <div class="col">
                             <div class="row justify-content-center" style="display: flex;">
                                 <button id="b_extraction_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'extraction' }" style="width:80px;" @click="showExtractionPage()">
-                                    <div class="h5"><i class="fas fa-fw fa-dice-d20"></i></div>
+                                    <div class="h5"><i class="fas fa-fw fa-hard-hat"></i></div>
                                     <div class="small">Extraction</div>
                                 </button>
                                 <button id="b_production_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'production' }" style="width:80px;" @click="showProductionPage()">
@@ -1737,24 +1737,27 @@ export default {
                     if (planet) {
                         this.planets[pId].civId = planet.civId
                         
-                        for (let bId in this.planets[pId].buildings) {
-                            let building = loadeddata.planets[pId].buildings[bId]
-                            if (building) {
-                                this.planets[pId].buildings[bId].count = building.count
-                                this.planets[pId].buildings[bId].queue = building.queue
-                                this.planets[pId].buildings[bId].active = building.active
+                        if (loadeddata.planets[pId].buildings)
+                            for (let bId in this.planets[pId].buildings) {
+                                let building = loadeddata.planets[pId].buildings[bId]
+                                if (building) {
+                                    this.planets[pId].buildings[bId].count = building.count
+                                    this.planets[pId].buildings[bId].queue = building.queue
+                                    this.planets[pId].buildings[bId].active = building.active
+                                }
                             }
-                        }
                         
-                        for (let rId in this.planets[pId].resources) {
-                            let resource = loadeddata.planets[pId].resources[rId]
-                            if (resource) this.planets[pId].resources[rId].count = resource.count
-                        }
+                        if (loadeddata.planets[pId].resources)
+                            for (let rId in this.planets[pId].resources) {
+                                let resource = loadeddata.planets[pId].resources[rId]
+                                if (resource) this.planets[pId].resources[rId].count = resource.count
+                            }
                         
-                        for (let sId in this.planets[pId].ships) {
-                            let ship = loadeddata.planets[pId].ships[sId]
-                            if (ship) this.planets[pId].ships[sId].count = ship.count
-                        }
+                        if (loadeddata.planets[pId].ships)
+                            for (let sId in this.planets[pId].ships) {
+                                let ship = loadeddata.planets[pId].ships[sId]
+                                if (ship) this.planets[pId].ships[sId].count = ship.count
+                            }
                     }
                 }
             
