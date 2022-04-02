@@ -180,8 +180,13 @@
                     </div>
                     
                     <div v-if="currentPage == 'map'" class="page">
-                        <div class="pt-4 text-center">
-                            <span class="text-danger">Page not implemented yet</span>
+                        <div class="h-100 d-flex align-items-stretch">
+                            <div class="h-100 col p-3 position-relative" :class="{ 'bg-perseus':currentNebula.id == 'perseus' }" style="overflow-y:auto;">
+                                <div v-for="planet in getNebulaPlanets()" :key="planet.id" class="position-absolute">
+                                </div>
+                            </div>
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                            </div>
                         </div>
                     </div>
                     
@@ -980,6 +985,21 @@ class Planet {
     }
 }
 
+var nebulasDef = [
+
+    { id: "perseus", },
+]
+
+class Nebula {
+
+    constructor(def) {
+    
+        this.id = def.id
+        
+        this.planets = {}
+    }
+}
+
 var researchesDef = [
 
     { id: "astronomy", desc: true, researchPoint: 3e3, mult: 4.3,
@@ -1308,6 +1328,7 @@ export default {
             currentPage:'planet',
             currentShip: null,
             currentPlanet: null,
+            currentNebula: null,
             currentBuilding: null,
             currentResearch: null,
             
@@ -1317,6 +1338,7 @@ export default {
             
             quests: {},
             planets: {},
+            nebulas: {},
             tutorials: {},
             researches: {},
         }
@@ -1670,8 +1692,20 @@ export default {
         
             questsDef.forEach(def => { this.quests[def.id] = new Quest(def) })
             planetsDef.forEach(def => { this.planets[def.id] = new Planet(def) })
+            nebulasDef.forEach(def => { this.nebulas[def.id] = new Nebula(def) })
             tutorialsDef.forEach(def => { this.tutorials[def.id] = new Tutorial(def) })
             researchesDef.forEach(def => { this.researches[def.id] = new Research(def) })
+            
+            for (let nId in this.nebulas) {
+                let nebula = this.nebulas[nId]
+                
+                for (let pId in this.planets) {
+                    let planet = this.planets[pId]
+                    if (planet.nebula == nebula.id) nebula.planets[pId] = planet
+                }
+            }
+            
+            this.currentNebula = this.nebulas["perseus"]
             
             this.currentPlanet = this.planets["promision"]
             this.currentPlanet.buildings["mine"].count = 1
@@ -1716,6 +1750,11 @@ export default {
                             let resource = loadeddata.planets[pId].resources[rId]
                             if (resource) this.planets[pId].resources[rId].count = resource.count
                         }
+                        
+                        for (let sId in this.planets[pId].ships) {
+                            let ship = loadeddata.planets[pId].ships[sId]
+                            if (ship) this.planets[pId].ships[sId].count = ship.count
+                        }
                     }
                 }
             
@@ -1757,7 +1796,7 @@ export default {
 
             for (let pId in this.planets) {
                 let planet = this.planets[pId]
-                saveddata.planets[pId] = { id: planet.id, civId: planet.civId, buildings: {}, resources: {},  }
+                saveddata.planets[pId] = { id: planet.id, civId: planet.civId, buildings: {}, resources: {}, ships: {},  }
                 
                 for (let bId in this.planets[pId].buildings) {
                     let building = this.planets[pId].buildings[bId]
@@ -1767,6 +1806,11 @@ export default {
                 for (let rId in this.planets[pId].resources) {
                     let resource = this.planets[pId].resources[rId]
                     saveddata.planets[pId].resources[rId] = { id: resource.id, count: resource.count }
+                }
+            
+                for (let sId in this.planets[pId].ships) {            
+                    let ship = this.planets[pId].ships[sId]                
+                    saveddata.planets[pId].ships[sId] = { id: ship.id, count: ship.count, }
                 }
             }
             
