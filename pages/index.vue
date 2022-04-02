@@ -55,7 +55,7 @@
                 <div class="w-100 h-100 position-relative border rounded" style="max-width:1160px; max-height:728px;">
                     
                     <div class="position-absolute top-0 start-0 end-0 border-bottom bg-1 d-flex align-items-center" style="height:50px;">
-                        <div class="col-auto px-3" style="width:300px;">
+                        <div class="col-auto px-3" style="width:275px;">
                             <div class="row gx-2">
                                 <span class="col-auto text-normal">Influence</span>
                                 <span class="col-auto text-white">{{ influence.toLocaleString() }}</span>
@@ -63,33 +63,33 @@
                         </div>
                         <div class="col">
                             <div class="row justify-content-center">
-                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':getFleetsPageState() == 'active', 'text-gray':getFleetsPageState() == 'locked' }" style="width:85px;" @click="showFleetsPage()">
+                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':getFleetsPageState() == 'active', 'text-gray':getFleetsPageState() == 'locked' }" style="width:80px;" @click="showFleetsPage()">
                                     <div class="h5"><i class="fas fa-fw fa-space-shuttle"></i></div>
                                     <div class="small">Fleets</div>
                                 </button>
-                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':getMapPageState() == 'active', 'text-gray':getMapPageState() == 'locked' }" style="width:85px;" @click="showMapPage()">
+                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':getMapPageState() == 'active', 'text-gray':getMapPageState() == 'locked' }" style="width:80px;" @click="showMapPage()">
                                     <div class="h5"><i class="fas fa-fw fa-map"></i></div>
                                     <div class="small">Map</div>
                                 </button>
-                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'research' }" style="width:85px;" @click="showResearchPage()">
+                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'research' }" style="width:80px;" @click="showResearchPage()">
                                     <div class="h5"><i class="fas fa-fw fa-atom"></i></div>
                                     <div class="small">Research</div>
                                 </button>
-                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':getDiplomacyPageState() == 'active', 'text-gray':getDiplomacyPageState() == 'locked' }" style="width:85px;" @click="showDiplomacyPage()">
+                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':getDiplomacyPageState() == 'active', 'text-gray':getDiplomacyPageState() == 'locked' }" style="width:80px;" @click="showDiplomacyPage()">
                                     <div class="h5"><i class="fas fa-fw fa-hands-helping"></i></div>
                                     <div class="small">Diplomacy</div>
                                 </button>
-                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':getTournamentPageState() == 'active', 'text-gray':getTournamentPageState() == 'locked' }" style="width:85px;" @click="showTournamentPage()">
+                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':getTournamentPageState() == 'active', 'text-gray':getTournamentPageState() == 'locked' }" style="width:80px;" @click="showTournamentPage()">
                                     <div class="h5"><i class="fas fa-fw fa-trophy"></i></div>
                                     <div class="small">Tournament</div>
                                 </button>
-                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'overview' }" style="width:85px;" @click="showOverviewPage()">
+                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'overview' }" style="width:80px;" @click="showOverviewPage()">
                                     <div class="h5"><i class="fas fa-fw fa-globe"></i></div>
                                     <div class="small">Overview</div>
                                 </button>
                             </div>				
                         </div>				
-                        <div class="col-auto px-3" style="width:300px;">
+                        <div class="col-auto px-3" style="width:275px;">
                             <div class="row align-items-center">
                                 <div class="col">
                                     <div class="row gx-2 justify-content-end">
@@ -116,7 +116,7 @@
                     </div>
                     
                     <div class="position-absolute bottom-0 start-0 end-0 border-top bg-1 d-flex align-items-center" style="height:50px;">
-                        <div class="col-auto px-3" style="width:300px;">
+                        <div class="col-auto px-3" style="width:275px;">
                             <div class="row gx-2 align-items-baseline">
                                 <span class="col-auto text-normal">Research Points</span>
                                 <span class="col-auto text-white"><FormatNumber :value="researchPoint.count" /></span>
@@ -125,37 +125,37 @@
                         </div>
                         <div class="col">
                             <div class="row justify-content-center" style="display: flex;">
-                                <button id="b_extraction_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'extraction' }" style="width:80px;" @click="showExtractionPage()">
+                                <button id="b_extraction_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'extraction' }" style="width:75px;" @click="showExtractionPage()">
                                     <div class="h5"><i class="fas fa-fw fa-hard-hat"></i></div>
                                     <div class="small">Extraction</div>
                                 </button>
-                                <button id="b_production_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'production' }" style="width:80px;" @click="showProductionPage()">
+                                <button id="b_production_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'production' }" style="width:75px;" @click="showProductionPage()">
                                     <div class="h5"><i class="fas fa-fw fa-industry"></i></div>
                                     <div class="small">Production</div>
                                 </button>
-                                <button id="b_energy_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'energy' }" style="width:80px;" @click="showEnergyPage()">
+                                <button id="b_energy_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'energy' }" style="width:75px;" @click="showEnergyPage()">
                                     <div class="h5"><i class="fas fa-fw fa-bolt"></i></div>
                                     <div class="small">Energy</div>
                                 </button>
-                                <button id="b_res_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'labs' }" style="width:80px;" @click="showLabsPage()">
+                                <button id="b_res_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'labs' }" style="width:75px;" @click="showLabsPage()">
                                     <div class="h5"><i class="fas fa-fw fa-flask"></i></div>
                                     <div class="small">Labs</div>
                                 </button>
-                                <button id="b_other_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'others' }" style="width:80px;" @click="showOthersPage()">
+                                <button id="b_other_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'others' }" style="width:75px;" @click="showOthersPage()">
                                     <div class="h5"><i class="fas fa-fw fa-building"></i></div>
                                     <div class="small">Others</div>
                                 </button>
-                                <button id="b_other_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':getShipyardPageState() == 'active', 'text-gray':getShipyardPageState() == 'locked' }" style="width:80px;" @click="showShipyardPage()">
+                                <button id="b_other_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':getShipyardPageState() == 'active', 'text-gray':getShipyardPageState() == 'locked' }" style="width:75px;" @click="showShipyardPage()">
                                     <div class="h5"><i class="fas fa-fw fa-rocket"></i></div>
                                     <div class="small">Shipyard</div>
                                 </button>
-                                <button id="b_other_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':getMarketPageState() == 'active', 'text-gray':getMarketPageState() == 'locked', 'text-danger':getMarketPageState() == 'forbidden' }" style="width:80px;" @click="showMarketPage()">
+                                <button id="b_other_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':getMarketPageState() == 'active', 'text-gray':getMarketPageState() == 'locked', 'text-danger':getMarketPageState() == 'forbidden' }" style="width:75px;" @click="showMarketPage()">
                                     <div class="h5"><i class="fas fa-fw fa-store"></i></div>
                                     <div class="small">Market</div>
                                 </button>
                             </div>
                         </div>					
-                        <div class="col-auto px-3" style="width:300px;">
+                        <div class="col-auto px-3" style="width:275px;">
                             <div class="row justify-content-end">
                                 <button type="button" class="col-auto btn lh-1" style="width:66px;" @click="manualSave()">
                                     <div class="h5"><i class="fas fa-fw fa-save"></i></div>
@@ -377,7 +377,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:275px;overflow-y:auto;">
                                 <ResearchDetails v-if="currentResearch" :research="currentResearch" />
                             </div>
                         </div>
@@ -421,7 +421,7 @@
                     
                     <div v-if="currentPage == 'planet'" class="page">
                         <div class="h-100 d-flex align-items-stretch">
-                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                            <div class="h-100 col-auto bg-1 border-end p-3 scrollbar" style="width:275px; overflow-y:auto;">
                                 <div class="row g-3">
                                     <div class="col-12 text-center">
                                         <div class="h5" :class="{ 'text-normal':currentPlanet.civId == 'human', 'text-danger':currentPlanet.civId != null && currentPlanet.civId != 'human', 'text-gray':currentPlanet.civId == null }" >{{ $t('planetName_' + currentPlanet.id) }}</div>
@@ -446,19 +446,17 @@
                                         </button>
                                     </div>
                                 </div>
-                                <div class="flex-fill d-flex align-items-center">
+                                <div :class="'flex-fill d-flex align-items-center bg-' + currentPlanet.id">
                                     <button v-if="currentPlanet.civId == 'human' && humanPlanetCount > 1" type="button" id="arrow_left" class="btn">
                                         <i class="fas fa-fw fa-chevron-circle-left"></i>
                                     </button>
-                                    <div class="col d-flex align-items-center justify-content-center">
-                                        <img :src="require(`~/assets/planets/${currentPlanet.id}.png`)" />
-                                    </div>
+                                    <div class="col"></div>
                                     <button v-if="currentPlanet.civId == 'human' && humanPlanetCount > 1" type="button" id="arrow_right" class="btn">
                                         <i class="fas fa-fw fa-chevron-circle-right"></i>
                                     </button>
                                 </div>
                             </div>
-                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:275px; overflow-y:auto;">
                                 <div class="row g-3">
                                     <div class="col-12 text-center">
                                         <span class="h5 text-primary">Status</span>
@@ -471,7 +469,7 @@
 
                     <div v-if="currentPage == 'extraction'" class="page">
                         <div class="h-100 d-flex align-items-stretch">
-                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:275px;overflow-y:auto;">
                                 <div class="row g-3">
                                     <PlanetVignet :planet="currentPlanet" class="col-12" />
                                     <PlanetEnergy :planet="currentPlanet" class="col-12" />
@@ -481,7 +479,7 @@
                             <div class="h-100 col p-3">
                                 <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('extraction')" :key="key" :building="building" />
                             </div>
-                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:275px;overflow-y:auto;">
                                 <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
                             </div>
                         </div>
@@ -489,7 +487,7 @@
                     
                     <div v-if="currentPage == 'production'" class="page">
                         <div class="h-100 d-flex align-items-stretch">
-                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:275px;overflow-y:auto;">
                                 <div class="row g-3">
                                     <PlanetVignet :planet="currentPlanet" class="col-12" />
                                     <PlanetEnergy :planet="currentPlanet" class="col-12" />
@@ -499,7 +497,7 @@
                             <div class="h-100 col p-3">
                                 <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('production')" :key="key" :building="building" />
                             </div>
-                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:275px;overflow-y:auto;">
                                 <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
                             </div>
                         </div>
@@ -507,7 +505,7 @@
                     
                     <div v-if="currentPage == 'energy'" class="page">
                         <div class="h-100 d-flex align-items-stretch">
-                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:275px;overflow-y:auto;">
                                 <div class="row g-3">
                                     <PlanetVignet :planet="currentPlanet" class="col-12" />
                                     <PlanetEnergy :planet="currentPlanet" class="col-12" />
@@ -517,7 +515,7 @@
                             <div class="h-100 col p-3">
                                 <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('energy')" :key="key" :building="building" />
                             </div>
-                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:275px;overflow-y:auto;">
                                 <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
                             </div>
                         </div>
@@ -525,7 +523,7 @@
                     
                     <div v-if="currentPage == 'labs'" class="page">
                         <div class="h-100 d-flex align-items-stretch">
-                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:275px;overflow-y:auto;">
                                 <div class="row g-3">
                                     <PlanetVignet :planet="currentPlanet" class="col-12" />
                                     <PlanetEnergy :planet="currentPlanet" class="col-12" />
@@ -535,7 +533,7 @@
                             <div class="h-100 col p-3">
                                 <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('research')" :key="key" :building="building" />
                             </div>
-                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:275px;overflow-y:auto;">
                                 <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
                             </div>
                         </div>
@@ -543,7 +541,7 @@
                     
                     <div v-if="currentPage == 'others'" class="page">
                         <div class="h-100 d-flex align-items-stretch">
-                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:275px;overflow-y:auto;">
                                 <div class="row g-3">
                                     <PlanetVignet :planet="currentPlanet" class="col-12" />
                                     <PlanetEnergy :planet="currentPlanet" class="col-12" />
@@ -554,7 +552,7 @@
                                 <div v-if="Object.keys(getCurrentPlanetBuildings('other')).length < 1" class="text-center"><span class="text-gray">There is no building to show</span></div>
                                 <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('other')" :key="key" :building="building" />
                             </div>
-                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:275px;overflow-y:auto;">
                                 <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
                             </div>
                         </div>
@@ -562,7 +560,7 @@
 
                     <div v-if="currentPage == 'shipyard'" class="page">
                         <div class="h-100 d-flex align-items-stretch">
-                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:300px;overflow-y:auto;">
+                            <div class="h-100 col-auto bg-1 border-end p-3" style="width:275px;overflow-y:auto;">
                                 <div class="row g-3">
                                     <PlanetVignet :planet="currentPlanet" class="col-12" />
                                     <PlanetEnergy :planet="currentPlanet" class="col-12" />
@@ -573,7 +571,7 @@
                                 <div v-if="Object.keys(getCurrentPlanetShips()).length < 1" class="text-center"><span class="text-gray">There is no ship to show</span></div>
                                 <ShipSummary v-for="(ship, key) of getCurrentPlanetShips()" :key="key" :ship="ship" />
                             </div>
-                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:275px;overflow-y:auto;">
                                 <ShipDetails v-if="currentShip" :ship="currentShip" />
                             </div>
                         </div>
@@ -1291,7 +1289,7 @@ class Tutorial {
 import LZString from 'lz-string'
 
 export default {
-
+    
     data() {
         return {
             
@@ -1898,6 +1896,8 @@ export default {
             this.load()
             this.update()
             
+            window.onbeforeunload = () => { if (this.isResseting == false) this.save() }
+            
             this.rafHandle = requestAnimationFrame(this.update)
             this.saveInterval = setInterval(() => { this.save() }, this.autoSaveDelay)
             
@@ -1955,8 +1955,6 @@ export default {
     },
 
     beforeDestroy() {
-        
-        if (this.isResseting == false) this.save()
         
         clearInterval(this.saveInterval)
         cancelAnimationFrame(this.rafHandle)
