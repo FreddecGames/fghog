@@ -9,7 +9,8 @@
                 <div class="col-auto btn-group btn-group-sm" role="group">
                     <button type="button" class="btn btn-sm py-0" :class="{ 'text-white':$parent.currentShipCount == 1 }" @click="$parent.currentShipCount = 1">1</button>
                     <button type="button" class="btn btn-sm py-0" :class="{ 'text-white':$parent.currentShipCount == 10 }" @click="$parent.currentShipCount = 10">10</button>
-                    <button type="button" class="btn btn-sm py-0" :class="{ 'text-white':$parent.currentShipCount == 50 }" @click="$parent.currentShipCount = 50">50</button>
+                    <button type="button" class="btn btn-sm py-0" :class="{ 'text-white':$parent.currentShipCount == 100 }" @click="$parent.currentShipCount = 100">100</button>
+                    <button type="button" class="btn btn-sm py-0" :class="{ 'text-white':$parent.currentShipCount == 1000 }" @click="$parent.currentShipCount = 1000">1000</button>
                 </div>
             </div>
             <div v-for="(res, key) of $parent.currentPlanet.getShipCost(ship.id, $parent.currentShipCount)" :key="key">

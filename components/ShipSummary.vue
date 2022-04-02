@@ -9,7 +9,8 @@
             <div class="col-auto">
                 <button type="button" class="btn btn-sm" :class="{ 'disabled':$parent.currentPlanet.canBuy($parent.currentPlanet.getShipCost(ship.id, 1)) == false  }" @click="$parent.currentPlanet.buildShip(ship.id, 1)"><i class="fas fa-fw fa-plus-circle"></i>1</button>
                 <button type="button" class="btn btn-sm" :class="{ 'disabled':$parent.currentPlanet.canBuy($parent.currentPlanet.getShipCost(ship.id, 10)) == false }" @click="$parent.currentPlanet.buildShip(ship.id, 10)"><i class="fas fa-fw fa-plus-circle"></i>10</button>
-                <button type="button" class="btn btn-sm" :class="{ 'disabled':$parent.currentPlanet.canBuy($parent.currentPlanet.getShipCost(ship.id, 50)) == false }" @click="$parent.currentPlanet.buildShip(ship.id, 50)"><i class="fas fa-fw fa-plus-circle"></i>50</button>
+                <button type="button" class="btn btn-sm" :class="{ 'disabled':$parent.currentPlanet.canBuy($parent.currentPlanet.getShipCost(ship.id, 100)) == false }" @click="$parent.currentPlanet.buildShip(ship.id, 100)"><i class="fas fa-fw fa-plus-circle"></i>100</button>
+                <button type="button" class="btn btn-sm" :class="{ 'disabled':$parent.currentPlanet.canBuy($parent.currentPlanet.getShipCost(ship.id, 1000)) == false }" @click="$parent.currentPlanet.buildShip(ship.id, 1000)"><i class="fas fa-fw fa-plus-circle"></i>1000</button>
             </div>
         </div>
     </button>

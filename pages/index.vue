@@ -25,7 +25,7 @@
 
         <div v-if="isMobile == false && started == true" class="position-absolute bg-grid top-0 bottom-0 start-0 end-0">
         
-            <div v-if="popupText" class="position-absolute top-0 bottom-0 start-0 end-0 bg-3 d-flex align-items-center justify-content-center" style="z-index:10;">
+            <div v-if="popupText" class="position-absolute top-0 bottom-0 start-0 end-0 bg-3 d-flex align-items-center justify-content-center" style="z-index:100;">
                 <div class="bg-2 rounded border p-3" style="width:380px;">
                     <div class="row g-3">
                         <div class="col-12 text-center" v-html="popupText"></div>
@@ -43,7 +43,7 @@
                 </div>
             </div>
         
-            <div v-if="toastText" class="position-absolute start-0 end-0" style="bottom:60px;">
+            <div v-if="toastText" class="position-absolute start-0 end-0" style="bottom:60px; z-index:100;">
 				<div class="d-flex justify-content-center">
                     <div class="toast show toast-body bg-2 text-center">
                         <span :class="{ 'text-normal':toastType == 'info', 'text-danger':toastType == 'error' }" v-html="toastText"></span>
@@ -63,11 +63,11 @@
                         </div>
                         <div class="col">
                             <div class="row justify-content-center">
-                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'fleets' }" style="width:85px;" @click="showFleetsPage()">
+                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':getFleetsPageState() == 'active', 'text-gray':getFleetsPageState() == 'locked' }" style="width:85px;" @click="showFleetsPage()">
                                     <div class="h5"><i class="fas fa-fw fa-space-shuttle"></i></div>
                                     <div class="small">Fleets</div>
                                 </button>
-                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'map' }" style="width:85px;" @click="showMapPage()">
+                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':getMapPageState() == 'active', 'text-gray':getMapPageState() == 'locked' }" style="width:85px;" @click="showMapPage()">
                                     <div class="h5"><i class="fas fa-fw fa-map"></i></div>
                                     <div class="small">Map</div>
                                 </button>
@@ -75,11 +75,11 @@
                                     <div class="h5"><i class="fas fa-fw fa-atom"></i></div>
                                     <div class="small">Research</div>
                                 </button>
-                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'diplomacy' }" style="width:85px;" @click="showDiplomacyPage()">
+                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':getDiplomacyPageState() == 'active', 'text-gray':getDiplomacyPageState() == 'locked' }" style="width:85px;" @click="showDiplomacyPage()">
                                     <div class="h5"><i class="fas fa-fw fa-hands-helping"></i></div>
                                     <div class="small">Diplomacy</div>
                                 </button>
-                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'tournament' }" style="width:85px;" @click="showTournamentPage()">
+                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':getTournamentPageState() == 'active', 'text-gray':getTournamentPageState() == 'locked' }" style="width:85px;" @click="showTournamentPage()">
                                     <div class="h5"><i class="fas fa-fw fa-trophy"></i></div>
                                     <div class="small">Tournament</div>
                                 </button>
@@ -145,11 +145,11 @@
                                     <div class="h5"><i class="fas fa-fw fa-building"></i></div>
                                     <div class="small">Others</div>
                                 </button>
-                                <button id="b_other_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'shipyard' }" style="width:80px;" @click="showShipyardPage()">
+                                <button id="b_other_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':getShipyardPageState() == 'active', 'text-gray':getShipyardPageState() == 'locked' }" style="width:80px;" @click="showShipyardPage()">
                                     <div class="h5"><i class="fas fa-fw fa-rocket"></i></div>
                                     <div class="small">Shipyard</div>
                                 </button>
-                                <button id="b_other_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'market' }" style="width:80px;" @click="showMarketPage()">
+                                <button id="b_other_icon" type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':getMarketPageState() == 'active', 'text-gray':getMarketPageState() == 'locked', 'text-danger':getMarketPageState() == 'forbidden' }" style="width:80px;" @click="showMarketPage()">
                                     <div class="h5"><i class="fas fa-fw fa-store"></i></div>
                                     <div class="small">Market</div>
                                 </button>
@@ -182,10 +182,7 @@
                     <div v-if="currentPage == 'map'" class="page">
                         <div class="h-100 d-flex align-items-stretch">
                             <div class="h-100 col p-3 position-relative" :class="{ 'bg-perseus':currentNebula.id == 'perseus' }" style="overflow-y:auto;">
-                                <div v-for="planet in getNebulaPlanets()" :key="planet.id" class="position-absolute">
-                                </div>
-                            </div>
-                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:300px;overflow-y:auto;">
+                                <MapPlanet v-for="planet in getNebulaPlanets()" :key="planet.id" :planet="planet" />
                             </div>
                         </div>
                     </div>
@@ -1034,10 +1031,13 @@ var researchesDef = [
         { id:"foundry", prods:[{ id: "steel", minLevel: 1, value: 50, maxLevel: 100, reduction: .5, }], },
       ],
     },
-
-    { id: "chemical",
-      isVisible(state) { return false },
-    },    
+    { id: "chemical", researchPoint: 1200, mult: 2.2, reqs:{ material: 1 },
+      isVisible(state) { return state.isResearchUnlocked('material') },
+      buildingBonuses: [
+        { id:"methaneProcesser", prods:[{ id: "fuel", minLevel: 1, value: 25, }], },
+      ],
+    },
+    
     { id: "ice",
       isVisible(state) { return false },
     },
@@ -1391,34 +1391,62 @@ export default {
     },
     
     methods: {
+                
+        getFleetsPageState() {
         
-        showFleetsPage(planet) {
+            if (this.currentPage == 'fleets') return 'active'
+            if (this.researches["astronomy"].level > 0) return null
+            else return 'locked'
+        },
+        
+        showFleetsPage() {
         
             if (this.researches["astronomy"].level > 0) this.currentPage = "fleets"
             else this.showToast("You must research Interstellar Travel first!", "error")
         },
         
-        showMapPage(planet) {
+        getMapPageState() {
+        
+            if (this.currentPage == 'map') return 'active'
+            if (this.researches["astronomy"].level > 0) return null
+            else return 'locked'
+        },
+        
+        showMapPage() {
         
             if (this.researches["astronomy"].level > 0) this.currentPage = "map"
             else this.showToast("You must research Interstellar Travel first!", "error")
         },
         
-        showResearchPage(planet) { this.currentPage = "research" },
+        showResearchPage() { this.currentPage = "research" },
         
-        showDiplomacyPage(planet) {
+        getDiplomacyPageState() {
+        
+            if (this.currentPage == 'diplomacy') return 'active'
+            if (this.timeTravelCount > 0 || this.researches["astronomy"].level > 6) return null
+            else return 'locked'
+        },
+        
+        showDiplomacyPage() {
         
             if (this.timeTravelCount > 0 || this.researches["astronomy"].level > 6) this.currentPage = "diplomacy"
             else this.showToast("You must time travel once<br> or research Interstellar Travel level 7 first!", "error")
         },
 
-        showTournamentPage(planet) {
+        getTournamentPageState() {
+        
+            if (this.currentPage == 'tournament') return 'active'
+            if (this.researches["astronomy"].level > 6) return null
+            else return 'locked'
+        },
+        
+        showTournamentPage() {
         
             if (this.researches["astronomy"].level > 6) this.currentPage = "tournament"
             else this.showToast("You must research Interstellar Travel level 7 first!", "error")
         },
 
-        showOverviewPage(planet) { this.currentPage = "overview" },
+        showOverviewPage() { this.currentPage = "overview" },
         
         showPlanetPage(planet) {
             
@@ -1426,23 +1454,40 @@ export default {
             this.currentPlanet = planet
         },
         
-        showExtractionPage(planet) { this.currentPage = "extraction" },
+        showExtractionPage() { this.currentPage = "extraction" },
         
-        showProductionPage(planet) { this.currentPage = "production" },
+        showProductionPage() { this.currentPage = "production" },
         
-        showEnergyPage(planet) { this.currentPage = "energy" },
+        showEnergyPage() { this.currentPage = "energy" },
         
-        showLabsPage(planet) { this.currentPage = "labs" },
+        showLabsPage() { this.currentPage = "labs" },
         
-        showOthersPage(planet) { this.currentPage = "others" },
+        showOthersPage() { this.currentPage = "others" },
         
-        showShipyardPage(planet) {
+        getShipyardPageState() {
+        
+            if (this.currentPage == 'shipyard') return 'active'
+            if (this.researches["astronomy"].level > 0) return null
+            else return 'locked'
+        },
+        
+        showShipyardPage() {
         
             if (this.researches["astronomy"].level > 0) this.currentPage = "shipyard"
             else this.showToast("You must research Interstellar Travel first!", "error")
         },
+        
+        getMarketPageState() {
+        
+            if (this.currentPage == 'market') return 'active'
+            if (this.quests["pirates_4"].done && this.government != "merchant") return 'forbidden'
+            else if (this.currentPlanet.nebula == "perseus")
+                if (this.currentPlanet.buildings["tradehub"].count > 0) return null
+                else return 'locked'
+            else return 'forbidden'
+        },
 
-        showMarketPage(planet) {
+        showMarketPage() {
             
             if (this.quests["pirates_4"].done && this.government != "merchant") this.showToast("You have been banned from the market as a result of your allegiance to pirates!", "error")
             else if (this.currentPlanet.nebula == "perseus")
@@ -1451,7 +1496,7 @@ export default {
             else this.showToast("The trade hub is unable to contact a market in this nebula!", "error")
         },
 
-        showSettingsPage(planet) { this.currentPage = "settings" },
+        showSettingsPage() { this.currentPage = "settings" },
         
         setCurrentBuilding(building) { this.currentBuilding = building },
         
@@ -1611,6 +1656,21 @@ export default {
         
             let def = researchesDef.find(def => def.id == rId)                    
             return def.isVisible(this)
+        },
+        
+        getNebulaPlanets() {
+        
+            let ret = {}
+            
+            let range = this.researches['astronomy'].level
+            
+            for (let pId in this.planets) {
+                let planet = this.planets[pId]
+                if (planet.nebula == this.currentNebula.id && planet.orbit <= range)
+                    ret[pId] = planet
+            }
+            
+            return ret
         },
         
         produceResources(delta) {
