@@ -46,7 +46,7 @@
             <div v-if="toastText" class="position-absolute start-0 end-0" style="bottom:60px; z-index:100;">
 				<div class="d-flex justify-content-center">
                     <div class="toast show toast-body bg-2 text-center">
-                        <span :class="{ 'text-normal':toastType == 'info', 'text-danger':toastType == 'error' }" v-html="toastText"></span>
+                        <span :class="{ 'text-normal':toastType == 'info', 'text-danger':toastType == 'error', 'text-success':toastType == 'success' }" v-html="toastText"></span>
                     </div>
                 </div>
 			</div>
@@ -87,29 +87,21 @@
                                     <div class="h5"><i class="fas fa-fw fa-globe"></i></div>
                                     <div class="small">Overview</div>
                                 </button>
-                            </div>				
-                        </div>				
+                            </div>
+                        </div>
                         <div class="col-auto px-3" style="width:275px;">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <div class="row gx-2 justify-content-end">
-                                        <span class="col-auto text-normal">Player Name</span>
-                                        <span class="col-auto text-white">Player</span>
-                                    </div>
-                                    <div class="row gx-2 justify-content-end">
-                                        <span class="col-auto text-normal">Year</span>
-                                        <span class="col-auto text-white">{{ year }}</span>
-                                        <span class="col-auto text-normal">Day</span>
-                                        <span class="col-auto text-white">{{ day }}</span>
-                                    </div>
+                            <div class="row gx-2 align-items-center justify-content-end">
+                                <div class="col-auto text-end">
+                                    <div class="text-normal">Bonus Time</div>
+                                    <div class="text-white"><FormatTime :value="bonusTime / 1000" /></div>
                                 </div>
-                                <button v-if="paused == false" type="button" class="col-auto btn lh-1" style="width:65px;" @click="togglePause()">
-                                    <div class="h5"><i class="fas fa-fw fa-pause"></i></div>
-                                    <div class="small">Pause</div>
-                                </button>
-                                <button v-if="paused == true" type="button" class="col-auto btn lh-1" style="width:65px;" @click="togglePause()">
+                                <button v-if="bonusActive == false" type="button" class="col-auto btn lh-1" :class="{ 'disabled':bonusTime <= 0 }" style="width:65px;" @click="toggleBonus()">
                                     <div class="h5"><i class="fas fa-fw fa-play"></i></div>
-                                    <div class="small">Resume</div>
+                                    <div class="small">Disabled</div>
+                                </button>
+                                <button v-if="bonusActive == true" type="button" class="col-auto btn lh-1" style="width:65px;" @click="toggleBonus()">
+                                    <div class="h5"><i class="fas fa-fw fa-pause"></i></div>
+                                    <div class="small">Enabled</div>
                                 </button>
                             </div>
                         </div>
@@ -174,8 +166,20 @@
                     </div>
                     
                     <div v-if="currentPage == 'fleets'" class="page">
-                        <div class="pt-4 text-center">
-                            <span class="text-danger">Page not implemented yet</span>
+                        <div class="h-100 d-flex align-items-stretch">
+                            <div class="h-100 col-auto bg-1 border-end p-3 scrollbar" style="width:275px; overflow-y:auto;">
+                                <button type="button" class="w-100 btn" :class="{ 'bg-2 text-white':currentFleetsMenu == 'ground' }" @click="currentFleetsMenu = 'ground'">
+                                    <span class="h6">Ground Ships</span>
+                                </button>
+                            </div>
+                            <div class="col d-flex flex-column">
+                                <div v-if="currentFleetsMenu == 'ground'" class="h-100 col p-3">
+                                    <FleetsGroundSummary v-for="planet in humanPlanets" :key="planet.id" :planet="planet" />
+                                </div>
+                            </div>
+                            <div class="h-100 col-auto bg-1 border-start p-3" style="width:275px; overflow-y:auto;">
+                                <FleetsGroundDetails v-if="currentFleetsGround" :planet="currentFleetsGround" />
+                            </div>
                         </div>
                     </div>
                     
@@ -666,15 +670,17 @@
 <script>
 var resourcesDef = [
 
-    { id: "iron",     value: 16, },
-    { id: "steel",    value: 4,  },
-    { id: "titanium", value: 3,  },
-    { id: "silicon",  value: 11, },
-    { id: "graphite", value: 7,  },
-    { id: "fuel",     value: 6,  },
+    { id: "iron",     },
+    { id: "steel",    },
+    { id: "graphite", },
+    { id: "fuel",     },
     { id: "methane",  },
-    { id: "uranium",  reqs: { mineralogy: 4 }, },
-    { id: "sand",     reqs: { mineralogy: 4 }, },
+    { id: "titanium", reqs: { mineralogy: 4 },  },
+    { id: "uranium",  reqs: { mineralogy: 4 },  },
+    { id: "sand",     reqs: { mineralogy: 4 },  },
+    { id: "oil",      reqs: { chemical: 1 },    },
+    { id: "plastic",  reqs: { material: 8 },    },
+    { id: "silicon",  reqs: { electronics: 1 }, },
 ]
 
 class Resource {
@@ -690,21 +696,24 @@ class Resource {
 
 var buildingsDef = [
 
-    { id: "mine",                                      type: "extraction", costs:{ iron:{ count: 10, mult: 1.2 }, steel:{ count: 9.75e-4, mult: 1.3 }, titanium:{ count: 2.1e-12, mult: 1.5 }}, prods:{ iron: 2 }, },
-    { id: "methaneExtractor",                          type: "extraction", costs:{ iron:{ count: 100, mult: 1.2 }, steel:{ count: .1, mult: 1.3 }, titanium:{ count: 3e-5, mult: 1.5 }}, prods:{ methane: 1 }, },
-    { id: "graphiteExtractor",                         type: "extraction", costs:{ iron:{ count: 500, mult: 1.2 }, steel:{ count: 4e-4, mult: 1.3 }, titanium:{ count: 3e-5, mult: 1.5 }}, prods:{ graphite: 1 }, },
-    { id: "metalCollector",    reqs:{ mineralogy: 4 }, type: "extraction", costs:{ steel:{ count: 2e3, mult: 1.25 }, titanium:{ count: .9, mult: 1.35 }}, prods:{ titanium: 10, uranium: 1 }, energy: -50 },    
-    { id: "sandQuarry",        reqs:{ mineralogy: 4 }, type: "extraction", costs:{ steel:{ count: 5e3, mult: 1.25 }, titanium:{ count: 1e3, mult: 1.35 }}, prods:{ sand: 1 }, energy: -80 },
+    { id: "mine",                                       type: "extraction", costs:{ iron:{ count: 10, mult: 1.2 }, steel:{ count: 9.75e-4, mult: 1.3 }, titanium:{ count: 2.1e-12, mult: 1.5 }}, prods:{ iron: 2 }, },
+    { id: "methaneExtractor",                           type: "extraction", costs:{ iron:{ count: 100, mult: 1.2 }, steel:{ count: .1, mult: 1.3 }, titanium:{ count: 3e-5, mult: 1.5 }}, prods:{ methane: 1 }, },
+    { id: "graphiteExtractor",                          type: "extraction", costs:{ iron:{ count: 500, mult: 1.2 }, steel:{ count: 4e-4, mult: 1.3 }, titanium:{ count: 3e-5, mult: 1.5 }}, prods:{ graphite: 1 }, },
+    { id: "pumpjack",          reqs:{ chemical: 1 },    type: "extraction", costs:{ steel:{ count: 1e3, mult: 1.25 }, titanium:{ count: .9, mult: 1.35 }}, prods:{ oil: 1 }, },
+    { id: "metalCollector",    reqs:{ mineralogy: 4 },  type: "extraction", costs:{ steel:{ count: 2e3, mult: 1.25 }, titanium:{ count: .9, mult: 1.35 }}, prods:{ titanium: 10, uranium: 1 }, energy: -50 },    
+    { id: "sandQuarry",        reqs:{ mineralogy: 4 },  type: "extraction", costs:{ steel:{ count: 5e3, mult: 1.25 }, titanium:{ count: 1e3, mult: 1.35 }}, prods:{ sand: 1 }, energy: -80 },
     
-    { id: "methaneProcesser",                          type: "production", costs:{ iron:{ count: 100, mult: 1.1 }, steel:{ count: .25, mult: 1.2 }, titanium:{ count: 2e-4, mult: 1.3 }}, prods:{ fuel: 1, methane: -2 }, },
-    { id: "foundry",                                   type: "production", costs:{ iron:{ count: 1e3, mult: 1.1 }, steel:{ count: .48, mult: 1.2 }, titanium:{ count: .01, mult: 1.3 }}, prods:{ steel: 2, iron: -2, graphite: -1, fuel: -2 }, },
+    { id: "methaneProcesser",                           type: "production", costs:{ iron:{ count: 100, mult: 1.1 }, steel:{ count: .25, mult: 1.2 }, titanium:{ count: 2e-4, mult: 1.3 }}, prods:{ fuel: 1, methane: -2 }, },
+    { id: "foundry",                                    type: "production", costs:{ iron:{ count: 1e3, mult: 1.1 }, steel:{ count: .48, mult: 1.2 }, titanium:{ count: .01, mult: 1.3 }}, prods:{ steel: 2, iron: -2, graphite: -1, fuel: -2 }, },
+    { id: "plasticFactory",    reqs:{ material: 8 },    type: "production", costs:{ steel:{ count: 1e4, mult: 1.25 }, titanium:{ count: 5e3, mult: 1.35 }}, prods: { plastic: 1, oil: -3 }, energy: -100 },
+    { id: "sandSmelter",       reqs:{ electronics: 1 }, type: "production", costs:{ steel:{ count: 2e4, mult: 1.1 }, titanium:{ count: 1e4, mult: 1.2 }, plastic:{ count: 500, mult: 1.3 }}, prods: { silicon: 1, sand: -1 }, energy: -50 },
     
-    { id: "smallGenerator",                            type: "energy",     costs:{ iron:{ count: 2e3, mult: 1.15 }, steel:{ count: 100, mult: 1.27 }, titanium:{ count: .17, mult: 1.35 }}, prods:{ fuel: -3 }, energy: 20 },
+    { id: "smallGenerator",                             type: "energy",     costs:{ iron:{ count: 2e3, mult: 1.15 }, steel:{ count: 100, mult: 1.27 }, titanium:{ count: .17, mult: 1.35 }}, prods:{ fuel: -3 }, energy: 20 },
     
-    { id: "laboratory",                                type: "research",   costs:{ iron:{ count: 1e3, mult: 2 }, steel:{ count: 200, mult: 3 }, titanium:{ count: .01, mult: 4 }}, energy: -5, researchPoint: 4 },
+    { id: "laboratory",                                 type: "research",   costs:{ iron:{ count: 1e3, mult: 2 }, steel:{ count: 200, mult: 3 }, titanium:{ count: .01, mult: 4 }}, energy: -5, researchPoint: 4 },
     
-    { id: "shipyard",          reqs:{ astronomy: 1 },  type: "other",      costs:{ steel:{ count: 5e3, mult: 2 }, titanium:{ count: 1e3, mult: 3.2 }}, },
-    { id: "tradehub",          reqs:{ astronomy: 5 },  type: "other",      costs:{ steel:{ count: 5e4, mult: 2 }, titanium:{ count: 1e4, mult: 3.2 }}, },
+    { id: "shipyard",          reqs:{ astronomy: 1 },   type: "other",      costs:{ steel:{ count: 5e3, mult: 2 }, titanium:{ count: 1e3, mult: 3.2 }}, },
+    { id: "tradehub",          reqs:{ astronomy: 5 },   type: "other",      costs:{ steel:{ count: 5e4, mult: 2 }, titanium:{ count: 1e4, mult: 3.2 }}, },
 ]
 
 class Building {
@@ -738,7 +747,8 @@ class Building {
 
 var shipsDef = [
 
-    { id: "vitha", shipyardLevel: 1, costs:{ iron: 5e4, steel: 8e4, titanium: 5e3 }, },
+    { id: "vitha",      shipyardLevel: 1, costs:{ iron: 5e4, steel: 8e4, titanium: 5e3 }, },
+    { id: "smallCargo", shipyardLevel: 1, costs:{ iron: 8e4, titanium: 5e3 }, },
 ]
 
 class Ship {
@@ -978,6 +988,18 @@ class Planet {
         
         ship.count += count
     }
+
+    getGroundShipCount() {
+    
+        let ret = 0
+        
+        for (let sId in this.ships) {
+            let ship = this.ships[sId]
+            ret += ship.count
+        }
+        
+        return ret
+    }
 }
 
 var nebulasDef = [
@@ -1003,6 +1025,7 @@ var researchesDef = [
       ],
       unlocks: [
         { level:1, buildings:["shipyard"], },
+        { level:5, buildings:["tradehub"], },
       ],
       isVisible(state) { return true },
     },
@@ -1017,6 +1040,7 @@ var researchesDef = [
       buildingBonuses: [
         { id:"mine", prods:[{ id: "iron", minLevel: 1, value: 25, maxLevel: 125, reduction: .2, }], },
         { id:"graphiteExtractor", prods:[{ id: "graphite", minLevel: 1, value: 12, }], },
+        { id:"pumpjack", prods:[{ id: "oil", minLevel: 4, value: 8, }], },
       ],
       unlocks: [
         { level:4, buildings:["metalCollector", "sandQuarry"], },
@@ -1024,25 +1048,34 @@ var researchesDef = [
       isVisible(state) { return true },
     },
     { id: "material", researchPoint: 500, mult: 2.2, reqs:{ mineralogy: 1 },
-      isVisible(state) { return true },
       buildingBonuses: [
         { id:"foundry", prods:[{ id: "steel", minLevel: 1, value: 50, maxLevel: 100, reduction: .5, }], },
       ],
+      unlocks: [
+        { level:8, buildings:["plasticFactory"], },
+      ],
+      isVisible(state) { return true },
     },
     { id: "chemical", researchPoint: 1200, mult: 2.2, reqs:{ material: 1 },
-      isVisible(state) { return state.isResearchUnlocked('material') },
       buildingBonuses: [
         { id:"methaneProcesser", prods:[{ id: "fuel", minLevel: 1, value: 25, }], },
       ],
+      unlocks: [
+        { level:1, buildings:["pumpjack"], },
+      ],
+      isVisible(state) { return state.isResearchUnlocked('material') },
+    },
+    { id: "electronics", researchPoint: 5e4, mult: 2.2, reqs:{ material: 5 },
+      unlocks: [
+        { level:1, buildings:["sandSmelter"], },
+      ],
+      isVisible(state) { return state.isResearchUnlocked('material') },
     },
     
     { id: "ice",
       isVisible(state) { return false },
     },
     { id: "military",
-      isVisible(state) { return false },
-    },
-    { id: "electronics",
       isVisible(state) { return false },
     },
     { id: "nuclear",
@@ -1315,8 +1348,6 @@ export default {
             
             //---
             
-            days: 0,
-            paused: false,
             tutorial: true,
             government: null,
             isResseting: false,
@@ -1329,6 +1360,8 @@ export default {
             currentNebula: null,
             currentBuilding: null,
             currentResearch: null,
+            currentFleetsMenu: 'ground',
+            currentFleetsGround: null,
             
             currentShipCount: 1,
             currentBuildCount: 1,
@@ -1339,6 +1372,9 @@ export default {
             nebulas: {},
             tutorials: {},
             researches: {},
+            
+            bonusTime: 0,
+            bonusActive: false,
         }
     },
     
@@ -1353,10 +1389,6 @@ export default {
                 
             return ret
         },
-        
-        year() { return parseInt(this.days / 365) },
-        
-        day() { return parseInt(this.days) - 365 * this.year },
         
         humanPlanets() {
         
@@ -1527,12 +1559,12 @@ export default {
             this.popupCancelAction = null
         },
         
-        togglePause() {
+        toggleBonus() {
         
-            this.paused = !this.paused
+            this.bonusActive = !this.bonusActive
             
-            if (this.paused == true) this.showToast("Game paused!", "info")
-            else this.showToast("Game resumed!", "info")
+            if (this.bonusActive == false) this.showToast("Bonus Time disabled! Game speed normal!", "info")
+            else this.showToast("Bonus Time enabled! Game speed x5!", "success")
         },
         
         showTutorial() {
@@ -1778,12 +1810,17 @@ export default {
                 if (!text) return console.warn('Load failed')
                 loadeddata = JSON.parse(text)
                 
-                this.days = loadeddata.days || 0
-                this.paused = loadeddata.paused
                 this.tutorial = loadeddata.tutorial
                 this.government = loadeddata.government
                 this.researchPoint = loadeddata.researchPoint || { count:0, prod:0 }
                 this.timeTravelCount = loadeddata.timeTravelCount || 0
+                this.bonusTime = loadeddata.bonusTime || 0
+                
+                if (loadeddata.lastFrameTimeMs) {
+                
+                    let delta = new Date().getTime() - loadeddata.lastFrameTimeMs
+                    this.bonusTime += delta
+                }
                 
                 for (let qId in this.quests) {            
                     let quest = loadeddata.quests[qId]                
@@ -1837,12 +1874,12 @@ export default {
             
             let saveddata = {
             
-                days: this.days,
-                paused: this.paused,
                 tutorial: this.tutorial,
                 government: this.government,
                 researchPoint: this.researchPoint,
                 timeTravelCount: this.timeTravelCount,
+                bonusTime: this.bonusTime,
+                lastFrameTimeMs: this.lastFrameTimeMs,
                 
                 quests: {},
                 planets: {},
@@ -1911,18 +1948,26 @@ export default {
             let currentTime = new Date().getTime()
             
             let deltaTime = currentTime - this.lastFrameTimeMs
-            if (deltaTime >= 1000 / this.fps) {
-            
+            if (deltaTime >= 1000 / this.fps) {            
                 this.lastFrameTimeMs = currentTime
-                if (this.paused == false) {
+                
+                let delta = deltaTime / 1000
+                if (this.bonusActive == true && this.bonusTime > 0) {
+                
+                    this.bonusTime -= delta * 4000
+                    if (this.bonusTime < 0) {
                     
-                    this.days += .1 * (deltaTime / 1000)
+                        this.bonusTime = 0
+                        this.bonusActive = false
+                    }
                     
-                    this.produceResources(deltaTime / 1000)
-                    this.buildBuildings()
-                    
-                    if (this.tutorial == true) this.checkTutorial()
+                    delta *= 5
                 }
+                
+                this.produceResources(delta)
+                this.buildBuildings()
+                
+                if (this.tutorial == true) this.checkTutorial()
             }
             
             this.rafHandle = requestAnimationFrame(this.update)

@@ -18,7 +18,7 @@
         </div>
         <div class="mt-3 row gx-2">
             <span class="col text-normal">Research Point</span>
-            <span class="col-auto" :class="{ 'text-success':planet.researchPoint.prod > 0, 'text-gray':planet.researchPoint.prod <= 0}">+{{ planet.researchPoint.prod }} <small class="opacity-75">/s</small></span>
+            <span class="col-auto" :class="{ 'text-success':planet.researchPoint.prod > 0, 'text-gray':planet.researchPoint.prod <= 0}">+<FormatNumber :value="planet.researchPoint.prod" /> <small class="opacity-75">/s</small></span>
         </div>
     </div>
 </template>

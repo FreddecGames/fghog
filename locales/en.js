@@ -11,6 +11,8 @@ export default {
     'resName_researchPoint': 'Research Point',
     'resName_uranium': 'Uranium',
     'resName_sand': 'Sand',
+    'resName_plastic': 'Plastic',
+    'resName_oil': 'Oil',
 
     'planetType_terrestrial': 'Terrestrial',
     
@@ -34,6 +36,9 @@ export default {
     'buildingName_nanotubesFactory': 'Nanotubes Factory',
     'buildingName_ceramicFoundry': 'Ceramic Foundry',
     'buildingName_shipyard': 'Shipyard',
+    'buildingName_tradehub': 'Trade Hub',
+    'buildingName_sandSmelter': 'Sand Smelter',
+    'buildingName_pumpjack': 'Pumpjack',
     
     'researchName_astronomy': 'Interstellar Travel',
     'researchName_science': 'Scientific Research',
@@ -68,4 +73,5 @@ export default {
     'shipStat_speed': 'Speed',
     
     'shipName_vitha': 'Vitha Colony Ship',
+    'shipName_smallCargo': 'ZB-03 Small Cargo',
 }
