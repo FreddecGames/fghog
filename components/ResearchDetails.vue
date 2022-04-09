@@ -23,46 +23,10 @@
         <div v-if="$parent.isResearchUnlocked(research.id) == true" class="row g-3">
             <div class="col-12 text-center">
                 <div class="h5 text-primary">{{ $t('researchName_' + research.id) }}</div>
+                <div class="small text-gray"><span class="text-normal">Lvl</span> <span class="ms-1 text-white">{{ research.level }}</span> <span v-if="research.max" class="">/{{ research.max }}</span></div>
             </div>
             <div v-if="research.desc == true" class="col-12 mt-4 text-center">
                 <span class="text-warning">{{ $t('researchDesc_' + research.id) }}</span>
-            </div>
-            <div class="col-12 mt-4">
-                <div class="row align-items-baseline justify-content-center">
-                    <div class="col-auto">
-                        <span class="text-normal">Lvl</span>
-                        <span class="ms-1 text-white">{{ research.level }}</span>
-                    </div>
-                    <div class="col-auto">
-                        <i class="text-normal fas fa-fw fa-arrow-right"></i>
-                    </div>
-                    <div class="col-auto">
-                        <span class="text-normal">Lvl</span>
-                        <span class="ms-1 text-white">{{ research.level + 1 }}</span>
-                    </div>
-                </div>
-            </div>
-            <div v-for="(bonus, key) of buildingBonuses" :key="key" class="col-12 mt-4">
-                <div class="text-gray">{{ $t('buildingName_' + key) }}</div>
-                <div v-for="(prod, key) of bonus.prods" :key="key" class="row gx-2">
-                    <span class="col text-normal">{{ $t('resName_' + key) }} production</span>
-                    <span class="col-auto text-success">+{{ prod }} <small class="opacity-75">%</small></span>
-                </div>
-                <div v-if="bonus.researchPoint" class="row gx-2">
-                    <span class="col text-normal">{{ $t('resName_researchPoint') }} production</span>
-                    <span class="col-auto text-success">+{{ bonus.researchPoint }} <small class="opacity-75">%</small></span>
-                </div>
-            </div>
-            <div v-for="(bonus, key) of research.getShipBonuses()" :key="key" class="col-12 mt-4">
-                <div class="text-gray">{{ $t('shipName_' + key) }}</div>
-                <div v-for="(stat, key) of bonus.stats" :key="key" class="row gx-2">
-                    <span class="col text-normal">{{ $t('shipStat_' + key) }}</span>
-                    <span class="col-auto text-success">+{{ stat }} <small class="opacity-75">%</small></span>
-                </div>
-            </div>
-            <div v-if="research.getNextUnlock()" class="col-12 mt-4">
-                <div class="text-gray">Unlocks</div>
-                <div v-for="bId in research.getNextUnlock().buildings" :key="bId" class="text-normal">{{ $t('buildingName_' + bId) }}</div>
             </div>
             <div class="col-12 mt-4">
                 <div class="row gx-2 align-items-baseline">
@@ -77,9 +41,32 @@
                     </div>
                 </div>
             </div>
-            <div v-for="unlock in research.getFutureUnlocks()" :key="unlock.level" class="col-12 mt-4">
-                <div class="text-gray">At level {{ unlock.level }}, unlocks</div>
-                <div v-for="bId in unlock.buildings" :key="bId" class="text-normal">{{ $t('buildingName_' + bId) }}</div>
+            <div v-if="research.unlocks" class="col-12 mt-4">
+                <div class="text-gray">Unlocks</div>
+                <div v-for="(value, key) of research.unlocks" :key="key" class="row gx-2">
+                    <div class="col text-normal">{{ $t('buildingName_' + key) }}</div>
+                    <div class="col-auto"><small class="text-normal">at level</small> <span class="text-white">{{ value }}</span></div>
+                </div>
+            </div>
+            <div v-if="research.buildingBonuses" class="col-12 mt-4">
+                <div class="row g-2">
+                    <div v-for="(bonuses, bId) of research.buildingBonuses" :key="bId" class="col-12">
+                        <div class="text-gray">{{ $t('buildingName_' + bId) }}</div>
+                        <div v-for="bonus in bonuses" class="row gx-2">
+                            <div class="col text-normal"><span v-if="bonus.attrib != 'researchPoint'">{{ $t('resName_' + bonus.rId) }}</span> {{ $t('attrib_' + bonus.attrib) }}</div>
+                            <div class="col-auto text-success"><span v-if="bonus.value > 0">+</span>{{ bonus.value }} <small class="opacity-75">%</small> <small>at level {{ bonus.minLevel }}</small></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-if="research.shipBonuses" class="col-12 mt-4">
+                <div v-for="(bonuses, sId) of research.shipBonuses" :key="sId">
+                    <div class="text-gray">{{ $t('shipName_' + sId) }}</div>
+                    <div v-for="bonus in bonuses" class="row gx-2">
+                        <div class="col text-normal">{{ $t('attrib_' +  bonus.attrib) }}</div>
+                        <div class="col-auto text-success">+{{ bonus.value }} <small class="opacity-75">%</small> <small>at level {{ bonus.minLevel }}</small></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -93,17 +80,6 @@ export default {
     computed: {
     
         rpCost() { return this.research.getCost() },
-        
-        buildingBonuses() {
-        
-            let ret = {}
-            
-            for (let bId in this.research.getBuildingBonuses())
-                if (this.$parent.isBuildingUnlocked(bId) == true)
-                    ret[bId] = this.research.getBuildingBonuses()[bId]
-            
-            return ret
-        }
     },
 }
 </script>
