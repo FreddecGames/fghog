@@ -107,6 +107,8 @@ hr { background-color: $primary; }
 
 .page { position: absolute; top: 50px; right: 0; bottom: 50px; margin: 0; width: 100%; }
 
+.bg-void { background-image: url('~@/assets/nebulas/void.png'); background-size: cover; }
 .bg-perseus { background-image: url('~@/assets/nebulas/perseus.png'); background-size: cover; }
+.bg-andromeda { background-image: url('~@/assets/nebulas/andromeda.png'); background-size: cover; }
 
 .bg-promision { background-image: url('~@/assets/planets/promision.png'); background-size: cover; }

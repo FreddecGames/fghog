@@ -15,14 +15,10 @@ export default {
     
     computed: {
     
-        resources() {
-        
-            let ret = {}
-            
+        resources() {        
+            let ret = {}            
             for (let rId in this.planet.resources)
-                if (this.$parent.isResUnlocked(rId) == true)
-                    ret[rId] = this.planet.resources[rId]
-            
+                ret[rId] = this.planet.resources[rId]            
             return ret            
         },
     },

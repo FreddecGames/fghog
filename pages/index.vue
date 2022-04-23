@@ -71,7 +71,7 @@
                                     <div class="h5"><i class="fas fa-fw fa-map"></i></div>
                                     <div class="small">Map</div>
                                 </button>
-                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'research' }" style="width:80px;" @click="showResearchPage()">
+                                <button type="button" class="col-auto rounded-0 btn lh-1" :class="{ 'text-white bg-2':currentPage == 'tech' }" style="width:80px;" @click="showResearchPage()">
                                     <div class="h5"><i class="fas fa-fw fa-atom"></i></div>
                                     <div class="small">Research</div>
                                 </button>
@@ -116,7 +116,18 @@
                             </div>
                         </div>
                         <div class="col">
-                            <div class="row justify-content-center" style="display: flex;">
+                            <div v-if="currentPage == 'map'" class="row justify-content-center">
+                                <button type="button" class="col-auto btn rounded-0 lh-1" @click="previousNebula()">
+                                    <div class="h5"><i class="fas fa-fw fa-chevron-left"></i></div>
+                                </button>
+                                <div class="col-auto text-center" style="width:250px;">
+                                    <span class="h5 text-normal">{{ $t('nebulaName_' + currentNebula.def.id) }}</span>
+                                </div>
+                                <button type="button" class="col-auto btn rounded-0 lh-1" @click="nextNebula()">
+                                    <div class="h5"><i class="fas fa-fw fa-chevron-right"></i></div>
+                                </button>
+                            </div>
+                            <div v-if="currentPage != 'map'" class="row justify-content-center">
                                 <button type="button" class="col-auto btn rounded-0 lh-1" :class="{ 'text-white bg-2':currentPage == 'extraction' }" style="width:75px;" @click="showExtractionPage()">
                                     <div class="h5"><i class="fas fa-fw fa-hard-hat"></i></div>
                                     <div class="small">Extraction</div>
@@ -185,8 +196,10 @@
                     
                     <div v-if="currentPage == 'map'" class="page">
                         <div class="h-100 d-flex align-items-stretch scrollbar" style="overflow-y:auto;">
-                            <div class="h-100 col p-3 position-relative" :class="{ 'bg-perseus':currentNebula.id == 'perseus' }" style="overflow-y:auto;">
-                                <MapPlanet v-for="planet in getNebulaPlanets()" :key="planet.id" :planet="planet" />
+                            <div class="h-100 col p-3 d-flex align-items-center justify-content-center" :class="{ 'bg-perseus':currentNebula.def.id == 'perseus', 'bg-andromeda':currentNebula.def.id == 'andromeda', 'bg-void':currentNebula.def.id == 'void' }" style="overflow-y:auto;">
+                                <div class="position-relative" style="width:1024px; height:432px;">
+                                    <MapPlanet v-for="planet in currentNebula.planets" :key="planet.id" :planet="planet" />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -194,156 +207,155 @@
                     <div v-if="currentPage == 'research'" class="page">
                         <div class="h-100 d-flex align-items-stretch">
                             <div class="h-100 col p-3 scrollbar" style="overflow-y:auto;">
-                                <div class="text-center mb-3 h5 text-primary">Tech Tree</div>
                                 <div class="row g-1">
                                     <div class="col-12">
                                         <div class="row g-1 align-items-center">
                                             <div class="col">
-                                                <ResearchSummary :research="researches['astronomy']" />
+                                                <ResearchSummary :tech="techs['astronomy']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;">
                                                 <i class="text-normal fas fa-fw fa-chevron-circle-right"></i>
                                             </div>
                                             <div class="col">
-                                                <ResearchSummary :research="researches['science']" />
+                                                <ResearchSummary :tech="techs['science']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;"></div>
                                             <div class="col"></div>
                                             <div class="col-auto text-center" style="width:20px;"></div>
                                             <div class="col">
-                                                <ResearchSummary :research="researches['mineralogy']" />
+                                                <ResearchSummary :tech="techs['mineralogy']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;">
-                                                <i v-if="isResearchVisible('vulcan')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                                <i v-if="techs['vulcan'].isVisible()" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
                                             </div>
                                             <div class="col">
-                                                <ResearchSummary v-if="isResearchVisible('vulcan')" :research="researches['vulcan']" />
+                                                <ResearchSummary v-if="techs['vulcan'].isVisible()" :tech="techs['vulcan']" />
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="row g-1 align-items-center">
                                             <div class="col text-center">
-                                                <div v-if="isResearchVisible('military')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                                <ResearchSummary v-if="isResearchVisible('military')" :research="researches['military']" />
+                                                <div v-if="techs['military'].isVisible()" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="techs['military'].isVisible()" :tech="techs['military']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;"></div>
                                             <div class="col">
                                                 <div class="text-center mb-1" style="height:15px;"></div>
-                                                <ResearchSummary v-if="isResearchVisible('intelligence')" :research="researches['intelligence']" />
+                                                <ResearchSummary v-if="techs['intelligence'].isVisible()" :tech="techs['intelligence']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;">
                                                 <div class="text-center mb-1" style="height:15px;"></div>
-                                                <i v-if="isResearchVisible('intelligence')" class="text-normal fas fa-fw fa-chevron-circle-left"></i>
+                                                <i v-if="techs['intelligence'].isVisible()" class="text-normal fas fa-fw fa-chevron-circle-left"></i>
                                             </div>
                                             <div class="col">
                                                 <div class="text-center mb-1" style="height:15px;"></div>
-                                                <ResearchSummary v-if="isResearchVisible('electronic')" :research="researches['electronic']" />
+                                                <ResearchSummary v-if="techs['electronic'].isVisible()" :tech="techs['electronic']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;">
                                                 <div class="text-center mb-1" style="height:15px;"></div>
-                                                <i v-if="isResearchVisible('electronic')" class="text-normal fas fa-fw fa-chevron-circle-left"></i>
+                                                <i v-if="techs['electronic'].isVisible()" class="text-normal fas fa-fw fa-chevron-circle-left"></i>
                                             </div>
                                             <div class="col">
-                                                <div v-if="isResearchVisible('material')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                                <ResearchSummary v-if="isResearchVisible('material')" :research="researches['material']" />
+                                                <div v-if="techs['material'].isVisible()" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="techs['material'].isVisible()" :tech="techs['material']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;">
                                                 <div class="text-center mb-1" style="height:15px;"></div>
-                                                <i v-if="isResearchVisible('ice')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                                <i v-if="techs['ice'].isVisible()" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
                                             </div>
                                             <div class="col">
                                                 <div class="text-center mb-1" style="height:15px;"></div>
-                                                <ResearchSummary v-if="isResearchVisible('ice')" :research="researches['ice']" />
+                                                <ResearchSummary v-if="techs['ice'].isVisible()" :tech="techs['ice']" />
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="row g-1 align-items-center">
                                             <div class="col">
-                                                <div v-if="isResearchVisible('artofwar')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                                <ResearchSummary v-if="isResearchVisible('artofwar')" :research="researches['artofwar']" />
+                                                <div v-if="techs['artofwar'].isVisible()" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="techs['artofwar'].isVisible()" :tech="techs['artofwar']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;"></div>
                                             <div class="col">
-                                                <div v-if="isResearchVisible('halean')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                                <ResearchSummary v-if="isResearchVisible('halean')" :research="researches['halean']" />
+                                                <div v-if="techs['halean'].isVisible()" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="techs['halean'].isVisible()" :tech="techs['halean']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;"></div>
                                             <div class="col">
-                                                <div v-if="isResearchVisible('nuclear')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                                <ResearchSummary v-if="isResearchVisible('nuclear')" :research="researches['nuclear']" />
+                                                <div v-if="techs['nuclear'].isVisible()" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="techs['nuclear'].isVisible()" :tech="techs['nuclear']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;"></div>
                                             <div class="col">
-                                                <div v-if="isResearchVisible('chemical')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                                <ResearchSummary v-if="isResearchVisible('chemical')" :research="researches['chemical']" />
+                                                <div v-if="techs['chemical'].isVisible()" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="techs['chemical'].isVisible()" :tech="techs['chemical']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;">
                                                 <div class="text-center mb-1" style="height:15px;"></div>
-                                                <i v-if="isResearchVisible('hydro')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                                <i v-if="techs['hydro'].isVisible()" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
                                             </div>
                                             <div class="col">
-                                                <div v-if="isResearchVisible('hydro')" class="text-center mb-1" style="height:15px;"></div>
-                                                <ResearchSummary v-if="isResearchVisible('hydro')" :research="researches['hydro']" />
+                                                <div v-if="techs['hydro'].isVisible()" class="text-center mb-1" style="height:15px;"></div>
+                                                <ResearchSummary v-if="techs['hydro'].isVisible()" :tech="techs['hydro']" />
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="row g-1 align-items-center">
                                             <div class="col">
-                                                <div v-if="isResearchVisible('karanartofwar')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                                <ResearchSummary v-if="isResearchVisible('karanartofwar')" :research="researches['karanartofwar']" />
+                                                <div v-if="techs['karanartofwar'].isVisible()" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="techs['karanartofwar'].isVisible()" :tech="techs['karanartofwar']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;"></div>
                                             <div class="col">
-                                                <div v-if="isResearchVisible('quantum')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                                <ResearchSummary v-if="isResearchVisible('quantum')" :research="researches['quantum']" />
+                                                <div v-if="techs['quantum'].isVisible()" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="techs['quantum'].isVisible()" :tech="techs['quantum']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;">
                                                 <div class="text-center mb-1" style="height:15px;"></div>
-                                                <i v-if="isResearchVisible('secret')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                                <i v-if="techs['secret'].isVisible()" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
                                             </div>
                                             <div class="col">
-                                                <div v-if="isResearchVisible('secret')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                                <ResearchSummary v-if="isResearchVisible('secret')" :research="researches['secret']" />
+                                                <div v-if="techs['secret'].isVisible()" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="techs['secret'].isVisible()" :tech="techs['secret']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;">
                                                 <div class="text-center mb-1" style="height:15px;"></div>
-                                                <i v-if="isResearchVisible('secret')" class="text-normal fas fa-fw fa-chevron-circle-left"></i>
+                                                <i v-if="techs['secret'].isVisible()" class="text-normal fas fa-fw fa-chevron-circle-left"></i>
                                             </div>
                                             <div class="col">
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;"></div>
                                             <div class="col">
+                                                <div v-if="techs['ammonia'].isVisible()" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="techs['ammonia'].isVisible()" :tech="techs['ammonia']" />
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="row g-1 align-items-center">
                                             <div class="col">
-                                                <div v-if="isResearchVisible('xiranartofwar')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                                <ResearchSummary v-if="isResearchVisible('xiranartofwar')" :research="researches['xiranartofwar']" />
+                                                <div v-if="techs['xiranartofwar'].isVisible()" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="techs['xiranartofwar'].isVisible()" :tech="techs['xiranartofwar']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;"></div>
                                             <div class="col">
-                                                <div v-if="isResearchVisible('karannuclear')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                                <ResearchSummary v-if="isResearchVisible('karannuclear')" :research="researches['karannuclear']" />
+                                                <div v-if="techs['karannuclear'].isVisible()" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="techs['karannuclear'].isVisible()" :tech="techs['karannuclear']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;"></div>
                                             <div class="col">
-                                                <div v-if="isResearchVisible('spacemining')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                                <ResearchSummary v-if="isResearchVisible('spacemining')" :research="researches['spacemining']" />
+                                                <div v-if="techs['spacemining'].isVisible()" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="techs['spacemining'].isVisible()" :tech="techs['spacemining']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;"></div>
                                             <div class="col">
-                                                <div v-if="isResearchVisible('rhodium')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                                <ResearchSummary v-if="isResearchVisible('rhodium')" :research="researches['rhodium']" />
+                                                <div v-if="techs['rhodium'].isVisible()" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="techs['rhodium'].isVisible()" :tech="techs['rhodium']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;"></div>
                                             <div class="col">
-                                                <div v-if="isResearchVisible('ammonia')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                                <ResearchSummary v-if="isResearchVisible('ammonia')" :research="researches['ammonia']" />
                                             </div>
                                         </div>
                                     </div>
@@ -352,24 +364,24 @@
                                             <div class="col"></div>
                                             <div class="col-auto text-center" style="width:20px;"></div>
                                              <div class="col">
-                                                <div v-if="isResearchVisible('protohalean')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                                <ResearchSummary v-if="isResearchVisible('protohalean')" :research="researches['protohalean']" />
+                                                <div v-if="techs['protohalean'].isVisible()" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="techs['protohalean'].isVisible()" :tech="techs['protohalean']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;">
                                                 <div class="text-center mb-1" style="height:15px;"></div>
-                                                <i v-if="isResearchVisible('darkmatter')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                                <i v-if="techs['darkmatter'].isVisible()" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
                                             </div>
                                             <div class="col">
-                                                <div v-if="isResearchVisible('darkmatter')" class="text-center mb-1" style="height:15px;"></div>
-                                                <ResearchSummary v-if="isResearchVisible('darkmatter')" :research="researches['darkmatter']" />
+                                                <div v-if="techs['darkmatter'].isVisible()" class="text-center mb-1" style="height:15px;"></div>
+                                                <ResearchSummary v-if="techs['darkmatter'].isVisible()" :tech="techs['darkmatter']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;">
                                                 <div class="text-center mb-1" style="height:15px;"></div>
-                                                <i v-if="isResearchVisible('osmium')" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
+                                                <i v-if="techs['osmium'].isVisible()" class="text-normal fas fa-fw fa-chevron-circle-right"></i>
                                             </div>
                                             <div class="col">
-                                                <div v-if="isResearchVisible('osmium')" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
-                                                <ResearchSummary v-if="isResearchVisible('osmium')" :research="researches['osmium']" />
+                                                <div v-if="techs['osmium'].isVisible()" class="text-center mb-1" style="height:15px;"><i class="text-normal fas fa-fw fa-chevron-circle-down"></i></div>
+                                                <ResearchSummary v-if="techs['osmium'].isVisible()" :tech="techs['osmium']" />
                                             </div>
                                             <div class="col-auto text-center" style="width:20px;"></div>
                                             <div class="col"></div>
@@ -378,7 +390,7 @@
                                 </div>
                             </div>
                             <div class="h-100 col-auto bg-1 border-start p-3 scrollbar" style="width:275px; overflow-y:auto;">
-                                <ResearchDetails v-if="currentResearch" :research="currentResearch" />
+                                <ResearchDetails v-if="currentResearch" :tech="currentResearch" />
                             </div>
                         </div>
                     </div>
@@ -397,9 +409,6 @@
 
                     <div v-if="currentPage == 'overview'" class="page pt-3 px-2">
                         <div class="h-100 row g-3 scrollbar" style="overflow-y:auto;">
-                            <div class="col-12 text-center">
-                                <span class="h5 text-primary">Planets under control</span>
-                            </div>
                             <div class="col-12">
                                 <div class="row g-1 align-items-center justify-content-center">
                                     <div v-for="(planet, key) of humanPlanets" :key="key" class="col-3">
@@ -424,34 +433,33 @@
                             <div class="h-100 col-auto bg-1 border-end p-3 scrollbar" style="width:275px; overflow-y:auto;">
                                 <div class="row g-3">
                                     <div class="col-12 text-center">
-                                        <div class="h5" :class="{ 'text-normal':currentPlanet.civId == 'human', 'text-danger':currentPlanet.civId != null && currentPlanet.civId != 'human', 'text-gray':currentPlanet.civId == null }" >{{ $t('planetName_' + currentPlanet.id) }}</div>
+                                        <div class="h5" :class="{ 'text-normal':currentPlanet.def.civId == 'human', 'text-danger':currentPlanet.def.civId != null && currentPlanet.def.civId != 'human', 'text-gray':currentPlanet.def.civId == null }" >{{ $t('planetName_' + currentPlanet.def.id) }}</div>
                                     </div>
                                     <PlanetInfo :planet="currentPlanet" class="col-12" />
                                     <PlanetEnergy :planet="currentPlanet" class="col-12" />
                                     <div class="col-12">
-                                        <div v-for="(prod, key) of currentPlanetProds" :key="key" class="row gx-2">
+                                        <div v-for="(prod, key) of currentPlanet.def.prod" :key="key" class="row gx-2">
                                             <span class="col text-normal">{{ $t('resName_' + key) }}</span>
                                             <span class="col-auto" :class="{ 'text-white':prod == 1, 'text-danger':prod < 1, 'text-success':prod > 1 }"><small class="opacity-75">x</small> {{ prod.toFixed(2) }}</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>               
-                            <div class="col d-flex flex-column scrollbar" style="overflow-y:auto;">
-                                <div class="pt-3 px-3">
-                                    <div class="row gx-2 justify-content-center align-items-center">
-                                        <span class="col-auto text-white">Controlled by</span>
-                                        <button type="button" class="col-auto btn py-0 d-flex align-items-center">
-                                            <img :src="require(`~/assets/civis/${currentPlanet.civId}.png`)" width="32px" />
-                                            <span class="ms-3 h5">{{ $t('civName_' + currentPlanet.civId) }}</span>
+                            <div class="col position-relative d-flex flex-column scrollbar" style="overflow-y:auto;">
+                                <div class="position-absolute w-100 pt-3 px-3">
+                                    <div class="text-center small text-gray">Controlled by</div>
+                                    <div class="text-center">
+                                        <button type="button" class="btn py-0">
+                                            <span class="h5">{{ $t('civName_' + currentPlanet.def.civId) }}</span>
                                         </button>
                                     </div>
                                 </div>
-                                <div :class="'flex-fill d-flex align-items-center bg-' + currentPlanet.id">
-                                    <button v-if="currentPlanet.civId == 'human' && humanPlanetCount > 1" type="button" id="arrow_left" class="btn">
+                                <div :class="'flex-fill pt-3 d-flex align-items-center bg-' + currentPlanet.def.id">
+                                    <button type="button" id="arrow_left" class="btn">
                                         <i class="fas fa-fw fa-chevron-circle-left"></i>
                                     </button>
                                     <div class="col"></div>
-                                    <button v-if="currentPlanet.civId == 'human' && humanPlanetCount > 1" type="button" id="arrow_right" class="btn">
+                                    <button type="button" id="arrow_right" class="btn">
                                         <i class="fas fa-fw fa-chevron-circle-right"></i>
                                     </button>
                                 </div>
@@ -477,7 +485,7 @@
                                 </div>
                             </div>
                             <div class="h-100 col p-3 scrollbar" style="overflow-y:auto;">
-                                <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('extraction')" :key="key" :building="building" />
+                                <BuildingSummary v-for="(building, key) of currentPlanet.getBuildingsByType('extraction')" :key="key" :building="building" />
                             </div>
                             <div class="h-100 col-auto bg-1 border-start p-3 scrollbar" style="width:275px; overflow-y:auto;">
                                 <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
@@ -495,7 +503,7 @@
                                 </div>
                             </div>
                             <div class="h-100 col p-3 scrollbar" style="overflow-y:auto;">
-                                <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('production')" :key="key" :building="building" />
+                                <BuildingSummary v-for="(building, key) of currentPlanet.getBuildingsByType('prod')" :key="key" :building="building" />
                             </div>
                             <div class="h-100 col-auto bg-1 border-start p-3 scrollbar" style="width:275px; overflow-y:auto;">
                                 <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
@@ -513,7 +521,7 @@
                                 </div>
                             </div>
                             <div class="h-100 col p-3 scrollbar" style="overflow-y:auto;">
-                                <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('energy')" :key="key" :building="building" />
+                                <BuildingSummary v-for="(building, key) of currentPlanet.getBuildingsByType('energy')" :key="key" :building="building" />
                             </div>
                             <div class="h-100 col-auto bg-1 border-start p-3 scrollbar" style="width:275px; overflow-y:auto;">
                                 <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
@@ -531,7 +539,7 @@
                                 </div>
                             </div>
                             <div class="h-100 col p-3 scrollbar" style="overflow-y:auto;">
-                                <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('research')" :key="key" :building="building" />
+                                <BuildingSummary v-for="(building, key) of currentPlanet.getBuildingsByType('research')" :key="key" :building="building" />
                             </div>
                             <div class="h-100 col-auto bg-1 border-start p-3 scrollbar" style="width:275px; overflow-y:auto;">
                                 <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
@@ -549,8 +557,8 @@
                                 </div>
                             </div>
                             <div class="h-100 col p-3 scrollbar" style="overflow-y:auto;">
-                                <div v-if="Object.keys(getCurrentPlanetBuildings('other')).length < 1" class="text-center"><span class="text-gray">There is no building to show</span></div>
-                                <BuildingSummary v-for="(building, key) of getCurrentPlanetBuildings('other')" :key="key" :building="building" />
+                                <div v-if="Object.keys(currentPlanet.getBuildingsByType('other')).length < 1" class="text-center"><span class="text-gray">There is no building to show</span></div>
+                                <BuildingSummary v-for="(building, key) of currentPlanet.getBuildingsByType('other')" :key="key" :building="building" />
                             </div>
                             <div class="h-100 col-auto bg-1 border-start p-3 scrollbar" style="width:275px; overflow-y:auto;">
                                 <BuildingDetails v-if="currentBuilding" :building="currentBuilding" />
@@ -568,8 +576,8 @@
                                 </div>
                             </div>
                             <div class="h-100 col p-3 scrollbar" style="overflow-y:auto;">
-                                <div v-if="Object.keys(getCurrentPlanetShips()).length < 1" class="text-center"><span class="text-gray">There is no ship to show</span></div>
-                                <ShipSummary v-for="(ship, key) of getCurrentPlanetShips()" :key="key" :ship="ship" />
+                                <div v-if="Object.keys(currentPlanet.ships).length < 1" class="text-center"><span class="text-gray">There is no ship to show</span></div>
+                                <ShipSummary v-for="(ship, key) of currentPlanet.ships" :key="key" :ship="ship" />
                             </div>
                             <div class="h-100 col-auto bg-1 border-start p-3 scrollbar" style="width:275px; overflow-y:auto;">
                                 <ShipDetails v-if="currentShip" :ship="currentShip" />
@@ -666,55 +674,54 @@
 <script>
 var resourcesDef = [
     
-    {	id: "ammonia",	reqs: { ammonia: 1 },	},
-    {	id: "ammunition",	reqs: { military: 1 },	},
-    {	id: "antimatter",	reqs: { quantum: 1 },	},
-    {	id: "armor",	reqs: { military: 12 },	},
-    {	id: "caesium",	reqs: { karannuclear: 1 },	},
-    {	id: "circuit",	reqs: { electronic: 1 },	},
-    {	id: "coolant",	reqs: { ice: 10 },	},
-    {	id: "darkmatter",	reqs: { darkmatter: 1 },	},
-    {	id: "emptybattery",	reqs: { electronic: 8 },	},
-    {	id: "engine",	reqs: { military: 16 },	},
-    {	id: "fuel",	},
-    {	id: "fullbattery",	reqs: { electronic: 8 },	},
-    {	id: "graphite",	},
-    {	id: "hydrogen",	reqs: { nuclear: 1 },	},
-    {	id: "ice",	reqs: { ice: 1 },	},
-    {	id: "iron",	},
-    {	id: "meissnercell",	reqs: { electronic: 35 },	},
-    {	id: "meissnerium",	reqs: { material: 35 },	},
-    {	id: "methane",	},
-    {	id: "mkembryo",	reqs: { osmium: 1 },	},
-    {	id: "nanotube",	reqs: { chemical: 30 },	},
-    {	id: "oil",	reqs:{ chemical: 1 },	},
-    {	id: "osmium",	reqs: { osmium: 1 },	},
-    {	id: "plastic",	reqs:{ material: 8 },	},
-    {	id: "qasers",	reqs: { protohalean: 1 },	},
-    {	id: "rhodium",	reqs: { hydro: 1 },	},
-    {	id: "robot",	reqs: { intelligence: 1 },	},
-    {	id: "sand",	reqs:{ mineralogy: 4 },	},
-    {	id: "silicon",	reqs:{ electronic: 1 },	},
-    {	id: "steel",	},
-    {	id: "sulfur",	reqs: { vulcan: 1 },	},
-    {	id: "superconductor",	reqs: { electronic: 30 },	},
-    {	id: "tammunition",	reqs: { artofwar: 1 },	},
-    {	id: "technetium",	reqs: { halean: 1 },	},
-    {	id: "thorium",	reqs: { karannuclear: 1 },	},
-    {	id: "titanium",	reqs:{ mineralogy: 4 },	},
-    {	id: "uammunition",	reqs: { military: 8 },	},
-    {	id: "uranium",	reqs:{ mineralogy: 4 },	},
-    {	id: "water",	},
+    {	id: "ammonia",	unlock: false,	reqs: { ammonia: 1 },	},
+    {	id: "ammunition",	unlock: false,	reqs: { military: 1 },	},
+    {	id: "antimatter",	unlock: false,	reqs: { quantum: 1 },	},
+    {	id: "armor",	unlock: false,	reqs: { military: 12 },	},
+    {	id: "caesium",	unlock: false,	reqs: { karannuclear: 1 },	},
+    {	id: "circuit",	unlock: false,	reqs: { electronic: 1 },	},
+    {	id: "coolant",	unlock: false,	reqs: { ice: 10 },	},
+    {	id: "darkmatter",	unlock: false,	reqs: { darkmatter: 1 },	},
+    {	id: "emptybattery",	unlock: false,	reqs: { electronic: 8 },	},
+    {	id: "engine",	unlock: false,	reqs: { military: 16 },	},
+    {	id: "fuel",	unlock: true,	},
+    {	id: "fullbattery",	unlock: false,	reqs: { electronic: 8 },	},
+    {	id: "graphite",	unlock: true,	},
+    {	id: "hydrogen",	unlock: false,	reqs: { nuclear: 1 },	},
+    {	id: "ice",	unlock: false,	reqs: { ice: 1 },	},
+    {	id: "iron",	unlock: true,	},
+    {	id: "meissnercell",	unlock: false,	reqs: { electronic: 35 },	},
+    {	id: "meissnerium",	unlock: false,	reqs: { material: 35 },	},
+    {	id: "methane",	unlock: true,	},
+    {	id: "mkembryo",	unlock: false,	reqs: { osmium: 1 },	},
+    {	id: "nanotube",	unlock: false,	reqs: { chemical: 30 },	},
+    {	id: "oil",	unlock: false,	reqs:{ chemical: 1 },	},
+    {	id: "osmium",	unlock: false,	reqs: { osmium: 1 },	},
+    {	id: "plastic",	unlock: false,	reqs:{ material: 8 },	},
+    {	id: "qaser",	unlock: false,	reqs: { protohalean: 1 },	},
+    {	id: "rhodium",	unlock: false,	reqs: { hydro: 1 },	},
+    {	id: "robot",	unlock: false,	reqs: { intelligence: 1 },	},
+    {	id: "sand",	unlock: false,	reqs:{ mineralogy: 4 },	},
+    {	id: "silicon",	unlock: false,	reqs:{ electronic: 1 },	},
+    {	id: "steel",	unlock: true,	},
+    {	id: "sulfur",	unlock: false,	reqs: { vulcan: 1 },	},
+    {	id: "superconductor",	unlock: false,	reqs: { electronic: 30 },	},
+    {	id: "tammunition",	unlock: false,	reqs: { artofwar: 1 },	},
+    {	id: "technetium",	unlock: false,	reqs: { halean: 1 },	},
+    {	id: "thorium",	unlock: false,	reqs: { karannuclear: 1 },	},
+    {	id: "titanium",	unlock: false,	reqs:{ mineralogy: 4 },	},
+    {	id: "uammunition",	unlock: false,	reqs: { military: 8 },	},
+    {	id: "uranium",	unlock: false,	reqs:{ mineralogy: 4 },	},
+    {	id: "water",	unlock: true,	},
 ]
 
 class PlanetResource {
 
-    constructor(def) {
-    
-        this.id = def.id
-        
+    constructor(planet, def) {    
+        this.def = def
         this.prod = 0
         this.count = 0
+        this.planet = planet        
     }
 }
 
@@ -741,7 +748,7 @@ var buildingsDef = [
     {	id: "sulfurMine",	type: "extraction",	reqs: { vulcan: 1 },	envs: ["lava", "radioactive", "acid"],	prod: { sulfur: 3, graphite: 2 },	cost: { technetium: 1e5, graphite: 1e6 },	mult: { technetium: 1.35, graphite: 1.25 },	buildable: true,	energy: -100,	researchPoint: 0,	desc: false,	},
     {	id: "lavaMine",	type: "extraction",	reqs: { vulcan: 1 },	envs: ["lava", "acid"],	prod: { titanium: 8 },	cost: { technetium: 1e5, graphite: 1e6 },	mult: { technetium: 1.35, graphite: 1.25 },	buildable: true,	energy: -200,	researchPoint: 0,	desc: false,	},
     
-    {	id: "darkmatterRefiner",	type: "prod",	reqs: { darkmatter: 1 },	envs: ["desert", "ice", "terrestrial", "metallic", "ocean", "gas", "lava", "acid", "radioactive", "ammonia"],	prod: { antimatter: -100, meissnercell: -10, darkmatter: 1 },	cost: { qasers: 1e4, meissnerium: 5e5 },	mult: { qasers: 1.2, meissnerium: 1.3 },	buildable: true,	energy: 0,	researchPoint: 0,	desc: false,	},
+    {	id: "darkmatterRefiner",	type: "prod",	reqs: { darkmatter: 1 },	envs: ["desert", "ice", "terrestrial", "metallic", "ocean", "gas", "lava", "acid", "radioactive", "ammonia"],	prod: { antimatter: -100, meissnercell: -10, darkmatter: 1 },	cost: { qaser: 1e4, meissnerium: 5e5 },	mult: { qaser: 1.2, meissnerium: 1.3 },	buildable: true,	energy: 0,	researchPoint: 0,	desc: false,	},
     {	id: "ammoniaElectrolyzer",	type: "prod",	reqs: { ammonia: 1 },	envs: ["desert", "ice", "terrestrial", "metallic", "ocean", "gas", "lava", "ammonia"],	prod: { ammonia: -10, hydrogen: 30 },	cost: { nanotube: 1e6, engine: 5e3 },	mult: { nanotube: 1.25, engine: 1.35 },	buildable: true,	energy: -100,	researchPoint: 0,	desc: false,	},
     {	id: "methaneProcesser",	type: "prod",	reqs: null,	envs: ["desert", "ice", "terrestrial", "metallic"],	prod: { methane: -2, fuel: 1 },	cost: { iron: 100, steel: .25, titanium: 2e-4 },	mult: { iron: 1.1, steel: 1.2, titanium: 1.3 },	buildable: true,	energy: 0,	researchPoint: 0,	desc: false,	},
     {	id: "foundry",	type: "prod",	reqs: null,	envs: ["desert", "ice", "terrestrial", "metallic"],	prod: { graphite: -1, iron: -2, fuel: -2, steel: 2 },	cost: { iron: 1e3, steel: .48, titanium: .01 },	mult: { iron: 1.1, steel: 1.2, titanium: 1.3 },	buildable: true,	energy: 0,	researchPoint: 0,	desc: false,	},
@@ -774,7 +781,7 @@ var buildingsDef = [
     {	id: "ceramicFoundry",	type: "prod",	reqs: { material: 35 },	envs: ["desert", "ice", "terrestrial", "metallic", "ocean", "carbon", "acid"],	prod: { water: -5e5, nanotube: -1e4, rhodium: -2e3, sulfur: -1e3, osmium: -500, iron: -2.5e3, meissnerium: 1 },	cost: { nanotube: 10e6, engine: 1e6 },	mult: { nanotube: 1.25, engine: 1.35 },	buildable: true,	energy: -500,	researchPoint: 0,	desc: false,	},
     {	id: "superconductorsFactory",	type: "prod",	reqs: { electronic: 30 },	envs: ["desert", "ice", "terrestrial", "metallic", "ocean", "carbon", "acid"],	prod: { meissnerium: -1, coolant: -350, superconductor: 1 },	cost: { nanotube: 10e6, engine: 1e6, meissnerium: 1e3 },	mult: { meissnerium: 1.2, nanotube: 1.25, engine: 1.35 },	buildable: true,	energy: -5e3,	researchPoint: 0,	desc: false,	},
     {	id: "cellsFactory",	type: "prod",	reqs: { electronic: 35 },	envs: ["desert", "ice", "terrestrial", "metallic", "ocean", "carbon", "acid"],	prod: { superconductor: -1, circuit: -1e7, nanotube: -1e7, meissnercell: 1 },	cost: { nanotube: 10e6, engine: 1e6, meissnerium: 1e3 },	mult: { meissnerium: 1.2, nanotube: 1.25, engine: 1.35 },	buildable: true,	energy: -1e4,	researchPoint: 0,	desc: false,	},
-    {	id: "qasersAssembler",	type: "prod",	reqs: { protohalean: 1 },	envs: ["desert", "ice", "terrestrial", "metallic"],	prod: { superconductor: -1, circuit: -1e7, nanotube: -1e7, water: -25e4, qasers: 1 },	cost: { nanotube: 1e6, engine: 25e4, meissnerium: 300 },	mult: { meissnerium: 1.2, nanotube: 1.25, engine: 1.35 },	buildable: true,	energy: -1e4,	researchPoint: 0,	desc: false,	},
+    {	id: "qaserAssembler",	type: "prod",	reqs: { protohalean: 1 },	envs: ["desert", "ice", "terrestrial", "metallic"],	prod: { superconductor: -1, circuit: -1e7, nanotube: -1e7, water: -25e4, qaser: 1 },	cost: { nanotube: 1e6, engine: 25e4, meissnerium: 300 },	mult: { meissnerium: 1.2, nanotube: 1.25, engine: 1.35 },	buildable: true,	energy: -1e4,	researchPoint: 0,	desc: false,	},
     {	id: "technetiumFissor",	type: "prod",	reqs: { halean: 1 },	envs: ["desert", "ice", "terrestrial", "metallic", "ocean", "gas", "lava", "radioactive", "ammonia"],	prod: { uranium: -12, technetium: 1 },	cost: { graphite: 5e6, nanotube: 500 },	mult: { graphite: 1.25, nanotube: 1.35 },	buildable: true,	energy: 0,	researchPoint: 0,	desc: false,	},
     {	id: "haleanAICenter",	type: "prod",	reqs: { halean: 1 },	envs: ["desert", "ice", "terrestrial", "metallic", "ocean", "gas", "lava", "radioactive", "ammonia"],	prod: { circuit: -50, technetium: -5, fullbattery: -100, robot: 1 },	cost: { circuit: 5e5, nanotube: 2e3, technetium: 100 },	mult: { circuit: 1.5, nanotube: 1.3, technetium: 1.2 },	buildable: true,	energy: -500,	researchPoint: 0,	desc: false,	},
     
@@ -802,7 +809,7 @@ var buildingsDef = [
     {	id: "karanLaboratory",	type: "research",	reqs: { karannuclear: 1 },	envs: ["desert", "ice", "terrestrial", "metallic", "lava", "acid"],	prod: { thorium: -8, caesium: -4, uranium: -25 },	cost: { titanium: 1e8, nanotube: 2e6, engine: 25e4 },	mult: { titanium: 1.2, nanotube: 1.3, engine: 1.2 },	buildable: true,	energy: -1e3,	researchPoint: 8e3,	desc: false,	},
     {	id: "fluidodynamicsCenter",	type: "research",	reqs: null,	envs: ["gas"],	prod: { hydrogen: -5 },	cost: { titanium: 1e4, plastic: 1e3 },	mult: { titanium: 1.5, plastic: 2 },	buildable: true,	energy: -70, 	researchPoint: 10,	desc: false,	},
     {	id: "karanLaboratory2",	type: "research",	reqs: { karannuclear: 1 },	envs: ["radioactive"],	prod: { thorium: -8, caesium: -4, uranium: -25 },	cost: { titanium: 100e6, nanotube: 2e6, engine: 25e4 },	mult: { titanium: 1.2, nanotube: 1.3, engine: 1.2 },	buildable: true,	energy: -1e3,	researchPoint: 16e3,	desc: false,	},
-    {	id: "superfluidsCenter",	type: "research",	reqs: { protohalean: 2 },	envs: ["ocean", "ammonia"],	prod: { qasers: -1, superconductors: -10, coolant: -1e3 }, 	cost: { nanotube: 20e6, engine: 3e6, meissnerium: 5e3 },	mult: { meissnerium: 1.3, nanotube: 1.25, engine: 1.3 },	buildable: true,	energy: -38e3,	researchPoint: 25e4,	desc: false,	},
+    {	id: "superfluidsCenter",	type: "research",	reqs: { protohalean: 2 },	envs: ["ocean", "ammonia"],	prod: { qaser: -1, superconductor: -10, coolant: -1e3 }, 	cost: { nanotube: 20e6, engine: 3e6, meissnerium: 5e3 },	mult: { meissnerium: 1.3, nanotube: 1.25, engine: 1.3 },	buildable: true,	energy: -38e3,	researchPoint: 25e4,	desc: false,	},
     {	id: "haleanLaboratory",	type: "research",	reqs: { halean: 1 },	envs: ["desert", "ice", "terrestrial", "metallic", "ocean", "gas", "lava", "radioactive", "ammonia"],	prod: { technetium: -2 },	cost: { circuit: 5e5, nanotube: 2e3, technetium: 100 }, 	mult: { circuit: 1.5, nanotube: 1.3, technetium: 1.2 },	buildable: true,	energy: -500,	researchPoint: 90,	desc: false,	},
     {	id: "vulcanObservatory",	type: "research",	reqs: { vulcan: 1 },	envs: ["lava", "acid"],	prod: { sulfur: -3 },	cost: { technetium: 1e5, graphite: 2e6 },	mult: { technetium: 1.35, graphite: 1.25 },	buildable: true,	energy: -800,	researchPoint: 1,	desc: false,	},
     
@@ -818,18 +825,12 @@ var buildingsDef = [
 
 class PlanetBuilding {
 
-    constructor(def) {
-    
-        this.id = def.id
-        this.type = def.type
-        this.envs = def.envs
-        this.cost = def.cost
-        this.prod = def.prod
-        this.energy = def.energy
-        this.researchPoint = def.researchPoint
+    constructor(planet, def) {    
+        this.def = def
+        this.planet = planet
         
         this.need = {}
-        for (let rId in this.prod) this.need[rId] = false
+        for (let rId in this.def.prod) this.need[rId] = false
         
         this.count = 0
         this.queue = 0
@@ -839,10 +840,78 @@ class PlanetBuilding {
     
     toggleActive() { this.active = !this.active }
     
-    hasNeeds() {
-    
-        for (let rId in this.needs) if (this.needs[rId] == true) return true
+    hasNeed() {
+        for (let rId in this.need) if (this.need[rId] == true) return true
         return false
+    }
+    
+    emptyQueue() { this.queue = 0 }
+    
+    addQueue(count) { this.queue += count }
+    
+    destroy(count) {
+        this.count -= count
+        let refund = this.getRefund(count)
+        for (let rId in refund)
+            this.planet.resources[rId].count += refund[rId]
+    }
+    
+    getProdArray(count) {
+        let ret = {}
+        if (this.def.energy > 0) ret["energy"] = this.def.energy * count
+        if (this.def.researchPoint > 0) ret["researchPoint"] = this.def.researchPoint * count
+        for (let rId in this.def.prod) {
+            ret[rId] = this.def.prod[rId] * count
+            if (this.planet.def.prod[rId]) ret[rId] *= this.planet.def.prod[rId]
+        }
+        if (this.def.energy < 0) ret["energy"] = this.def.energy * count
+        return ret
+    }
+    
+    getCost(count) {
+        let ret = {}
+        for (let rId in this.def.cost) {
+            let t1 = Math.pow(this.def.mult[rId], this.count)
+            ret[rId] = this.def.cost[rId] * t1
+            for (let i = 1; i < count; i++) {
+                t1 *= this.def.mult[rId]
+                ret[rId] += this.def.cost[rId] * t1
+            }
+        }
+        return ret
+    }
+    
+    getRefund(count) {
+        let ret = {}
+        for (let rId in this.def.cost) {
+            ret[rId] = 0
+            for (let n = 0; n < count; n++)
+                ret[rId] += (this.def.cost[rId] * Math.pow(this.def.mult[rId], this.def.count - n - 1))
+        }
+        for (let rId in ret) ret[rId] /= 2
+        return ret
+    }
+
+    canProduce() {
+        let ret = true
+        if (this.def.type != "extraction") {
+            for (let rId in this.def.prod) {
+                if (this.planet.resources[rId].count + (this.count * this.def.prod[rId]) < 0) {
+                    ret = false
+                    this.need[rId] = true
+                    this.stoppedDelay = 1
+                }
+                else {
+                    this.need[rId] = false
+                }
+            }
+        }
+        return ret
+    }
+
+    canBuild(count) {
+        let cost = this.getCost(count)
+        return this.planet.canBuy(cost)
     }
 }
 
@@ -864,12 +933,12 @@ var shipsDef = [
     {	id: "alkantara",	civIds: ["human", "rebel"],	type: "fighter",	shipyardLevel: 13,	novalue: 0,	reqs: null,	weapon: "ballistic",	power: 21e3,	shield: 5e4,	armor: 3e5,	speed: .15,	piercing: 0,	storage: 2e6,	fuel: "hydrogen",	weight: 55e3,	combatWeight: 0,	hp: 6e5,	cost: { ammunition: 25e4, nanotube: 5e4, robots: 1800 },	desc: true,	},
     {	id: "auxilia",	civIds: ["human"],	type: "fighter",	shipyardLevel: 14,	novalue: 0,	reqs: { artofwar: 3 },	weapon: "thermal",	power: 5800,	shield: 0,	armor: 3200,	speed: 1.7,	piercing: 0,	storage: 100,	fuel: "hydrogen",	weight: 1340,	combatWeight: 0,	hp: 380,	cost: { technetium: 300, "t-ammunition": 10 },	desc: false,	},
     {	id: "servant",	civIds: ["human"],	type: "fighter",	shipyardLevel: 15,	novalue: 0,	reqs: { osmium: 1 },	weapon: "thermal",	power: 3e4,	shield: 0,	armor: 1e4,	speed: 2.8,	piercing: 0,	storage: 10,	fuel: "rhodium",	weight: 130,	combatWeight: 0,	hp: 2e4,	cost: { silicon: 5e4, rhodium: 1500, "mK Embryo": 10 },	desc: false,	},
-    {	id: "orionCargo",	civIds: ["human"],	type: "cargo",	shipyardLevel: 14,	novalue: 1,	reqs: null,	weapon: "laser",	power: 33,	shield: 0,	armor: 20,	speed: 1.5,	piercing: 0,	storage: 250e6,	fuel: "hydrogen",	weight: 5e6,	combatWeight: 2,	hp: 150,	cost: { robots: 200, nanotube: 2e4 },	desc: false,	},
-    {	id: "angerPerseus",	civIds: ["human", "rebel"],	type: "fighter",	shipyardLevel: 16,	novalue: 0,	reqs: { quantum: 3 },	weapon: "antimatter",	power: 300e6,	shield: 1e6,	armor: 50e6,	speed: .035,	piercing: 0,	storage: 100e6,	fuel: "hydrogen",	weight: 5e6,	combatWeight: 0,	hp: 5e9,	cost: { iron: 200e9, steel: 2e12, titanium: 50e9, nanotube: 500e6, ammunition: 1e9, "full battery": 350e6, "u-ammunition": 100e6, armor: 10e6, robots: 1e6, engine: 3e5, antimatter: 1e4 },	desc: true,	},
-    {	id: "medusaMiner",	civIds: ["human"],	type: "fighter",	shipyardLevel: 18,	novalue: 1,	reqs: { spacemining: 1 },	weapon: "unarmed",	power: 0,	shield: 0,	armor: 1,	speed: .5,	piercing: 0,	storage: 0,	fuel: "hydrogen",	weight: 100e6,	combatWeight: 2,	hp: 10,	cost: { iron: 300e6, steel: 1e9, titanium: 100e6, nanotube: 1e6, "full battery": 25e4, robots: 1e5, engine: 500 },	desc: true,	},
+    {	id: "orion",	civIds: ["human"],	type: "cargo",	shipyardLevel: 14,	novalue: 1,	reqs: null,	weapon: "laser",	power: 33,	shield: 0,	armor: 20,	speed: 1.5,	piercing: 0,	storage: 250e6,	fuel: "hydrogen",	weight: 5e6,	combatWeight: 2,	hp: 150,	cost: { robots: 200, nanotube: 2e4 },	desc: false,	},
+    {	id: "anger",	civIds: ["human", "rebel"],	type: "fighter",	shipyardLevel: 16,	novalue: 0,	reqs: { quantum: 3 },	weapon: "antimatter",	power: 300e6,	shield: 1e6,	armor: 50e6,	speed: .035,	piercing: 0,	storage: 100e6,	fuel: "hydrogen",	weight: 5e6,	combatWeight: 0,	hp: 5e9,	cost: { iron: 200e9, steel: 2e12, titanium: 50e9, nanotube: 500e6, ammunition: 1e9, "full battery": 350e6, "u-ammunition": 100e6, armor: 10e6, robots: 1e6, engine: 3e5, antimatter: 1e4 },	desc: true,	},
+    {	id: "miner",	civIds: ["human"],	type: "fighter",	shipyardLevel: 18,	novalue: 1,	reqs: { spacemining: 1 },	weapon: "unarmed",	power: 0,	shield: 0,	armor: 1,	speed: .5,	piercing: 0,	storage: 0,	fuel: "hydrogen",	weight: 100e6,	combatWeight: 2,	hp: 10,	cost: { iron: 300e6, steel: 1e9, titanium: 100e6, nanotube: 1e6, "full battery": 25e4, robots: 1e5, engine: 500 },	desc: true,	},
     {	id: "andromeda",	civIds: ["human"],	type: "cargo",	shipyardLevel: 17,	novalue: 1,	reqs: { spacemining: 1 },	weapon: "laser",	power: 50,	shield: 0,	armor: 50,	speed: 2,	piercing: 0,	storage: 30e9,	fuel: "hydrogen",	weight: 50e6,	combatWeight: 2,	hp: 1e3,	cost: { robots: 2e4, nanotube: 2e6, engine: 1e3 },	desc: false,	},
-    {	id: "munya",	civIds: ["human"],	type: "fighter",	shipyardLevel: 19,	novalue: 0,	reqs: { protohalean: 1 },	weapon: "antimatter",	power: 1e6,	shield: 0,	armor: 2e5,	speed: 15.5,	piercing: 25,	storage: 1e3,	fuel: "hydrogen",	weight: 12e5,	combatWeight: 0,	hp: 2E6,	cost: { ammunition: 1e5, "t-ammunition": 1e5, nanotube: 88e4, robots: 25e3, engine: 15e3, qasers: 20 },	desc: false,	},
-    {	id: "soulAndromeda",	civIds: ["human"],	type: "defence",	shipyardLevel: 20,	novalue: 0,	reqs: { darkmatter: 1 },	weapon: "antimatter",	power: 50e9,	shield: 5e6,	armor: 500e6,	speed: .02,	piercing: 0,	storage: 1e9,	fuel: "hydrogen",	weight: 5e9,	combatWeight: 0,	hp: 500e9,	cost: { iron: 5e12, steel: 50e12, titanium: 500e9, nanotube: 30e9, ammunition: 100e9, "full battery": 1e9, "u-ammunition": 10e9, "t-ammunition": 100e6, armor: 1e9, robots: 1e9, engine: 30e6, antimatter: 10e6, meissnerium: 1e6, "dark matter": 1e3 },	desc: true,	},
+    {	id: "munya",	civIds: ["human"],	type: "fighter",	shipyardLevel: 19,	novalue: 0,	reqs: { protohalean: 1 },	weapon: "antimatter",	power: 1e6,	shield: 0,	armor: 2e5,	speed: 15.5,	piercing: 25,	storage: 1e3,	fuel: "hydrogen",	weight: 12e5,	combatWeight: 0,	hp: 2E6,	cost: { ammunition: 1e5, "t-ammunition": 1e5, nanotube: 88e4, robots: 25e3, engine: 15e3, qaser: 20 },	desc: false,	},
+    {	id: "soul",	civIds: ["human"],	type: "defence",	shipyardLevel: 20,	novalue: 0,	reqs: { darkmatter: 1 },	weapon: "antimatter",	power: 50e9,	shield: 5e6,	armor: 500e6,	speed: .02,	piercing: 0,	storage: 1e9,	fuel: "hydrogen",	weight: 5e9,	combatWeight: 0,	hp: 500e9,	cost: { iron: 5e12, steel: 50e12, titanium: 500e9, nanotube: 30e9, ammunition: 100e9, "full battery": 1e9, "u-ammunition": 10e9, "t-ammunition": 100e6, armor: 1e9, robots: 1e9, engine: 30e6, antimatter: 10e6, meissnerium: 1e6, "dark matter": 1e3 },	desc: true,	},
 
     {	id: "glassBurson",	civIds: ["council"],	type: "fighter",	shipyardLevel: null,	novalue: 0,	reqs: null,	weapon: "ballistic",	power: 2800,	shield: 0,	armor: 12e3,	speed: .5,	piercing: 0,	storage: 1.2e6,	fuel: "hydrogen",	weight: 15300,	combatWeight: 0,	hp: 1e4,	cost: null,	desc: false,	},
     {	id: "key",	civIds: ["council"],	type: "fighter",	shipyardLevel: null,	novalue: 0,	reqs: null,	weapon: "ballistic",	power: 4e3,	shield: 0,	armor: 18e3,	speed: .3,	piercing: 0,	storage: 5e6,	fuel: "hydrogen",	weight: 13e3,	combatWeight: 0,	hp: 103e3,	cost: null,	desc: false,	},
@@ -984,62 +1053,58 @@ var shipsDef = [
 
 class PlanetShip {
 
-    constructor(def) {
-    
-        this.id = def.id
-        this.hp = def.hp
-        this.desc = def.desc
-        this.type = def.type
-        this.armor = def.armor
-        this.power = def.power || 0
-        this.cost = def.cost
-        this.speed = def.speed
-        this.shield = def.shield || 0
-        this.civIds = def.civIds
-        this.weight = def.weight
-        this.weapon = def.weapon || "unarmed"
-        this.techReq = def.techReq
-        this.storage = def.storage
-        this.piercing = def.piercing || 0
-        this.combatWeight = def.combatWeight || 0
-        this.shipyardLevel = def.shipyardLevel
-        
+    constructor(planet, def) {    
+        this.def = def.id
         this.count = 0
+        this.planet = def.planet        
+    }
+    
+    getCost(count) {
+        let ret = {}
+        for (let rId in this.def.cost)        
+            ret[rId] = this.def.cost[rId] * count
+        return ret
+    }
+    
+    build(count) {    
+        for (let rId in this.def.cost)        
+            this.planet.resources[rId].count -= this.def.cost[rId] * count        
+        this.count += count
     }
 }
 
 var planetsDef = [
 
-    {	id: "promision",	nebula: "perseus",	civId: "human",	x: 64,	y: 64,	type: "terrestrial",	unlock: null,	influence: 1,	radius: 6833,	temp: 22,	atmos: "oxygen",	orbit: 1,	prod:{ iron: 1, graphite: 1, titanium: 1, silicon: 1, uranium: 1, methane: 1, sand: .5 },	},
-    {	id: "vasilis",	nebula: "perseus",	civId: null,	x: 161,	y: 94,	type: "ice",	unlock: "ice",	influence: 1,	radius: 5201,	temp: -21,	atmos: "oxygen",	orbit: 2.9,	prod:{ coolant: 2, ice: 2, methane: 2, titanium: 1.5, iron: 1, uranium: 1, oil: .5 },	},
-    {	id: "aequoreas",	nebula: "perseus",	civId: null,	x: 30,	y: 145,	type: "ocean",	unlock: "hydro",	influence: 1,	radius: 8890,	temp: 18,	atmos: "oxygen",	orbit: .7,	prod:{ sand: 2, iron: 1, titanium: 1.5, oil: 1, water: 5 },	},
-    {	id: "orpheus",	nebula: "perseus",	civId: null,	x: 53,	y: 229,	type: "gas",	unlock: null,	influence: 1,	radius: 18540,	temp: -141,	atmos: "hydrogen",	orbit: 8.2,	prod:{ hydrogen: 8, methane: 3, technetium: 2 },	},
-    {	id: "antirion",	nebula: "perseus",	civId: "pirates",	x: 30,	y: 370,	type: "metallic",	unlock: "military",	influence: 5,	radius: 2230,	temp: -66,	atmos: "methane",	orbit: 5.45,	prod:{ thorium: .2, rhodium: 1.5, iron: 3, titanium: 3, uranium: 2, graphite: .5, methane: 2.4, plastic: 2 },	},
-    {	id: "city",	nebula: "perseus",	civId: "city",	x: 166,	y: 302,	type: "ice",	unlock: null,	influence: 8,	radius: 4235,	temp: -8,	atmos: "oxygen",	orbit: 1.82,	prod:{ thorium: .5, ammunition: 2, "u-ammunition": 1.5, iron: 3, graphite: 3, titanium: 2, uranium: 1.5, ice: 1.2, methane: 2.2, osmium: .5 },	},
-    {	id: "ishtar",	nebula: "perseus",	civId: "orion",	x: 256,	y: 192,	type: "ocean",	unlock: null,	influence: 12,	radius: 7020,	temp: 3,	atmos: "co2",	orbit: 2.8,	prod:{ graphite: 2, sand: 1, uranium: 1, water: 3.2, oil: .5, nanotube: 2 },	},
-    {	id: "traumland",	nebula: "perseus",	civId: "phantids",	x: 448,	y: 236,	type: "terrestrial",	unlock: "environment",	influence: 15,	radius: 6550,	temp: 28,	atmos: "oxygen",	orbit: .7,	prod:{ iron: 1, titanium: 1.2, sand: 1, oil: 2, uranium: .25, water: .6, silicon: 2, graphite: 2, methane: 1 },	},
-    {	id: "tataridu",	nebula: "perseus",	civId: "phantids",	x: 384,	y: 64,	type: "terrestrial",	unlock: null,	influence: 18,	radius: 3118,	temp: 38,	atmos: "oxygen",	orbit: .45,	prod:{ iron: .5, uranium: 2, oil: 2.6, water: .25, methane: 2.8, circuit: 2 },	},
-    {	id: "zelera",	nebula: "perseus",	civId: "robot",	x: 750,	y: 200,	type: "ice",	unlock: "intelligence",	influence: 22,	radius: 8230,	temp: -30,	atmos: "methane",	orbit: 7.45,	prod:{ osmium: 1.8, ice: 3, iron: 4, titanium: 3.5, uranium: 2.2, robot: 2, methane: 2 },	},
-    {	id: "posirion",	nebula: "perseus",	civId: "halean",	x: 854,	y: 62,	type: "gas",	unlock: "halean",	influence: 27,	radius: 48270,	temp: -189,	atmos: "hydrogen",	orbit: 17.22,	prod:{ hydrogen: 51.3, methane: 18.41, technetium: 2 },	},
-    {	id: "tsartasis",	nebula: "perseus",	civId: "metallokopta",	x: 680,	y: 750,	type: "desert",	unlock: "rhodium",	influence: 29,	radius: 4504,	temp: 102,	atmos: "co2",	orbit: .31,	prod:{ iron: 2.7, titanium: 3.7, uranium: 5.4, sand: 2, rhodium: 1.6 },	},
-    {	id: "acanthus",	nebula: "perseus",	civId: "quris",	x: 275,	y: 422,	type: "ice",	unlock: null,	influence: 31,	radius: 5155,	temp: -12,	atmos: "co2",	orbit: 2.4,	prod:{ darkmatter: 2, thorium: 1.5, osmium: 2.2, methane: 3.2, ice: 5, titanium: 2, uranium: 3 },	},
-    {	id: "raknar",	nebula: "perseus",	civId: "quris",	x: 164,	y: 440,	type: "ice",	unlock: null,	influence: 32,	radius: 4081,	temp: -31,	atmos: "co2",	orbit: 4.5,	prod:{ thorium: .5, osmium: 1.8, methane: 2, ice: 3, titanium: 3, uranium: 1, iron: 2, graphite: 5 },	},
-    {	id: "shin",	nebula: "perseus",	civId: "metallokopta",	x: 640,	y: 900,	type: "ice",	unlock: "osmium",	influence: 32,	radius: 4504,	temp: -85,	atmos: "co2",	orbit: 8.31,	prod:{ iron: 4.1, titanium: 3.5, uranium: 2.2, ice: 3.2, water: 2, osmium: 3.7, mkembryo: 2 },	},
-    {	id: "phorun",	nebula: "perseus",	civId: "halean",	x: 1048,	y: 162,	type: "gas",	unlock: null,	influence: 33,	radius: 28270,	temp: -89,	atmos: "hydrogen",	orbit: 7.22,	prod:{ hydrogen: 31.3, methane: 28.41, technetium: 2.8 },	},
-    {	id: "antaris",	nebula: "perseus",	civId: "quris",	x: 410,	y: 687,	type: "metallic",	unlock: "artofwar",	influence: 34,	radius: 6052,	temp: 32,	atmos: "co2",	orbit: 1.4,	prod:{ thorium: 1.2, tammunition: 2, methane: 2, titanium: 1, uranium: 2, iron: 3, rhodium: .5 },	},
-    {	id: "teleras",	nebula: "perseus",	civId: "quris",	x: 557,	y: 541,	type: "metallic",	unlock: null,	influence: 36,	radius: 10733,	temp: 202,	atmos: "methane",	orbit: .2,	prod:{ methane: 3, titanium: 2, uranium: 3, iron: 1, rhodium: 1 },	},
-    {	id: "jabir",	nebula: "perseus",	civId: "quris",	x: 448,	y: 576,	type: "metallic",	unlock: null,	influence: 38,	radius: 8220,	temp: 182,	atmos: "methane",	orbit: .26,	prod:{ caesium: 1, methane: 2, titanium: 4, uranium: 1, iron: 2, rhodium: 1.2 },	},
-    {	id: "epsilon",	nebula: "perseus",	civId: "halean",	x: 948,	y: 310,	type: "desert",	unlock: null,	influence: 46,	radius: 12301,	temp: 74,	atmos: "co2",	orbit: .44,	prod:{ sand: 8, iron: 4.82, titanium: 1.35, uranium: .2, rhodium: 2.5, silicon: 2 },	},
-    {	id: "zhura",	nebula: "perseus",	civId: "halean",	x: 1109,	y: 454,	type: "gas",	unlock: "quantum",	influence: 57,	radius: 36420,	temp: -135,	atmos: "hydrogen",	orbit: 5.8,	prod:{ darkmatter: 2, hydrogen: 80, methane: 51.5, technetium: 3.5 },	},
-    {	id: "kitrion",	nebula: "perseus",	civId: "metallokopta",	x: 700,	y: 430,	type: "desert",	unlock: null,	influence: 57,	radius: 4504,	temp: 77,	atmos: "co2",	orbit: .77,	prod:{ darkmatter: 2, caesium: 3, methane: 3.2, hydrogen: 15.4, antimatter: 2 },	},
-    {	id: "ares",	nebula: "perseus",	civId: "metallokopta",	x: 172,	y: 807,	type: "desert",	unlock: null,	influence: 63,	radius: 3402,	temp: 84,	atmos: "co2",	orbit: 1.42,	prod:{ oil: 2.09, iron: 2.81, titanium: 2.2, sand: 8.33, uranium: 1.37, rhodium: 1.8 },	},
-    {	id: "kandi",	nebula: "perseus",	civId: "metallokopta",	x: 360,	y: 920,	type: "ice",	unlock: null,	influence: 65,	radius: 4504,	temp: -22,	atmos: "co2",	orbit: 3.31,	prod:{ iron: 1.76, titanium: 1.75, uranium: 1.2, ice: 4.8, osmium: 1.9, rhodium: 2.5 },	},
-    {	id: "bharash",	nebula: "perseus",	civId: "halean",	x: 1198,	y: 636,	type: "gas",	unlock: null,	influence: 68,	radius: 45420,	temp: -92,	atmos: "hydrogen",	orbit: 3.01,	prod:{ hydrogen: 89, methane: 48.5, technetium: 5 },	},
-    {	id: "caerul",	nebula: "perseus",	civId: "halean",	x: 1127,	y: 256,	type: "gas",	unlock: null,	influence: 75,	radius: 21155,	temp: -122,	atmos: "hydrogen",	orbit: 9.84,	prod:{ antimatter: 2, hydrogen: 8.66, methane: 3.22, technetium: 8 },	},
-    {	id: "mermorra",	nebula: "perseus",	civId: "metallokopta",	x: 820,	y: 590,	type: "gas",	unlock: null,	influence: 82,	radius: 88706,	temp: 305,	atmos: "hydrogen",	orbit: .31,	prod:{ iron: 3.2, titanium: 2.66, uranium: 1.95, silicon: 7.5, sand: 2.4, rhodium: 2.54, oil: 2.7 },	},
-    {	id: "xora2",	nebula: "perseus",	civId: "metallokopta",	x: 832,	y: 930,	type: "metallic",	unlock: null,	influence: 128,	radius: 6577,	temp: -181,	atmos: "co2",	orbit: 9.46,	prod:{ caesium: 2.1, thorium: 1.2, osmium: 3.1, iron: 8.7, titanium: 5.7, uranium: 13.4, rhodium: 2.6 },	},
-    {	id: "xora",	nebula: "perseus",	civId: "metallokopta",	x: 960,	y: 960,	type: "metallic",	unlock: "secret",	influence: 173,	radius: 8230,	temp: -58,	atmos: "methane",	orbit: 7.45,	prod:{ thorium: .8, osmium: 5, methane: 2.2, iron: 4.1, titanium: 9.5, uranium: 7.2, silicon: 5.2, rhodium: 8.7 },	},
-    {	id: "babilo",	nebula: "perseus",	civId: "orion",	x: 378,	y: 318,	type: "ice",	unlock: null,	influence: 650,	radius: 8230,	temp: -58,	atmos: "co2",	orbit: 7.45,	prod:{ nanotube: 5, ice: 3, water: .8, iron: 4, titanium: 3.5, uranium: 2.2, robot: 2, osmium: 3 },	},
+    {	id: "promision",	nebula: "perseus",	civId: "human",	x: 26,	y: 1,	type: "terrestrial",	unlock: null,	influence: 1,	radius: 6833,	temp: 22,	atmos: "oxygen",	orbit: 1,	prod:{ iron: 1, graphite: 1, titanium: 1, silicon: 1, uranium: 1, methane: 1, sand: .5 },	},
+    {	id: "vasilis",	nebula: "perseus",	civId: null,	x: 100,	y: 14,	type: "ice",	unlock: "ice",	influence: 1,	radius: 5201,	temp: -21,	atmos: "oxygen",	orbit: 2.9,	prod:{ coolant: 2, ice: 2, methane: 2, titanium: 1.5, iron: 1, uranium: 1, oil: .5 },	},
+    {	id: "aequoreas",	nebula: "perseus",	civId: null,	x: 0,	y: 37,	type: "ocean",	unlock: "hydro",	influence: 1,	radius: 8890,	temp: 18,	atmos: "oxygen",	orbit: .7,	prod:{ sand: 2, iron: 1, titanium: 1.5, oil: 1, water: 5 },	},
+    {	id: "orpheus",	nebula: "perseus",	civId: null,	x: 18,	y: 75,	type: "gas",	unlock: null,	influence: 1,	radius: 18540,	temp: -141,	atmos: "hydrogen",	orbit: 8.2,	prod:{ hydrogen: 8, methane: 3, technetium: 2 },	},
+    {	id: "antirion",	nebula: "perseus",	civId: "pirates",	x: 0,	y: 139,	type: "metallic",	unlock: "military",	influence: 5,	radius: 2230,	temp: -66,	atmos: "methane",	orbit: 5.45,	prod:{ thorium: .2, rhodium: 1.5, iron: 3, titanium: 3, uranium: 2, graphite: .5, methane: 2.4, plastic: 2 },	},
+    {	id: "city",	nebula: "perseus",	civId: "city",	x: 104,	y: 108,	type: "ice",	unlock: null,	influence: 8,	radius: 4235,	temp: -8,	atmos: "oxygen",	orbit: 1.82,	prod:{ thorium: .5, ammunition: 2, "u-ammunition": 1.5, iron: 3, graphite: 3, titanium: 2, uranium: 1.5, ice: 1.2, methane: 2.2, osmium: .5 },	},
+    {	id: "ishtar",	nebula: "perseus",	civId: "orion",	x: 174,	y: 59,	type: "ocean",	unlock: null,	influence: 12,	radius: 7020,	temp: 3,	atmos: "co2",	orbit: 2.8,	prod:{ graphite: 2, sand: 1, uranium: 1, water: 3.2, oil: .5, nanotube: 2 },	},
+    {	id: "traumland",	nebula: "perseus",	civId: "phantids",	x: 321,	y: 78,	type: "terrestrial",	unlock: "environment",	influence: 15,	radius: 6550,	temp: 28,	atmos: "oxygen",	orbit: .7,	prod:{ iron: 1, titanium: 1.2, sand: 1, oil: 2, uranium: .25, water: .6, silicon: 2, graphite: 2, methane: 1 },	},
+    {	id: "tataridu",	nebula: "perseus",	civId: "phantids",	x: 273,	y: 1,	type: "terrestrial",	unlock: null,	influence: 18,	radius: 3118,	temp: 38,	atmos: "oxygen",	orbit: .45,	prod:{ iron: .5, uranium: 2, oil: 2.6, water: .25, methane: 2.8, circuit: 2 },	},
+    {	id: "zelera",	nebula: "perseus",	civId: "robot",	x: 554,	y: 62,	type: "ice",	unlock: "intelligence",	influence: 22,	radius: 8230,	temp: -30,	atmos: "methane",	orbit: 7.45,	prod:{ osmium: 1.8, ice: 3, iron: 4, titanium: 3.5, uranium: 2.2, robot: 2, methane: 2 },	},
+    {	id: "posirion",	nebula: "perseus",	civId: "halean",	x: 634,	y: 0,	type: "gas",	unlock: "halean",	influence: 27,	radius: 48270,	temp: -189,	atmos: "hydrogen",	orbit: 17.22,	prod:{ hydrogen: 51.3, methane: 18.41, technetium: 2 },	},
+    {	id: "tsartasis",	nebula: "perseus",	civId: "metallokopta",	x: 500,	y: 310,	type: "desert",	unlock: "rhodium",	influence: 29,	radius: 4504,	temp: 102,	atmos: "co2",	orbit: .31,	prod:{ iron: 2.7, titanium: 3.7, uranium: 5.4, sand: 2, rhodium: 1.6 },	},
+    {	id: "acanthus",	nebula: "perseus",	civId: "quris",	x: 188,	y: 162,	type: "ice",	unlock: null,	influence: 31,	radius: 5155,	temp: -12,	atmos: "co2",	orbit: 2.4,	prod:{ darkmatter: 2, thorium: 1.5, osmium: 2.2, methane: 3.2, ice: 5, titanium: 2, uranium: 3 },	},
+    {	id: "raknar",	nebula: "perseus",	civId: "quris",	x: 104,	y: 170,	type: "ice",	unlock: null,	influence: 32,	radius: 4081,	temp: -31,	atmos: "co2",	orbit: 4.5,	prod:{ thorium: .5, osmium: 1.8, methane: 2, ice: 3, titanium: 3, uranium: 1, iron: 2, graphite: 5 },	},
+    {	id: "shin",	nebula: "perseus",	civId: "metallokopta",	x: 469,	y: 377,	type: "ice",	unlock: "osmium",	influence: 32,	radius: 4504,	temp: -85,	atmos: "co2",	orbit: 8.31,	prod:{ iron: 4.1, titanium: 3.5, uranium: 2.2, ice: 3.2, water: 2, osmium: 3.7, mkembryo: 2 },	},
+    {	id: "phorun",	nebula: "perseus",	civId: "halean",	x: 783,	y: 45,	type: "gas",	unlock: null,	influence: 33,	radius: 28270,	temp: -89,	atmos: "hydrogen",	orbit: 7.22,	prod:{ hydrogen: 31.3, methane: 28.41, technetium: 2.8 },	},
+    {	id: "antaris",	nebula: "perseus",	civId: "quris",	x: 263,	y: 281,	type: "metallic",	unlock: "artofwar",	influence: 34,	radius: 6052,	temp: 32,	atmos: "co2",	orbit: 1.4,	prod:{ thorium: 1.2, tammunition: 2, methane: 2, titanium: 1, uranium: 2, iron: 3, rhodium: .5 },	},
+    {	id: "teleras",	nebula: "perseus",	civId: "quris",	x: 405,	y: 216,	type: "metallic",	unlock: null,	influence: 36,	radius: 10733,	temp: 202,	atmos: "methane",	orbit: .2,	prod:{ methane: 3, titanium: 2, uranium: 3, iron: 1, rhodium: 1 },	},
+    {	id: "jabir",	nebula: "perseus",	civId: "quris",	x: 321,	y: 231,	type: "metallic",	unlock: null,	influence: 38,	radius: 8220,	temp: 182,	atmos: "methane",	orbit: .26,	prod:{ caesium: 1, methane: 2, titanium: 4, uranium: 1, iron: 2, rhodium: 1.2 },	},
+    {	id: "epsilon",	nebula: "perseus",	civId: "halean",	x: 706,	y: 112,	type: "desert",	unlock: null,	influence: 46,	radius: 12301,	temp: 74,	atmos: "co2",	orbit: .44,	prod:{ sand: 8, iron: 4.82, titanium: 1.35, uranium: .2, rhodium: 2.5, silicon: 2 },	},
+    {	id: "zhura",	nebula: "perseus",	civId: "halean",	x: 830,	y: 176,	type: "gas",	unlock: "quantum",	influence: 57,	radius: 36420,	temp: -135,	atmos: "hydrogen",	orbit: 5.8,	prod:{ darkmatter: 2, hydrogen: 80, methane: 51.5, technetium: 3.5 },	},
+    {	id: "kitrion",	nebula: "perseus",	civId: "metallokopta",	x: 515,	y: 166,	type: "desert",	unlock: null,	influence: 57,	radius: 4504,	temp: 77,	atmos: "co2",	orbit: .77,	prod:{ darkmatter: 2, caesium: 3, methane: 3.2, hydrogen: 15.4, antimatter: 2 },	},
+    {	id: "ares",	nebula: "perseus",	civId: "metallokopta",	x: 109,	y: 335,	type: "desert",	unlock: null,	influence: 63,	radius: 3402,	temp: 84,	atmos: "co2",	orbit: 1.42,	prod:{ oil: 2.09, iron: 2.81, titanium: 2.2, sand: 8.33, uranium: 1.37, rhodium: 1.8 },	},
+    {	id: "kandi",	nebula: "perseus",	civId: "metallokopta",	x: 254,	y: 386,	type: "ice",	unlock: null,	influence: 65,	radius: 4504,	temp: -22,	atmos: "co2",	orbit: 3.31,	prod:{ iron: 1.76, titanium: 1.75, uranium: 1.2, ice: 4.8, osmium: 1.9, rhodium: 2.5 },	},
+    {	id: "bharash",	nebula: "perseus",	civId: "halean",	x: 898,	y: 258,	type: "gas",	unlock: null,	influence: 68,	radius: 45420,	temp: -92,	atmos: "hydrogen",	orbit: 3.01,	prod:{ hydrogen: 89, methane: 48.5, technetium: 5 },	},
+    {	id: "caerul",	nebula: "perseus",	civId: "halean",	x: 835,	y: 87,	type: "gas",	unlock: null,	influence: 75,	radius: 21155,	temp: -122,	atmos: "hydrogen",	orbit: 9.84,	prod:{ antimatter: 2, hydrogen: 8.66, methane: 3.22, technetium: 8 },	},
+    {	id: "mermorra",	nebula: "perseus",	civId: "metallokopta",	x: 607,	y: 238,	type: "gas",	unlock: null,	influence: 82,	radius: 88706,	temp: 305,	atmos: "hydrogen",	orbit: .31,	prod:{ iron: 3.2, titanium: 2.66, uranium: 1.95, silicon: 7.5, sand: 2.4, rhodium: 2.54, oil: 2.7 },	},
+    {	id: "xora2",	nebula: "perseus",	civId: "metallokopta",	x: 572,	y: 391,	type: "metallic",	unlock: null,	influence: 128,	radius: 6577,	temp: -181,	atmos: "co2",	orbit: 9.46,	prod:{ caesium: 2.1, thorium: 1.2, osmium: 3.1, iron: 8.7, titanium: 5.7, uranium: 13.4, rhodium: 2.6 },	},
+    {	id: "xora",	nebula: "perseus",	civId: "metallokopta",	x: 715,	y: 404,	type: "metallic",	unlock: "secret",	influence: 173,	radius: 8230,	temp: -58,	atmos: "methane",	orbit: 7.45,	prod:{ thorium: .8, osmium: 5, methane: 2.2, iron: 4.1, titanium: 9.5, uranium: 7.2, silicon: 5.2, rhodium: 8.7 },	},
+    {	id: "babilo",	nebula: "perseus",	civId: "orion",	x: 267,	y: 115,	type: "ice",	unlock: null,	influence: 650,	radius: 8230,	temp: -58,	atmos: "co2",	orbit: 7.45,	prod:{ nanotube: 5, ice: 3, water: .8, iron: 4, titanium: 3.5, uranium: 2.2, robot: 2, osmium: 3 },	},
     
     {	id: "nassaus",	nebula: "andromeda",	civId: "pirates",	x: 80,	y: 520,	type: "lava",	unlock: "vulcan",	influence: 38,	radius: 6771,	temp: 582,	atmos: "sulfur",	orbit: .1,	prod: { thorium: 1.5, rhodium: 1.8, graphite: 3.4, sulfur: 1, titanium: 5 },	},
     {	id: "solidad",	nebula: "andromeda",	civId: null,	x: 578,	y: 33,	type: "terrestrial",	unlock: null,	influence: 5,	radius: 5741,	temp: 38,	atmos: "oxygen",	orbit: .85,	prod: { iron: 3, graphite: 2, titanium: 3, methane: 2, oil: 1.5, water: .5 },	},
@@ -1112,48 +1177,36 @@ var planetsDef = [
 
 class Planet {
 
-    constructor(def) {
-    
-        this.id = def.id
-        this.civId = def.civId
-        this.nebula = def.nebula
-        this.influence = def.influence
-        this.x = def.x
-        this.y = def.y
-        this.type = def.type
-        this.radius = def.radius
-        this.temp = def.temp
-        this.atmos = def.atmos
-        this.orbit = def.orbit
-        this.prod = def.prod
-        
-        this.resources = {}
-        resourcesDef.forEach(def => { this.resources[def.id] = new PlanetResource(def) })
+    constructor(state, def) {
+        this.def = def
+        this.state = state
         
         this.energy = { prod: 0, consum: 0, }
         this.researchPoint = { prod: 0, }
         
+        this.resources = {}
+        resourcesDef.forEach(def => { this.resources[def.id] = new PlanetResource(this, def) })
+        
         this.buildings = {}
-        buildingsDef.forEach(def => { this.buildings[def.id] = new PlanetBuilding(def) })        
+        buildingsDef.forEach(def => { this.buildings[def.id] = new PlanetBuilding(this, def) })        
         
         this.ships = {}
-        shipsDef.forEach(def => { this.ships[def.id] = new PlanetShip(def) })        
+        shipsDef.forEach(def => { this.ships[def.id] = new PlanetShip(this, def) })        
     }
     
-    emptyQueue(bId) { this.buildings[bId].queue = 0 }
+    getBuildingsByType(type) {
     
-    queueBuilding(bId, count) { this.buildings[bId].queue += count }
-    
-    destroyBuilding(bId, count) {
-    
-        this.buildings[bId].count -= count
+        let ret = {}
         
-        let refunds = this.getBuildingRefund(bId, count)
-        for (let rId in refunds)
-            this.resources[rId].count += refunds[rId]
+        for (let bId in this.buildings) {
+            let building = this.buildings[bId]
+            if (building.def.type == type) ret[bId] = building
+        }
+        
+        return ret
     }
     
-    produce(delta) {
+    produceResources(delta) {
     
         for (let rId in this.resources) this.resources[rId].prod = 0        
         this.researchPoint.prod = 0
@@ -1169,18 +1222,18 @@ class Planet {
                 else if (building.stoppedDelay > 0) building.stoppedDelay += delta
                 
                 if (building.stoppedDelay <= 0) {
-                                    
-                    if (this.canProduce(building.id) == true) {
+                    
+                    if (building.canProduce() == true) {
                     
                         let energyCoeff = this.getEnergyCoeff()
                         if (building.energy >= 0) energyCoeff = 1
                         
-                        for (let rId in building.prod) {
-                            this.resources[rId].prod += building.prod[rId] * building.count * energyCoeff
-                            if (this.prod[rId]) this.resources[rId].prod *= this.prod[rId]
+                        for (let rId in building.def.prod) {
+                            this.resources[rId].prod += building.def.prod[rId] * building.count * energyCoeff
+                            if (this.def.prod[rId]) this.resources[rId].prod *= this.def.prod[rId]
                         }
                         
-                        this.researchPoint.prod += building.researchPoint * building.count * energyCoeff
+                        this.researchPoint.prod += building.def.researchPoint * building.count * energyCoeff
                         
                         if (building.energy > 0) energy.prod += building.energy * building.count
                         else if (building.energy < 0) energy.consum += building.energy * building.count
@@ -1197,25 +1250,6 @@ class Planet {
         this.energy = energy
     }
     
-    getRawProduction(bId, count) {
-    
-        let ret = {}
-        
-        let building = this.buildings[bId]
-        
-        if (building.energy > 0) ret["energy"] = building.energy * count
-        if (building.researchPoint > 0) ret["researchPoint"] = building.researchPoint * count
-        
-        for (let rId in building.prod) {
-            ret[rId] = building.prod[rId] * count
-            if (this.prod[rId]) ret[rId] *= this.prod[rId]
-        }
-
-        if (building.energy < 0) ret["energy"] = building.energy * count
-        
-        return ret
-    }
-        
     getEnergyCoeff() {
     
         let ret = 1
@@ -1227,117 +1261,22 @@ class Planet {
         return ret
     }
     
-    getBuildingCost(bId, count) {
-    
-        let ret = {}
-        
-        let building = this.buildings[bId]
-        for (let rId in building.cost) {
-        
-            let t1 = Math.pow(building.cost[rId].mult, building.count)
-            ret[rId] = building.cost[rId].count * t1
-            
-            for (let i = 1; i < count; i++) {
-            
-                t1 *= building.cost[rId].mult
-                ret[rId] += building.cost[rId].count * t1
-            }
-        }
-        
-        return ret
-    }
-    
-    getBuildingRefund(bId, count) {
-    
-        let ret = {}
-        
-        for (let rId in this.buildings[bId].cost) {
-            ret[rId] = 0
-            for (let n = 0; n < count; n++)
-                ret[rId] += (this.buildings[bId].cost[rId].count * Math.pow(this.buildings[bId].cost[rId].mult, this.buildings[bId].count - n - 1))
-        }
-
-        for (let rId in ret) ret[rId] /= 2
-        
-        return ret
-    }
-    
     canBuy(cost) {
-    
         let ret = true
-        
         for (let rId in cost)
             if (cost[rId] >= 1 && this.resources[rId].count < cost[rId]) {            
                 ret = false
                 break
             }
-            
         return ret
-    }
-
-    canProduce(bId) {
-    
-        let ret = true
-        
-        let building = this.buildings[bId]
-        
-        if (building.type != "extraction") {
-            for (let rId in building.prod) {
-                if (this.resources[rId].count + (building.count * building.prod[rId]) < 0) {
-                    ret = false
-                    building.needs[rId] = true
-                    building.stoppedDelay = 1
-                }
-                else {
-                    building.needs[rId] = false
-                }
-            }
-        }
-        
-        return ret
-    }
-    
-    isShipUnlocked(sId) {
-    
-        let ret = true
-        
-        let ship = this.ships[sId]
-        let shipyard = this.buildings["shipyard"]
-        
-        if (shipyard.count < ship.shipyardLevel) ret = false
-        
-        return ret
-    }
-    
-    getShipCost(sId, count) {
-    
-        let ret = {}
-        
-        let ship = this.ships[sId]
-        for (let rId in ship.cost)        
-            ret[rId] = ship.cost[rId] * count
-        
-        return ret
-    }
-    
-    buildShip(sId, count) {
-    
-        let ship = this.ships[sId]
-        for (let rId in ship.cost)        
-            this.resources[rId].count -= ship.cost[rId] * count
-        
-        ship.count += count
     }
 
     getGroundShipCount() {
-    
         let ret = 0
-        
         for (let sId in this.ships) {
             let ship = this.ships[sId]
             ret += ship.count
         }
-        
         return ret
     }
 }
@@ -1351,26 +1290,23 @@ var nebulasDef = [
 
 class Nebula {
 
-    constructor(def) {
-    
-        this.id = def.id
+    constructor(state, def) {    
+        this.def = def
+        this.state = state
         
         this.planets = {}
     }
 }
 
-var researchesDef = [
+var techsDef = [
 
-    { id: "astronomy", desc: true, researchPoint: 3e3, mult: 4.3,
+    { id: "astronomy", desc: true, costRP: 3e3, multRP: 4.3,
       shipBonuses: {
-        vitha: [
-            { attrib: "speed", minLevel: 1, value: 12 },
-        ],
+        vitha: [{ attrib: "speed", minLevel: 1, value: 12 }],
       },
-      unlocks: { shipyard: 1, tradehub: 5 },
-      isVisible(state) { return true },
+      buildingUnlocks: { shipyard: 1, tradehub: 5 },
     },
-    { id: "science", researchPoint: 4e4, mult: 2.5, reqs:{ astronomy: 1 }, max: 64,
+    { id: "science", costRP: 4e4, multRP: 2.5, reqTechs:{ astronomy: 1 }, max: 64,
       buildingBonuses: {
         laboratory: [{ attrib: "researchPoint", minLevel: 1, value: 11 }],
         ammoniaAirship: [{ attrib: "researchPoint", minLevel: 1, value: 11 }],
@@ -1383,10 +1319,97 @@ var researchesDef = [
         haleanLaboratory: [{ attrib: "researchPoint", minLevel: 1, value: 11 }],
         vulcanObservatory: [{ attrib: "researchPoint", minLevel: 1, value: 11 }],
       },
-      isVisible(state) { return true },
     },    
+    { id: "military", costRP: 33e3, multRP: 2.2, reqTechs:{ astronomy: 4 }, reqPlanet: "antirion",
+      buildingBonuses: {
+        ammunitionFactory: [{ attrib: "prod", rId: "ammunition", minLevel: 2, value: 12 }],
+        uraniumShellAssembler: [{ attrib: "prod", rId: "uammunition", minLevel: 9, value: 12 }],
+        armorFactory: [{ attrib: "prod", rId: "armor", minLevel: 13, value: 12 }],
+        engineFactory: [{ attrib: "prod", rId: "engine", minLevel: 17, value: 12 }],
+      },
+      buildingUnlocks: { ammunitionFactory: 1, uraniumShellAssembler: 8, armorFactory: 12, engineFactory: 16 },
+    },
+    { id: "artofwar", costRP: 5e8, multRP: 1.6, reqTechs:{ military: 12 }, reqPlanet: "antaris",
+      shipBonuses: {
+        vitha: [{ attrib: "power", minLevel: 1, value: 5, }],
+        zb03: [{ attrib: "power", minLevel: 1, value: 5, }],
+        zb04: [{ attrib: "power", minLevel: 1, value: 5, }],
+        ark22: [{ attrib: "power", minLevel: 1, value: 5, }],
+        ark55: [{ attrib: "power", minLevel: 1, value: 5, }],
+        foxar: [{ attrib: "power", minLevel: 1, value: 12, }],
+        skydragon: [{ attrib: "power", minLevel: 1, value: 12, }],
+        zb22: [{ attrib: "power", minLevel: 1, value: 5, }],
+        babayaga: [{ attrib: "power", minLevel: 1, value: 15, }],
+        zb50: [{ attrib: "power", minLevel: 1, value: 5, }],
+        luxis: [{ attrib: "power", minLevel: 1, value: 5, }],
+        muralla: [{ attrib: "power", minLevel: 1, value: 5, }],
+        siber: [{ attrib: "power",  minLevel: 1, value: 15, }],
+        alkantara: [{ attrib: "power", minLevel: 1, value: 5, }],
+        auxilia: [{ attrib: "power",  minLevel: 1, value: 15, }],
+        servant: [{ attrib: "power", minLevel: 1, value: 5, }],
+        orion: [{ attrib: "power", minLevel: 1, value: 5, }],
+        anger: [{ attrib: "power", minLevel: 1, value: 5, }],
+        miner: [{ attrib: "power", minLevel: 1, value: 5, }],
+        andromeda: [{ attrib: "power", minLevel: 1, value: 5, }],
+        munya: [{ attrib: "power", minLevel: 1, value: 5, }],
+        soul: [{ attrib: "power", minLevel: 1, value: 5, }],
+      },
+      shipUnlocks: { auxilia: 3 },
+      buildingUnlocks: { tammunitionAssembler: 1 },
+    },
+    { id: "karanartofwar", costRP: 2e11, multRP: 2.2, reqTechs:{ artofwar: 12 }, reqPlanet: "alfari", max: 111,
+      shipBonuses: {
+        vitha: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        zb03: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        zb04: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        ark22: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        ark55: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        foxar: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        skydragon: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        zb22: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        babayaga: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        zb50: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        luxis: [
+            { attrib: "cost", minLevel: 1, value: -8 },
+            { attrib: "piercing", minLevel: 1, value: 30 },
+        ],
+        muralla: [
+            { attrib: "cost", minLevel: 1, value: -8 },
+            { attrib: "weight", minLevel: 1, value: 50 },
+            { attrib: "combatWeight", minLevel: 1, value: 50 },
+        ],
+        siber: [
+            { attrib: "cost", minLevel: 1, value: -8 },
+            { attrib: "piercing", minLevel: 1, value: 30 },
+        ],
+        alkantara: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        auxilia: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        servant: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        orion: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        anger: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        miner: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        andromeda: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        munya: [{ attrib: "cost", minLevel: 1, value: -8 }],
+        soul: [{ attrib: "cost", minLevel: 1, value: -8 }],
+      },
+    },
+    { id: "xiranartofwar", costRP: 15e13, multRP: 2.2, reqTechs:{ karanartofwar: 13 }, reqPlanet: "xirandrus",
+      buildingBonuses: {
+        batteryFactory: [{ attrib: "prod", rId: "emptybattery", minLevel:1, value: 12 }],
+        batteryCharger: [
+            { attrib: "cost", rId: "steel", minLevel:1, value: -25 },
+            { attrib: "cost", rId: "titanium", minLevel:1, value: -25 },
+            { attrib: "cost", rId: "plastic", minLevel:1, value: -25 },
+        ],
+        batteryPowerPlant: [
+            { attrib: "cost", rId: "circuit", minLevel:1, value: -25 }, 
+            { attrib: "cost", rId: "titanium", minLevel:1, value: -25 },
+            { attrib: "cost", rId: "plastic", minLevel:1, value: -25 },
+        ],
+      },
+    },
 
-    { id: "mineralogy", researchPoint: 125, mult: 2.2,
+    { id: "mineralogy", costRP: 125, multRP: 2.2,
       buildingBonuses: {
         mine: [{ attrib: "prod", rId:"iron", minLevel: 1, value: 25, maxLevel: 125, reduction: .2 }],
         graphiteExtractor: [{ attrib: "prod", rId:"graphite", minLevel: 1, value: 12 }],
@@ -1411,10 +1434,9 @@ var researchesDef = [
         pumpjack: [{ attrib: "prod", rId:"oil", minLevel: 4, value: 8 }],
         algaeOilFarm: [{ attrib: "prod", rId:"oil", minLevel: 4, value: 8 }],
       },
-      unlocks: { metalCollector: 3, sandQuarry: 4 },
-      isVisible(state) { return true },
+      buildingUnlocks: { metalCollector: 3, sandQuarry: 4 },
     },
-    { id: "material", researchPoint: 500, mult: 2.2, reqs:{ mineralogy: 1 },
+    { id: "material", costRP: 500, multRP: 2.2, reqTechs:{ mineralogy: 1 },
       buildingBonuses: {
         foundry: [{ attrib: "prod", rId: "steel", minLevel: 1, value: 50, maxLevel: 100, reduction: .5, }],
         plasticFactory: [{ attrib: "prod", rId: "plastic", minLevel: 8, value: 25 }],
@@ -1423,20 +1445,18 @@ var researchesDef = [
         nanotubeDome: [{ attrib: "prod", rId: "nanotube", minLevel: 15, value: 12 }],
         ceramicFoundry: [{ attrib: "prod", rId: "meissnerium", minLevel: 36, value: 8 }],
       },
-      unlocks: { plasticFactory: 8, nanotubeFactory: 15, nanotubeDome: 15, ceramicFoundry: 35 },
-      isVisible(state) { return true },
+      buildingUnlocks: { plasticFactory: 8, nanotubeFactory: 15, nanotubeDome: 15, ceramicFoundry: 35 },
     },
-    { id: "chemical", researchPoint: 1200, mult: 2.2, reqs:{ material: 1 },
+    { id: "chemical", costRP: 1200, multRP: 2.2, reqTechs:{ material: 1 },
       buildingBonuses: {
         methaneProcesser: [{ attrib: "prod", rId: "fuel", minLevel: 1, value: 25, }],
         methaneHarvester: [{ attrib: "prod", rId: "methane", minLevel: 1, value: 20, }],
         oilRefinery: [{ attrib: "prod", rId: "fuel", minLevel: 3, value: 12, }],
         methaneAggregator: [{ attrib: "prod", rId: "fuel", minLevel: 31, value: 20, }],
       },
-      unlocks: { pumpjack: 1, thermalPlant: 1, oilRefinery: 2, methaneAggregator: 30 },
-      isVisible(state) { return state.isResearchUnlocked('material') },
+      buildingUnlocks: { pumpjack: 1, thermalPlant: 1, oilRefinery: 2, methaneAggregator: 30 },
     },
-    { id: "electronic", researchPoint: 5e4, mult: 2.2, reqs:{ material: 5 },
+    { id: "electronic", costRP: 5e4, multRP: 2.2, reqTechs:{ material: 5 },
       buildingBonuses: {
         electronicFacility: [
             { attrib: "prod", rId: "circuit", minLevel: 2, value: 30 },
@@ -1458,327 +1478,217 @@ var researchesDef = [
             { attrib: "prod", rId: "meissnercell", minLevel: 35, value: 12.5, maxLevel: 60, reduction: .5 },
         ],
       },
-      unlocks: { sandSmelter: 1, electronicFacility: 1, solarCentral: 1, batteryFactory: 8, batteryPowerPlant: 8, batteryCharger: 8, superconductorsFactory: 30, cellsFactory: 35 },
-      isVisible(state) { return state.isResearchUnlocked('material') },
+      buildingUnlocks: { sandSmelter: 1, electronicFacility: 1, solarCentral: 1, batteryFactory: 8, batteryPowerPlant: 8, batteryCharger: 8, superconductorsFactory: 30, cellsFactory: 35 },
     },
-    { id: "ice", researchPoint: 1e4, mult: 2.2, reqs:{ material: 3 },
+    { id: "ice", costRP: 1e4, multRP: 2.2, reqTechs:{ material: 3 }, reqPlanet: "vasilis",
       buildingBonuses: {
         iceDrill: [{ attrib: "prod", rId: "ice", minLevel: 2, value: 25 }],
         coolantFactory: [{ attrib: "prod", rId: "coolant", minLevel: 10, value: 12 }],
         ammoniaRefrigerator: [{ attrib: "prod", rId: "coolant", minLevel: 10, value: 12 }],
         cryogenicLaboratory: [{ attrib: "researchPoint", minLevel: 12, value: 12 }],
       },
-      unlocks: { iceDrill: 1, waterFreezer: 1, iceMelter: 1, coolantFactory: 10, cryogenicLaboratory: 12 },
-      isVisible(state) { return state.isResearchUnlocked('material') && state.planets["vasilis"].civId == "human" },
+      buildingUnlocks: { iceDrill: 1, waterFreezer: 1, iceMelter: 1, coolantFactory: 10, cryogenicLaboratory: 12 },
     },
-    { id: "military", researchPoint: 33e3, mult: 2.2, reqs:{ astronomy: 4 },
-      buildingBonuses: {
-        ammunitionFactory: [{ attrib: "prod", rId: "ammunition", minLevel: 2, value: 12 }],
-        uraniumShellAssembler: [{ attrib: "prod", rId: "uammunition", minLevel: 9, value: 12 }],
-        armorFactory: [{ attrib: "prod", rId: "armor", minLevel: 13, value: 12 }],
-        engineFactory: [{ attrib: "prod", rId: "engine", minLevel: 17, value: 12 }],
-      },
-      unlocks: { ammunitionFactory: 1, uraniumShellAssembler: 8, armorFactory: 12, engineFactory: 16 },
-      isVisible(state) { return state.isResearchUnlocked('astronomy') && state.planets["antirion"].civId == "human" },
-    },
-    { id: "nuclear", researchPoint: 5e5, mult: 2.2, reqs:{ hydro: 3 },
+    { id: "nuclear", costRP: 5e5, multRP: 2.2, reqTechs:{ hydro: 3 },
       buildingBonuses: {
         fusionReactor: [{ attrib: "prod", rId: "hydrogen", minLevel: 2, value: 9.5 }],
       },
-      unlocks: { hydrogenCondenser: 1, nuclearPowerplant: 1, nuclearPowerplant2: 1, pressurizedWaterReactor: 3, fusionReactor: 5, floatingReactor: 5 },
-      isVisible(state) { return state.isResearchUnlocked('hydro') },
+      buildingUnlocks: { hydrogenCondenser: 1, nuclearPowerplant: 1, nuclearPowerplant2: 1, pressurizedWaterReactor: 3, fusionReactor: 5, floatingReactor: 5 },
     },
-    { id: "halean", researchPoint: 1e8, mult: 2.2, reqs:{ intelligence: 1 },
+    { id: "halean", costRP: 1e8, multRP: 2.2, reqTechs:{ intelligence: 1 }, reqPlanet: "posirion",
       buildingBonuses: {
         technetiumFissor: [{ attrib: "prod", rId: "technetium", minLevel: 1, value: 12, }],
         haleanLaboratory: [{ attrib: "researchPoint", minLevel: 1, value: 12, }],
         robotFactory: [{ attrib: "prod", rId: "robot", minLevel: 1, value: 12, }],
       },
-      unlocks: { technetiumFissor: 1, haleanAICenter: 1, haleanLaboratory: 1 },
-      isVisible(state) { return state.isResearchUnlocked('intelligence') && state.planets["posirion"].civId == "human" },
+      buildingUnlocks: { technetiumFissor: 1, haleanAICenter: 1, haleanLaboratory: 1 },
     },
-    { id: "artofwar", researchPoint: 5e8, mult: 1.6, reqs:{ military: 12 },
-      shipBonuses: {
-        vitha: [{ attrib: "power", minLevel: 1, value: 5, }],
-        zb03: [{ attrib: "power", minLevel: 1, value: 5, }],
-        zb04: [{ attrib: "power", minLevel: 1, value: 5, }],
-        ark22: [{ attrib: "power", minLevel: 1, value: 5, }],
-        ark55: [{ attrib: "power", minLevel: 1, value: 5, }],
-        foxar: [{ attrib: "power", minLevel: 1, value: 12, }],
-        skydragon: [{ attrib: "power", minLevel: 1, value: 12, }],
-        zb22: [{ attrib: "power", minLevel: 1, value: 5, }],
-        babayaga: [{ attrib: "power", minLevel: 1, value: 15, }],
-        zb50: [{ attrib: "power", minLevel: 1, value: 5, }],
-        luxis: [{ attrib: "power", minLevel: 1, value: 5, }],
-        muralla: [{ attrib: "power", minLevel: 1, value: 5, }],
-        siber: [{ attrib: "power",  minLevel: 1, value: 15, }],
-        alkantara: [{ attrib: "power", minLevel: 1, value: 5, }],
-        auxilia: [{ attrib: "power",  minLevel: 1, value: 15, }],
-        servant: [{ attrib: "power", minLevel: 1, value: 5, }],
-        orionCargo: [{ attrib: "power", minLevel: 1, value: 5, }],
-        angerPerseus: [{ attrib: "power", minLevel: 1, value: 5, }],
-        medusaMiner: [{ attrib: "power", minLevel: 1, value: 5, }],
-        andromeda: [{ attrib: "power", minLevel: 1, value: 5, }],
-        munya: [{ attrib: "power", minLevel: 1, value: 5, }],
-        soulAndromeda: [{ attrib: "power", minLevel: 1, value: 5, }],
-      },
-      unlocks: { tammunitionAssembler: 1, auxilia: 3 },
-      isVisible(state) { return state.isResearchUnlocked('military') && state.planets["antaris"].civId == "human" },
-    },
-    { id: "intelligence", researchPoint: 5e7, mult: 2.2, reqs:{ electronic: 8 },
+    { id: "intelligence", costRP: 5e7, multRP: 2.2, reqTechs:{ electronic: 8 }, reqPlanet: "zelera",
       buildingBonuses: {
         robotFactory: [{ attrib: "researchPoint", minLevel: 1, value: 12 }],
       },
-      unlocks: { robotFactory: 1 },
-      isVisible(state) { return state.isResearchUnlocked('electronic') && state.planets["zelera"].civId == "human" },
+      buildingUnlocks: { robotFactory: 1 },
     },
-    { id: "vulcan", researchPoint: 2e8, mult: 2.2, reqs:{ mineralogy: 17 },
+    { id: "vulcan", costRP: 2e8, multRP: 2.2, reqTechs:{ mineralogy: 17 }, reqPlanet: "nassaus",
       buildingBonuses: {
         sulfurMine: [
             { attrib: "prod", rId: "graphite", minLevel: 1, value: 12 },
             { attrib: "prod", rId: "sulfur", minLevel: 1, value: 12 },
         ],
-        lavaMine: [{ attrib: "prod", rId: "titanium", minLevel: 1, value: 12, }],
-        vulcanObservatory: [{ attrib: "researchPoint", minLevel: 1, value: 12, }],
+        lavaMine: [{ attrib: "prod", rId: "titanium", minLevel: 1, value: 12 }],
+        vulcanObservatory: [{ attrib: "researchPoint", minLevel: 1, value: 12 }],
       },
-      unlocks: { sulfurMine: 1, lavaMine: 1, vulcanObservatory: 1 },
-      isVisible(state) { return state.isResearchUnlocked('mineralogy') && state.planets["nassaus"].civId == "human" },
+      buildingUnlocks: { sulfurMine: 1, lavaMine: 1, vulcanObservatory: 1 },
     },  
-    { id: "hydro", researchPoint: 2e4, mult: 2.2, reqs:{ chemical: 3 },
+    { id: "hydro", costRP: 2e4, multRP: 2.2, reqTechs:{ chemical: 3 }, reqPlanet: "aequoreas",
       buildingBonuses: {
-        waterPump: [{ attrib: "prod", rId: "water", minLevel: 1, value: 12, }] },
-        pumpingPlatform: [{ attrib: "prod", rId: "water", minLevel: 1, value: 12, }] },
-        algaeOilFarm: [{ attrib: "prod", rId: "oil", minLevel: 1, value: 12, }] },
+        waterPump: [{ attrib: "prod", rId: "water", minLevel: 1, value: 12 }],
+        pumpingPlatform: [{ attrib: "prod", rId: "water", minLevel: 1, value: 12 }],
+        algaeOilFarm: [{ attrib: "prod", rId: "oil", minLevel: 1, value: 12 }],
         electrolyzer: [
             { attrib: "prod", rId: "hydrogen", minLevel: 1, value: 12 },
             { attrib: "prod", rId: "water", minLevel: 1, value: 12 },
         ],
-        submergedOilRefinery: [{ attrib: "prod", rId: "fuel", minLevel: 1, value: 8 }, { id: "oil", minLevel: 1, value: 8, }] },
-        nanotubeDome: [{ attrib: "prod", rId: "nanotube", minLevel: 1, value: 8, }] },
-        oceanographicCenter: [{ attrib: "researchPoint", minLevel: 1, value: 12 } },
-      ],
-      unlocks: { waterPump: 1, submergedMetalMine: 1, submergedSandMine: 1, electrolyzer: 1 },
-      isVisible(state) { return state.isResearchUnlocked('chemical') && state.planets["aequoreas"].civId == "human" },
+        submergedOilRefinery: [
+            { attrib: "prod", rId: "fuel", minLevel: 1, value: 8 },
+            { attrib: "prod", rId: "oil", minLevel: 1, value: 8 },
+        ],
+        nanotubeDome: [{ attrib: "prod", rId: "nanotube", minLevel: 1, value: 8, }],
+        oceanographicCenter: [{ attrib: "researchPoint", minLevel: 1, value: 12 }],
+      },
+      buildingUnlocks: { waterPump: 1, submergedMetalMine: 1, submergedSandMine: 1, electrolyzer: 1 },
     },
-    { id: "rhodium", researchPoint: 1e9, mult: 2.2, reqs:{ chemical: 17 },
+    { id: "rhodium", costRP: 1e9, multRP: 2.2, reqTechs:{ chemical: 17 }, reqPlanet: "tsartasis",
       buildingBonuses: {
         rhodiumExtractor: [
             { attrib: "prod", rId: "rhodium", minLevel: 2, value: 12 },
             { attrib: "prod", rId: "titanium", minLevel: 2, value: 12, },
         ],
-        rhodiumSandSmelter: [{ attrib: "prod", rId: "silicon", minLevel: 2, value: 8, }] },
-        sandSmelter: [{ attrib: "prod", rId: "silicon", minLevel: 2, value: 8, }] },
-        submergedSandMine: [{ attrib: "prod", rId: "silicon", minLevel: 2, value: 8, }] },
-      ],
-      unlocks: { rhodiumExtractor: 1, rhodiumSandSmelter: 1 },
-      isVisible(state) { return state.isResearchUnlocked('chemical') && state.planets["tsartasis"].civId == "human" },
+        rhodiumSandSmelter: [{ attrib: "prod", rId: "silicon", minLevel: 2, value: 8 }],
+        sandSmelter: [{ attrib: "prod", rId: "silicon", minLevel: 2, value: 8 }],
+        submergedSandMine: [{ attrib: "prod", rId: "silicon", minLevel: 2, value: 8 }],
+      },
+      buildingUnlocks: { rhodiumExtractor: 1, rhodiumSandSmelter: 1 },
     },
-    { id: "osmium", researchPoint: 5e9, mult: 2.2, reqs:{ rhodium: 2 },
+    { id: "osmium", costRP: 5e9, multRP: 2.2, reqTechs:{ rhodium: 2 }, reqPlanet: "shin",
       buildingBonuses: {
-        osmiumExtractor: [{ attrib: "prod", rId: "osmium", minLevel: 1, value: 5, }] },
-        metallokoptaClonator: [{ attrib: "prod", rId: "mkembryo", minLevel: 1, value: 5, }] },
-        submergedSandMine: [{ attrib: "prod", rId: "osmium", minLevel: 2, value: 8, }] },
-      ],
-      unlocks: { osmiumExtractor: 1, metallokoptaClonator: 1, servant: 1 },
-      isVisible(state) { return state.isResearchUnlocked('rhodium') && state.planets["shin"].civId == "human" },
+        osmiumExtractor: [{ attrib: "prod", rId: "osmium", minLevel: 1, value: 5, }],
+        metallokoptaClonator: [{ attrib: "prod", rId: "mkembryo", minLevel: 1, value: 5, }],
+        submergedSandMine: [{ attrib: "prod", rId: "osmium", minLevel: 2, value: 8, }],
+      },
+      shipUnlocks: { servant: 1 },
+      buildingUnlocks: { osmiumExtractor: 1, metallokoptaClonator: 1 },
     },
-    { id: "quantum", researchPoint: 2e9, mult: 2.2, reqs:{ halean: 2 },
+    { id: "quantum", costRP: 2e9, multRP: 2.2, reqTechs:{ halean: 2 }, reqPlanet: "zhura",
       buildingBonuses: {
-        particleAccelerator: [{ attrib: "prod", rId: "antimatter", minLevel: 1, value: 12, }] },
-      ],
-      unlocks: { particleAccelerator: 1, antimatterCollider: 1, angerPerseus: 3 },
-      isVisible(state) { return state.isResearchUnlocked('halean') && state.planets["zhura"].civId == "human" },
+        particleAccelerator: [{ attrib: "prod", rId: "antimatter", minLevel: 1, value: 12 }],
+      },
+      shipUnlocks: { anger: 3 },
+      buildingUnlocks: { particleAccelerator: 1, antimatterCollider: 1 },
     },
-    { id: "secret", researchPoint: 5e10, mult: 100, reqs:{ quantum: 2, nuclear: 14, rhodium: 3 }, max: 2,
-      unlocks: { wahrianTimeMachine: 1, spaceGateAlpha: 1, spaceGateBeta: 2 },
-      isVisible(state) { return state.isResearchUnlocked('quantum') && state.isResearchUnlocked('nuclear') && state.isResearchUnlocked('rhodium') && state.planets["zhura"].civId == "human" },
+    { id: "secret", costRP: 5e10, multRP: 100, reqTechs:{ quantum: 2, nuclear: 14, rhodium: 3 }, reqPlanet: "zhura", max: 2,
+      buildingUnlocks: { wahrianTimeMachine: 1, spaceGateAlpha: 1, spaceGateBeta: 2 },
     },
-    { id: "karanartofwar", researchPoint: 2e11, mult: 2.2, reqs:{ artofwar: 12 }, max: 111,
-      shipBonuses: [
-        vitha: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        zb03: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        zb04: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        ark22: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        ark55: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        foxar: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        skydragon: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        zb22: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        babayaga: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        zb50: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        luxis: [{ attrib: "cost", minLevel: 1, cost: -8, piercing: 30 }],
-        muralla: [{ attrib: "cost", minLevel: 1, cost: -8, weight: 50, combatWeight: 50 }],
-        siber: [{ attrib: "cost", minLevel: 1, cost: -8, piercing: 30 }],
-        alkantara: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        auxilia: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        servant: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        orionCargo: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        angerPerseus: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        medusaMiner: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        andromeda: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        munya: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-        soulAndromeda: [{ attrib: "cost", minLevel: 1, cost: -8 }],
-      ],
-      isVisible(state) { return state.isResearchUnlocked('artofwar') && state.planets["alfari"].civId == "human" },
+    { id: "spacemining", costRP: 2e12, multRP: 3, reqTechs:{ secret: 1 }, reqPlanet: "swamp", max: 100,
+      shipBonuses: {
+        andromeda: [{ attrib: "storage", minLevel: 1, value: 8 }],
+      },
+      shipUnlocks: { miner: 1, andromeda: 1 },
     },
-    { id: "spacemining", researchPoint: 2e12, mult: 3, reqs:{ secret: 1 }, planet: "swamp", max: 100,
-      shipBonuses: [
-        andromeda", minLevel: 1, storage: 8 },
-      ],
-      unlocks: [
-        { level: 1, ships:["medusaMiner", "andromeda"] },
-      ],
-      isVisible(state) { return state.isResearchUnlocked('secret') && state.planets[""].civId == "human" },
-    },
-    { id: "karannuclear", researchPoint: 25e10, mult: 2.2, reqs:{ quantum: 6 }, planet: "xeno",
+    { id: "karannuclear", costRP: 25e10, multRP: 2.2, reqTechs:{ quantum: 6 }, reqPlanet: "xeno",
       buildingBonuses: {
-        thoriumExtractor: [{ attrib: "prod", rId: "thorium", minLevel: 2, value: 25 }, { id: "caesium", minLevel: 2, value: 25, }] },
-        thoriumReactor", energy:{ minLevel:1, value: 5 } },
-        thoriumReactor2", energy:{ minLevel:1, value: 5 } },
-        pressurizedAmmoniaReactor", energy:{ minLevel:1, value: 5 } },
-        pressurizedWaterReactor", energy:{ minLevel:1, value: 5 } },
-        karanLaboratory: [{ attrib: "researchPoint", { minLevel:2, value: 20 } },
-      ],
-      unlocks: [
-        { level: 1, buildings:["thoriumExtractor", "thoriumReactor", "thoriumReactor2", "karanLaboratory", "karanLaboratory2"] },
-      ],
-      isVisible(state) { return state.isResearchUnlocked('quantum') && state.planets[""].civId == "human" },
+        thoriumExtractor: [
+            { attrib: "prod", rId: "thorium", minLevel: 2, value: 25 },
+            { attrib: "prod", rId: "caesium", minLevel: 2, value: 25 },
+        ],
+        thoriumReactor: [{ attrib: "energy", minLevel: 1, value: 5 }],
+        thoriumReactor2: [{ attrib: "energy", minLevel: 1, value: 5 }],
+        pressurizedAmmoniaReactor: [{ attrib: "energy", minLevel: 1, value: 5 }],
+        pressurizedWaterReactor: [{ attrib: "energy", minLevel: 1, value: 5 }],
+        karanLaboratory: [{ attrib: "researchPoint", minLevel: 2, value: 20 }],
+      },
+      buildingUnlocks: { thoriumExtractor: 1, thoriumReactor: 1, thoriumReactor2: 1, karanLaboratory: 1, karanLaboratory2: 1 },
     },
-    { id: "ammonia", researchPoint: 6e11, mult: 2.2, reqs:{ hydro: 20 }, planet: "auriga",
+    { id: "ammonia", costRP: 6e11, multRP: 2.2, reqTechs:{ hydro: 20 }, reqPlanet: "auriga",
       buildingBonuses: {
-        ammoniaExtractor", prod:{ ammonia:{ minLevel:2, value: 25 } } },
-        ammoniaRefrigerator", prod:{ coolant:{ minLevel:2, value: 25 } } },
-        ammoniaElectrolyzer", prod:{ ammonia:{ minLevel:2, value: 25 }, hydrogen:{ minLevel:2, value: 25 } } },
-        ammoniaExtractor: [{ attrib: "researchPoint", { minLevel:1, value: 12 } },
-      ],
-      unlocks: [
-        { level:1, buildings:["ammoniaExtractor", "ammoniaElectrolyzer", "ammoniaRefrigerator", "pressurizedAmmoniaReactor", "ammoniaAirship"] },
-      ],
-      isVisible(state) { return state.isResearchUnlocked('hydro') && state.planets[""].civId == "human" },
+        ammoniaExtractor: [{ attrib: "prod", rId: "ammonia", minLevel:2, value: 25 }],
+        ammoniaRefrigerator: [{ attrib: "prod", rId: "coolant", minLevel:2, value: 25 }],
+        ammoniaElectrolyzer: [
+            { attrib: "prod", rId: "ammonia", minLevel:2, value: 25 },
+            { attrib: "prod", rId: "hydrogen", minLevel:2, value: 25 },
+        ],
+        ammoniaExtractor: [{ attrib: "researchPoint", minLevel:1, value: 12 }],
+      },
+      buildingUnlocks: { ammoniaExtractor: 1, ammoniaElectrolyzer: 1, ammoniaRefrigerator: 1, pressurizedAmmoniaReactor: 1, ammoniaAirship: 1 },
     },
-    { id: "protohalean", researchPoint: 5e12, mult: 2.2, reqs:{ karannuclear: 20 }, planet: "asun",
+    { id: "protohalean", costRP: 5e12, multRP: 2.2, reqTechs:{ karannuclear: 20 }, reqPlanet: "asun",
       buildingBonuses: {
-        qasersAssembler", prod:{ qaser:{ minLevel:1, value: 12 } } },
-        superfluidsCenter: [{ attrib: "researchPoint", { minLevel:3, value: 25 } },
-      ],
-      shipBonuses: [
-        ark22", minLevel: 1, power: -80 },
-        ark55", minLevel: 1, power: -80 },
-        foxar", minLevel: 1, power: -80 },
-        skydragon", minLevel: 1, power: -80 },
-        orionCargo", minLevel: 1, power: -80 },
-        andromeda", minLevel: 1, power: -80 },
-      ],
-      unlocks: [
-        { level: 1, buildings:["qasersAssembler"], ships:["munya"] },
-        { level: 2, buildings:["superfluidsCenter"] },
-      ],
-      isVisible(state) { return state.isResearchUnlocked('karannuclear') && state.planets[""].civId == "human" },
+        qaserAssembler: [{ attrib: "prod", rId: "qaser", minLevel:1, value: 12 }],
+        superfluidsCenter: [{ attrib: "researchPoint", minLevel:3, value: 25 }],
+      },
+      shipBonuses: {
+        ark22: [{ attrib: "power", minLevel: 1, value: -80 }],
+        ark55: [{ attrib: "power", minLevel: 1, value: -80 }],
+        foxar: [{ attrib: "power", minLevel: 1, value: -80 }],
+        skydragon: [{ attrib: "power", minLevel: 1, value: -80 }],
+        orion: [{ attrib: "power", minLevel: 1, value: -80 }],
+        andromeda: [{ attrib: "power", minLevel: 1, value: -80 }],
+      },
+      shipUnlocks: { munya: 1 },
+      buildingUnlocks: { qaserAssembler: 1, superfluidsCenter: 2 },
     },
-    { id: "darkmatter", researchPoint: 15e13, mult: 2.2, reqs:{ protohalean: 1 },
+    { id: "darkmatter", costRP: 15e13, multRP: 2.2, reqTechs:{ protohalean: 1 },
       buildingBonuses: {
-        darkmatterRefiner", prod:{ darkmatter:{ minLevel:1, value: 25 } } },
-      ],
-      unlocks: [
-        { level: 1, buildings:["darkmatterRefiner"], ships:["soulAndromeda"] },
-      ],
-      isVisible(state) { return state.isResearchUnlocked('protohalean') },
-    },
-    { id: "xiranartofwar", researchPoint: 15e13, mult: 2.2, reqs:{ karanartofwar: 13 },
-      buildingBonuses: {
-        batteryFactory", prod:{ emptybattery:{ minLevel:1, value: 12 } } },
-        batteryCharger", cost:{ steel:{ minLevel:1, value: -25 }, titanium:{ minLevel:1, value: -25 }, plastic:{ minLevel:1, value: -25 } } },
-        batteryPowerPlant", cost:{ circuit:{ minLevel:1, value: -25 }, titanium:{ minLevel:1, value: -25 }, plastic:{ minLevel:1, value: -25 } } },
-      ],
-      isVisible(state) { return state.isResearchUnlocked('karanartofwar') && state.planets["xirandrus"].civId == "human" },
+        darkmatterRefiner: [{ attrib: "prod", rId: "darkmatter", minLevel:1, value: 25 }],
+      },
+      shipUnlocks: { soul: 1 },
+      buildingUnlocks: { darkmatterRefiner: 1 },
     },
 ]
 
-class Research {
+class Tech {
 
-    constructor(def) {
-    
-        this.id = def.id
-        this.max = def.max
-        this.desc = def.desc
-        this.reqs = def.reqs
-        this.mult = def.mult
-        this.unlocks = def.unlocks
-        this.shipBonuses = def.shipBonuses
-        this.researchPoint = def.researchPoint
-        this.buildingBonuses = def.buildingBonuses
+    constructor(state, def) {    
+        this.def = def
+        this.state = state
         
         this.level = 0
     }
     
-    getCost() { return this.researchPoint * Math.pow(this.mult, this.level) }
-    
-    getBuildingBonuses() {
+    isVisible() {
         
-        if (!this.buildingBonuses) return null
+        return true
         
-        let ret = {}
-        
-        this.buildingBonuses.forEach(bonus => {
-            ret[bonus.id] = {}
+        if (this.def.reqPlanet && this.state.planets[this.def.reqPlanet].civId != "human")
+            return false
             
-            if (bonus.prod) {
-                ret[bonus.id].prod = {}
+        if (this.def.reqTechs)
+            for (let rId in this.def.reqTechs)
+                if (this.state.techs[rId].unlocked ==  false)
+                    return false
+        
+        return true
+    }
+    
+    getCostRP() { return this.def.costRP * Math.pow(this.def.multRP, this.level) }
+    
+    canLevelUpRP() { return this.def.unlocked == true && this.state.researchPoint.count >= this.getCostRP() }
+
+    levelUpRP() {
+    
+        if (this.canLevelUpRP() == true) {
+            
+            this.state.researchPoint.count -= this.getCostRP()
+            this.level += 1
+            
+            this.applyBonuses()
+        }
+    }
+    
+    applyBonuses() {
+        
+        for (let bId in this.def.buildingBonuses) {
+            let buildingBonuses = this.def.buildingBonuses[bId]
+            
+            for (let bonus of buildingBonuses) {
+            
+                if (this.level >= bonus.minLevel) {
                 
-                bonus.prod.forEach(prod => {
-                
-                    if (prod.minLevel - 1 <= this.level) {
-                    
-                        let value = prod.value
-                        if (prod.reduction) {
-                            value -= prod.reduction * ((this.level + 1) - prod.minLevel)
-                            if (this.level > prod.maxLevel) value = 0
-                            if (value < 0) value = 0
-                        }
-                        
-                        if (value != 0) ret[bonus.id].prod[prod.id] = value
+                    let value = bonus.value
+                    if (bonus.reduction) {
+                        value -= bonus.reduction * ((this.level + 1) - bonus.minLevel)
+                        if (this.level > bonus.maxLevel) value = 0
+                        if (value < 0) value = 0
                     }
-                })
+                    
+                    let building =  buildingsDef.find(def => def.id == bId)
+                    if (bonus.attrib == "prod") building.prod[bonus.rId] *= (100 + value) / 100
+                    else if (bonus.attrib == "cost") building.cost[bonus.rId] *= (100 + value) / 100
+                    else if (bonus.attrib == "energy") building.energy *= (100 + value) / 100
+                    else if (bonus.attrib == "researchPoint") building.researchPoint *= (100 + value) / 100
+                }
             }
-            
-            if (bonus.researchPoint && bonus.researchPoint.minLevel - 1 <= this.level) ret[bonus.id].researchPoint = bonus.researchPoint.value
-        })
-        
-        return ret
-    }
-    
-    getShipBonuses() {
-        
-        if (!this.shipBonuses) return null
-        
-        let ret = {}
-
-        this.shipBonuses.forEach(bonus => {
-            ret[bonus.id] = {}
-
-            if (bonus.stats) {
-                ret[bonus.id].stats = {}
-                
-                bonus.stats.forEach(stat => {
-                
-                    if (stat.minLevel - 1 <= this.level)
-                        ret[bonus.id].stats[stat.id] = stat.value
-                })
-            }
-        })
-        
-        return ret
-    }
-    
-    getNextUnlock() {
-        
-        if (!this.unlocks) return null
-        return this.unlocks.find(unlock => unlock.level == this.level + 1)
-    }
-    
-    getFutureUnlocks() {
-    
-        if (!this.unlocks) return null
-        return this.unlocks.filter(unlock => unlock.level > this.level + 1)
+        }
     }
 }
 
@@ -1790,7 +1700,7 @@ var tutorialsDef = [
               "<div class='mt-2 text-danger text-center'>This version is a rewriting/remake of the original game. It is still under development so bugs and data lost could happen!</div>" +
               "<div class='mt-2 text-warning text-center'>You can disable this tutorial. To open it again, click on the icon <i class='fas fa-fw fa-question-circle'></i> in the bottom-right corner of the screen</div>",
         check: function(state) { return true },
-        action: function(state) { if (state.currentPage != "planet" || state.currentPlanet.id != "promision") state.showPlanetPage(state.planets['promision'] ) },
+        action: function(state) { if (state.currentPage != "planet" || state.currentPlanet.def.id != "promision") state.showPlanetPage(state.planets['promision'] ) },
     },
     {
         id: "tut1",
@@ -1799,7 +1709,7 @@ var tutorialsDef = [
               "<div class='mt-2 text-normal text-center'>On the left you can see a list of resources that can be <span class='text-white'>extracted</span> on this planet, like <span class='text-white'>Iron</span>.</div>" +
               "<div class='mt-2 text-normal text-center'>Click on the icon <i class='fas fa-fw fa-dice-d20'></i> in the bottom menu to access the <span class='text-white'>Extraction</span> page.</div>",
         check: function(state) { return true },
-        action: function(state) { if (state.currentPage != "planet" || state.currentPlanet.id != "promision") state.showPlanetPage(state.planets['promision'] ) },
+        action: function(state) { if (state.currentPage != "planet" || state.currentPlanet.def.id != "promision") state.showPlanetPage(state.planets['promision'] ) },
     },
     {
         id: "tut2",
@@ -1807,7 +1717,7 @@ var tutorialsDef = [
               "<div class='text-normal text-center'>In this page, you can construct buildings to extract resources. By clicking on the desired building, you can see more details about it.</div>" +
               "<div class='mt-2 text-normal text-center'>On the left you can see how many resources are being produced every second.</div>" +
               "<div class='mt-2 text-normal text-center'>Now click on the icon <i class='fas fa-fw fa-plus-circle'></i>1 on the right of <span class='text-white'>Mining Plant</span> to build 1 more.</div>",
-        check: function(state) { return state.currentPage == "extraction" && state.currentPlanet.id == "promision" },
+        check: function(state) { return state.currentPage == "extraction" && state.currentPlanet.def.id == "promision" },
         action: function(state) { },
     },
     {
@@ -1816,7 +1726,7 @@ var tutorialsDef = [
               "<div class='text-normal text-center'>Perfect! You can now see on the right how <span class='text-white'>Iron</span> production has doubled!</div>" +
               "<div class='mt-2 text-normal text-center'>Keep building <span class='text-white'>Mining Plants</span>, until you reach 10 of them. Should only take few seconds!</div>",
         check: function(state) { return state.currentPlanet.buildings["mine"].count > 1 },
-        action: function(state) { if (state.currentPage != "extraction" || state.currentPlanet.id != "promision") { state.currentPlanet = state.planets["promision"]; state.showExtractionPage(); } },
+        action: function(state) { if (state.currentPage != "extraction" || state.currentPlanet.def.id != "promision") { state.currentPlanet = state.planets["promision"]; state.showExtractionPage(); } },
     },
     {
         id: "tut4",
@@ -1824,7 +1734,7 @@ var tutorialsDef = [
               "<div class='text-normal text-center'>Perfect! But <span class='text-white'>Iron</span> is not the only resource you will need.</div>" +
               "<div class='mt-2 text-normal text-center'>Let's build a <span class='text-white'>Methane Extractor</span> to extract <span class='text-white'>Methane</span>.</div>",
         check: function(state) { return state.currentPlanet.buildings["mine"].count > 9 },
-        action: function(state) { if (state.currentPage != "extraction" || state.currentPlanet.id != "promision") { state.currentPlanet = state.planets["promision"]; state.showExtractionPage(); } },
+        action: function(state) { if (state.currentPage != "extraction" || state.currentPlanet.def.id != "promision") { state.currentPlanet = state.planets["promision"]; state.showExtractionPage(); } },
     },
     {
         id: "tut5",
@@ -1832,13 +1742,8 @@ var tutorialsDef = [
               "<div class='text-normal text-center'>Great! But <span class='text-white'>Methane</span> alone is not that useful, we need <span class='text-white'>Fuel</span>.</div>" +
               "<div class='mt-2 text-normal text-center'>Click on the icon <i class='fas fa-fw fa-industry'></i> in the bottom menu to access the <span class='text-white'>Production</span> page.</div>",
         check: function(state) { return state.currentPlanet.buildings["methaneExtractor"].count > 0 },
-        action: function(state) { if (state.currentPage != "extraction" || state.currentPlanet.id != "promision") { state.currentPlanet = state.planets["promision"]; state.showExtractionPage(); } },
-    },
-
-//    "<div class='text-primary text-center h5 mb-4'>Let's go further</div>" +
-//    "In this interface you can construct buildings that transform raw resources, like iron and methane, into more useful and advanced resources."
-//    "Let's construct a <span class='white_text'>Methane Processer</span> to convert methane into fuel.",
-    
+        action: function(state) { if (state.currentPage != "extraction" || state.currentPlanet.def.id != "promision") { state.currentPlanet = state.planets["promision"]; state.showExtractionPage(); } },
+    },    
     {
         id: "tut6",
         text: "<div class='text-primary text-center h5 mb-4'>Tutorial in progress</div><div class='text-normal text-center'>Next steps of tutorial are under development.</div><div class='mt-2 text-normal text-center'>To be informed when new steps and new features will be ready, please join Discord server.</div><div class='mt-2 text-normal text-center'><a href='https://discord.gg/3UkgeeT9CV' target='_blank' class='btn text-white'>Join Discord server</a></div>",
@@ -1849,15 +1754,60 @@ var tutorialsDef = [
 
 class Tutorial {
 
-    constructor(def) {
-    
-        this.id = def.id
-        this.text = def.text
-        this.check = def.check
-        this.action = def.action
+    constructor(state, def) {    
+        this.def = def
+        this.state = state
         
         this.done = false
     }
+}
+
+var routesDef = [
+
+    { id:0, pl1Id: "promision", pl2Id: "vasilis", },
+    { id:1, pl1Id: "vasilis", pl2Id: "aequoreas", },
+    { id:2, pl1Id: "aequoreas", pl2Id: "orpheus", },
+    { id:3, pl1Id: "orpheus", pl2Id: "santorini", },
+    { id:4, pl1Id: "orpheus", pl2Id: "mexager", },
+    { id:5, pl1Id: "orpheus", pl2Id: "uanass", },
+    { id:6, pl1Id: "posirion", pl2Id: "zelera", },
+    { id:7, pl1Id: "santorini", pl2Id: "traumland", },
+    { id:8, pl1Id: "santorini", pl2Id: "lagea", },
+    { id:9, pl1Id: "lagea", pl2Id: "zelera", },
+    { id:10, pl1Id: "santorini", p2:"miselquris", },
+    { id:11, pl1Id: "kurol", pl2Id: "miselquris", },
+    { id:12, pl1Id: "miselquris", pl2Id: "jabir", },
+    { id:13, pl1Id: "jabir", pl2Id: "teleras", },
+    { id:14, pl1Id: "antaris", pl2Id: "jabir", },
+    { id:15, pl1Id: "zhura", pl2Id: "bhara", },
+    { id:16, pl1Id: "epsilon", pl2Id: "zhura", },
+    { id:17, pl1Id: "caerul", pl2Id: "epsilon", },
+    { id:18, pl1Id: "epsilon", pl2Id: "traurig", },
+    { id:19, pl1Id: "posirion", pl2Id: "traurig", },
+    { id:20, pl1Id: "antaris", pl2Id: "tsartasis", },
+    { id:21, pl1Id: "ares", pl2Id: "kandi", },
+    { id:22, pl1Id: "kandi", pl2Id: "echoes", },
+    { id:23, pl1Id: "echoes", pl2Id: "tsartasis", },
+    { id:24, pl1Id: "echoes", pl2Id: "xora2", },
+    { id:25, pl1Id: "xora2", pl2Id: "xora", },
+    { id:26, pl1Id: "tsartasis", pl2Id: "mermorra", },
+    { id:27, pl1Id: "kitrino", pl2Id: "mermorra", },
+    { id:28, pl1Id: "santorini", pl2Id: "virgo", },
+]
+
+class Route {
+
+    constructor(state, def) {    
+        this.def = def
+        
+        this.planet1 = state.planets[def.pl1Id]
+        this.planet2 = state.planets[def.pl2Id]
+    }
+    
+    cx() { return this.planet1.x - this.planet2.x }
+    cy() { return this.planet1.y - this.planet2.y }
+    
+    distance() { return Math.floor(Math.sqrt(Math.pow(this.cx(), 2) + Math.pow(this.cy(), 2))) }
 }
 
 import LZString from 'lz-string'
@@ -1891,7 +1841,7 @@ export default {
             
             tutorial: true,
             government: null,
-            isResseting: false,
+            isResetting: false,
             researchPoint: { count:0, prod:0 },
             timeTravelCount: 0,
             
@@ -1908,10 +1858,11 @@ export default {
             currentBuildCount: 1,
             currentDestroyCount: 1,
             
+            techs: {},
+            routes: {},
             planets: {},
             nebulas: {},
             tutorials: {},
-            researches: {},
             
             bonusTime: 0,
             bonusActive: false,
@@ -1921,53 +1872,53 @@ export default {
     computed: {
     
         influence() {
-        
             let ret = 0
-            
             for (let pId in this.planets)
-                if (this.planets[pId].civId == 'human') ret += this.planets[pId].influence
-                
+                if (this.planets[pId].def.civId == 'human')
+                    ret += this.planets[pId].def.influence
             return ret
         },
         
-        humanPlanets() {
-        
-            let ret = {}
-            
+        humanPlanets() {        
+            let ret = {}            
             for (let pId in this.planets)
-                if (this.planets[pId].civId == 'human') ret[pId] = this.planets[pId]
-                
+                if (this.planets[pId].def.civId == 'human')
+                    ret[pId] = this.planets[pId]                
             return ret
         },
         
         humanPlanetCount() { return Object.keys(this.humanPlanets).length },
 
         exportGameData() {
-
             let text = localStorage.getItem(this.localStorageName)
             return text
-        },
-
-        currentPlanetProds() {
-        
-            let ret = {}
-            
-            for (let rId in this.currentPlanet.prod)
-                if (this.isResUnlocked(rId) && this.currentPlanet.prod[rId] > 0)
-                    ret[rId] = this.currentPlanet.prod[rId]
-            
-            return ret
         },
     },
     
     methods: {
-                
+        
+        nextNebula() {
+        
+            if (this.currentNebula.def.id == 'perseus') this.currentNebula = this.nebulas['andromeda']
+            else if (this.currentNebula.def.id == 'andromeda') this.currentNebula = this.nebulas['void']
+            else if (this.currentNebula.def.id == 'void') this.currentNebula = this.nebulas['perseus']
+        },
+        
+        previousNebula() {
+        
+            if (this.currentNebula.def.id == 'perseus') this.currentNebula = this.nebulas['void']
+            else if (this.currentNebula.def.id == 'andromeda') this.currentNebula = this.nebulas['perseus']
+            else if (this.currentNebula.def.id == 'void') this.currentNebula = this.nebulas['andromeda']
+        },
+        
+        //---
+        
         getFleetsPageState() {
             
             return null
             
             if (this.currentPage == 'fleets') return 'active'
-            if (this.researches["astronomy"].level > 0) return null
+            if (this.techs["astronomy"].level > 0) return null
             else return 'locked'
         },
         
@@ -1976,7 +1927,7 @@ export default {
             this.currentPage = "fleets"
             return
             
-            if (this.researches["astronomy"].level > 0) this.currentPage = "fleets"
+            if (this.techs["astronomy"].level > 0) this.currentPage = "fleets"
             else this.showToast("You must research Interstellar Travel first!", "error")
         },
         
@@ -1985,7 +1936,7 @@ export default {
             return null
             
             if (this.currentPage == 'map') return 'active'
-            if (this.researches["astronomy"].level > 0) return null
+            if (this.techs["astronomy"].level > 0) return null
             else return 'locked'
         },
         
@@ -1994,7 +1945,7 @@ export default {
             this.currentPage = "map"
             return
             
-            if (this.researches["astronomy"].level > 0) this.currentPage = "map"
+            if (this.techs["astronomy"].level > 0) this.currentPage = "map"
             else this.showToast("You must research Interstellar Travel first!", "error")
         },
         
@@ -2005,7 +1956,7 @@ export default {
             return null
             
             if (this.currentPage == 'diplomacy') return 'active'
-            if (this.timeTravelCount > 0 || this.researches["astronomy"].level > 6) return null
+            if (this.timeTravelCount > 0 || this.techs["astronomy"].level > 6) return null
             else return 'locked'
         },
         
@@ -2014,7 +1965,7 @@ export default {
             this.currentPage = "diplomacy"
             return
             
-            if (this.timeTravelCount > 0 || this.researches["astronomy"].level > 6) this.currentPage = "diplomacy"
+            if (this.timeTravelCount > 0 || this.techs["astronomy"].level > 6) this.currentPage = "diplomacy"
             else this.showToast("You must time travel once<br> or research Interstellar Travel level 7 first!", "error")
         },
 
@@ -2023,7 +1974,7 @@ export default {
             return null
             
             if (this.currentPage == 'tournament') return 'active'
-            if (this.researches["astronomy"].level > 6) return null
+            if (this.techs["astronomy"].level > 6) return null
             else return 'locked'
         },
         
@@ -2032,7 +1983,7 @@ export default {
             this.currentPage = "tournament"
             return
             
-            if (this.researches["astronomy"].level > 6) this.currentPage = "tournament"
+            if (this.techs["astronomy"].level > 6) this.currentPage = "tournament"
             else this.showToast("You must research Interstellar Travel level 7 first!", "error")
         },
 
@@ -2059,7 +2010,7 @@ export default {
             return null
             
             if (this.currentPage == 'shipyard') return 'active'
-            if (this.researches["astronomy"].level > 0) return null
+            if (this.techs["astronomy"].level > 0) return null
             else return 'locked'
         },
         
@@ -2068,7 +2019,7 @@ export default {
             this.currentPage = "shipyard"
             return
             
-            if (this.researches["astronomy"].level > 0) this.currentPage = "shipyard"
+            if (this.techs["astronomy"].level > 0) this.currentPage = "shipyard"
             else this.showToast("You must research Interstellar Travel first!", "error")
         },
         
@@ -2094,14 +2045,25 @@ export default {
                 else this.showToast("You must build at least one Trade Hub!", "error")
             else this.showToast("The trade hub is unable to contact a market in this nebula!", "error")
         },
-
+        
         showSettingsPage() { this.currentPage = "settings" },
+        
+        showHardResetPopup() {
+        
+            this.popupText = "<div class='h5 text-danger mb-2'>Hard Reset</div><span class='text-danger'>Are you sure you want to wipe your data?<br>You will lose ALL your progress!</span>"
+            this.popupOkAction = function() { this.resetGameData(); this.closePopup(); }
+            this.popupCancelAction = this.closePopup
+        },
+        
+        //---
+        
+        setCurrentShip(ship) { this.currentShip = ship },
         
         setCurrentBuilding(building) { this.currentBuilding = building },
         
         setCurrentResearch(research) { this.currentResearch = research },
-        
-        setCurrentShip(ship) { this.currentShip = ship },
+       
+        //---
         
         showToast(text, type) {
         
@@ -2112,13 +2074,6 @@ export default {
             setTimeout(function() { self.toastText = null }, 3e3)
         },
         
-        showHardResetPopup() {
-        
-            this.popupText = "<div class='h5 text-danger mb-2'>Hard Reset</div><span class='text-danger'>Are you sure you want to wipe your data?<br>You will lose ALL your progress!</span>"
-            this.popupOkAction = function() { this.resetGameData(); this.closePopup(); }
-            this.popupCancelAction = this.closePopup
-        },
-        
         closePopup() {
         
             this.popupText = null
@@ -2127,6 +2082,8 @@ export default {
             this.popupCancelText = "Cancel"
             this.popupCancelAction = null
         },
+       
+        //---
         
         toggleBonus() {
         
@@ -2147,174 +2104,38 @@ export default {
             this.save()
             this.showToast("Game saved in local storage!", "info")
         },
-        
-        getCurrentPlanetBuildings(type) {
-        
-            let ret = {}
-            
-            for (let bId in this.currentPlanet.buildings)
-                if (this.isBuildingUnlocked(bId) && this.currentPlanet.buildings[bId].type == type)
-                    ret[bId] = this.currentPlanet.buildings[bId]
-            
-            return ret
-        },
-        
-        getCurrentPlanetShips() {
-        
-            let ret = {}
-            
-            for (let sId in this.currentPlanet.ships)
-                if (this.currentPlanet.isShipUnlocked(sId))
-                    ret[sId] = this.currentPlanet.ships[sId]
-                    
-            return ret
-        },
-        
-        levelUpResearch(rId) {
-        
-            if (this.canLevelUp(rId)) {
-                
-                let research = this.researches[rId]
-                this.researchPoint.count -= research.getCost()
-                
-                this.applyResearchBonuses(rId)
-            }
-        },
-        
-        canLevelUp(rId) {
-        
-            let ret = true
-            
-            let research = this.researches[rId]
-            if (research.getCost() > this.researchPoint.count) ret = false
-                
-            return ret
-        },
-        
-        applyResearchBonuses(rId) {
-        
-            let research = this.researches[rId]
-            
-            for (let bId in research.buildingBonuses) {
-                let buildingBonuses = research.buildingBonuses[bId]
-                
-                buildingBonuses.forEach(bonus => {
-                
-                    if (research.level >= bonus.minLevel - 1) {
-                    
-                        let value = bonus.value
-                        if (bonus.reduction) {
-                            value -= bonus.reduction * ((this.level + 1) - bonus.minLevel)
-                            if (research.level > bonus.maxLevel) value = 0
-                            if (value < 0) value = 0
-                        }
-                        
-                        let building =  buildingsDef.find(def => def.id == bId)
-                        if (bonus.attrib == 'prod') building.prod[bonus.rId] *= (100 + value) / 100
-                        else if (bonus.attrib == 'cost') building.cost[bonus.rId] *= (100 + value) / 100
-                        else if (bonus.attrib == 'researchPoint') building.researchPoint *= (100 + value) / 100
-                    }
-                })
-            }
-            
-            research.level += 1
-        },
-        
+       
         //---
-        
-        isResUnlocked(rId) {
-        
-            let def = resourcesDef.find(def => def.id == rId)
-            
-            for (let tId in def.reqs)
-                if (this.researches[tId].level < def.reqs[tId])
-                    return false
-            
-            for (let qId in def.quests)
-                if (this.quests[qId].done == false)
-                    return false
-                    
-            return true
-        },
-        
-        isBuildingUnlocked(bId) {
-        
-            let def = buildingsDef.find(def => def.id == bId)
-            if (def == null) console.log(bId)
-            
-            for (let tId in def.reqs)
-                if (this.researches[tId].level < def.reqs[tId])
-                    return false
-                    
-            return true
-        },
-        
-        isResearchUnlocked(rId) {
-            
-            let ret = true
-            
-            let def = researchesDef.find(def => def.id == rId)
-            if (def.reqs)
-                for (let rId in def.reqs)
-                    if (this.researches[rId].level < def.reqs[rId])
-                        ret = false
-            
-            return ret
-        },
-        
-        isResearchVisible(rId) {
-        
-            let def = researchesDef.find(def => def.id == rId)
-            if (def == null) console.log(rId)
-            return def.isVisible(this)
-        },
-        
-        getNebulaPlanets() {
-        
-            let ret = {}
-            
-            let range = this.researches['astronomy'].level
-            
-            for (let pId in this.planets) {
-                let planet = this.planets[pId]
-                if (planet.nebula == this.currentNebula.id && planet.orbit <= range)
-                    ret[pId] = planet
-            }
-            
-            return ret
-        },
         
         produceResources(delta) {
             
             this.researchPoint.prod = 0
             
             for (let pId in this.planets)
-                if (this.planets[pId].civId == 'human') {
-                    this.planets[pId].produce(delta)
+                if (this.planets[pId].def.civId == 'human') {
+                    this.planets[pId].produceResources(delta)
                     this.researchPoint.prod += this.planets[pId].researchPoint.prod
                 }
-                        
+            
             this.researchPoint.count += this.researchPoint.prod * delta
         },
         
         buildBuildings() {
         
             for (let pId in this.planets)
-                if (this.planets[pId].civId == 'human')
-                    for (let bId in this.planets[pId].buildings)
-                        for (let i = 0; i < this.planets[pId].buildings[bId].queue; i++) {
-                        
-                            let cost = this.planets[pId].getBuildingCost(bId, 1)
-                            if (this.planets[pId].canBuy(cost) == true) {
-                                
-                                this.planets[pId].buildings[bId].count += 1
-                                for (let rId in cost) if (cost[rId] > 1) this.planets[pId].resources[rId].count -= cost[rId]
-                                
-                                this.planets[pId].buildings[bId].queue -= 1
-                            }
-                            
+                if (this.planets[pId].def.civId == 'human')
+                    for (let bId in this.planets[pId].buildings) {
+                        let building = this.planets[pId].buildings[bId]
+                        for (let i = 0; i < building.queue; i++) {                        
+                            let cost = building.getCost(1)
+                            if (this.planets[pId].canBuy(cost) == true) {                                
+                                building.count += 1
+                                for (let rId in cost) if (cost[rId] > 1) this.planets[pId].resources[rId].count -= cost[rId]                                
+                                building.queue -= 1
+                            }                            
                             else break
                         }
+                    }
         },
         
         checkTutorial() {
@@ -2324,25 +2145,25 @@ export default {
                     break
             
             let tut = this.tutorials[tutId]
-            if (tut.check(this) == true && this.popupText == null) {
+            if (tut.def.check(this) == true && this.popupText == null) {
             
-                tut.action(this)
+                tut.def.action(this)
                 
-                this.popupText = tut.text
+                this.popupText = tut.def.text
                 
                 this.popupOkAction = function() {
                 
-                    if (tut.id == "tutLast") this.tutorial = false;
+                    if (tut.def.id == "tutLast") this.tutorial = false;
                     tut.done = true;
                     this.closePopup();
                 }
                 
-                if (tut.id == "tut6") {
+                if (tut.def.id == "tut6") {
                 
                     this.popupOkText = null
                     this.popupCancelText = "Got it"
                 }
-                else if (tut.id == "tutLast") {
+                else if (tut.def.id == "tutLast") {
                 
                     this.popupOkText = "End Tutorial"
                     this.popupCancelText = null
@@ -2358,20 +2179,20 @@ export default {
         },
         
         //---
-            
+        
         init() {
         
-            planetsDef.forEach(def => { this.planets[def.id] = new Planet(def) })
-            nebulasDef.forEach(def => { this.nebulas[def.id] = new Nebula(def) })
-            tutorialsDef.forEach(def => { this.tutorials[def.id] = new Tutorial(def) })
-            researchesDef.forEach(def => { this.researches[def.id] = new Research(def) })
+            techsDef.forEach(def => { this.techs[def.id] = new Tech(this, def) })
+            routesDef.forEach(def => { this.routes[def.id] = new Route(this, def) })
+            planetsDef.forEach(def => { this.planets[def.id] = new Planet(this, def) })
+            nebulasDef.forEach(def => { this.nebulas[def.id] = new Nebula(this, def) })
+            tutorialsDef.forEach(def => { this.tutorials[def.id] = new Tutorial(this, def) })
             
             for (let nId in this.nebulas) {
-                let nebula = this.nebulas[nId]
-                
+                let nebula = this.nebulas[nId]                
                 for (let pId in this.planets) {
                     let planet = this.planets[pId]
-                    if (planet.nebula == nebula.id) nebula.planets[pId] = planet
+                    if (planet.def.nebula == nebula.def.id) nebula.planets[pId] = planet
                 }
             }
             
@@ -2391,10 +2212,10 @@ export default {
                 loadeddata = JSON.parse(text)
                 
                 this.tutorial = loadeddata.tutorial
+                this.bonusTime = loadeddata.bonusTime || 0
                 this.government = loadeddata.government
                 this.researchPoint = loadeddata.researchPoint || { count:0, prod:0 }
                 this.timeTravelCount = loadeddata.timeTravelCount || 0
-                this.bonusTime = loadeddata.bonusTime || 0
                 
                 if (loadeddata.lastFrameTimeMs) {
                 
@@ -2410,11 +2231,12 @@ export default {
                 for (let pId in this.planets) {
                     let planet = loadeddata.planets[pId]
                     if (planet) {
-                        this.planets[pId].civId = planet.civId
+                        let def =  planetsDef.find(def => def.id == pId)
+                        def.civId = planet.civId
                         
                         if (loadeddata.planets[pId].buildings)
-                            for (let bId in this.planets[pId].buildings) {
-                                let building = loadeddata.planets[pId].buildings[bId]
+                            for (let bId in this.planets[pId].def.buildings) {
+                                let building = loadeddata.planets[pId].def.buildings[bId]
                                 if (building) {
                                     this.planets[pId].buildings[bId].count = building.count
                                     this.planets[pId].buildings[bId].queue = building.queue
@@ -2441,11 +2263,13 @@ export default {
                     if (tutorial) this.tutorials[tId].done = tutorial.done
                 }
                 
-                for (let rId in this.researches) {            
-                    let research = loadeddata.researches[rId]
-                    if (research)
-                        for (let i = 0; i < research.level; i++)
-                            this.applyResearchBonuses(rId)
+                for (let tId in this.techs) {            
+                    let tech = loadeddata.techs[tId]
+                    if (tech && tech.level > 0) {
+                        this.techs[tId].level = tech.level
+                        for (let i = 0; i < tech.level; i++)
+                            this.techs[tId].applyBonuses(this)                            
+                    }
                 }
             }
             
@@ -2457,51 +2281,51 @@ export default {
             let saveddata = {
             
                 tutorial: this.tutorial,
+                bonusTime: this.bonusTime,
                 government: this.government,
                 researchPoint: this.researchPoint,
                 timeTravelCount: this.timeTravelCount,
-                bonusTime: this.bonusTime,
                 lastFrameTimeMs: this.lastFrameTimeMs,
                 
+                techs: {},
                 quests: {},
                 planets: {},
                 tutorials: {},
-                researches: {},
             }
             
             for (let qId in this.quests) {            
                 let quest = this.quests[qId]                
-                saveddata.quests[qId] = { id: quest.id, done: quest.done, }
+                saveddata.quests[qId] = { id: quest.def.id, done: quest.done, }
             }
 
             for (let pId in this.planets) {
                 let planet = this.planets[pId]
-                saveddata.planets[pId] = { id: planet.id, civId: planet.civId, buildings: {}, resources: {}, ships: {},  }
+                saveddata.planets[pId] = { id: planet.def.id, civId: planet.def.civId, buildings: {}, resources: {}, ships: {},  }
                 
                 for (let bId in this.planets[pId].buildings) {
                     let building = this.planets[pId].buildings[bId]
-                    saveddata.planets[pId].buildings[bId] = { id: building.id, count: building.count, queue: building.queue, active: building.active }
+                    saveddata.planets[pId].buildings[bId] = { id: building.def.id, count: building.count, queue: building.queue, active: building.active }
                 }
                 
                 for (let rId in this.planets[pId].resources) {
                     let resource = this.planets[pId].resources[rId]
-                    saveddata.planets[pId].resources[rId] = { id: resource.id, count: resource.count }
+                    saveddata.planets[pId].resources[rId] = { id: resource.def.id, count: resource.count }
                 }
             
                 for (let sId in this.planets[pId].ships) {            
                     let ship = this.planets[pId].ships[sId]                
-                    saveddata.planets[pId].ships[sId] = { id: ship.id, count: ship.count, }
+                    saveddata.planets[pId].ships[sId] = { id: ship.def.id, count: ship.count, }
                 }
             }
             
             for (let tId in this.tutorials) {            
                 let tutorial = this.tutorials[tId]                
-                saveddata.tutorials[tId] = { id: tutorial.id, done: tutorial.done, }
+                saveddata.tutorials[tId] = { id: tutorial.def.id, done: tutorial.done, }
             }
             
-            for (let rId in this.researches) {            
-                let research = this.researches[rId]                
-                saveddata.researches[rId] = { id: research.id, level: research.level, }
+            for (let rId in this.techs) {            
+                let tech = this.techs[rId]                
+                saveddata.techs[rId] = { id: tech.def.id, level: tech.level, }
             }
             
             let text = JSON.stringify(saveddata)
@@ -2515,7 +2339,7 @@ export default {
             this.load()
             this.update()
             
-            window.onbeforeunload = () => { if (this.isResseting == false) this.save() }
+            window.onbeforeunload = () => { if (this.isResetting == false) this.save() }
             
             this.rafHandle = requestAnimationFrame(this.update)
             this.saveInterval = setInterval(() => { this.save() }, this.autoSaveDelay)
@@ -2566,7 +2390,7 @@ export default {
 
         resetGameData() {
             
-            this.isResseting = true
+            this.isResetting = true
             localStorage.removeItem(this.localStorageName)
             window.location.reload()
         },
