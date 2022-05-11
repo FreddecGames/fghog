@@ -1,7 +1,7 @@
 <template>
     <div class="row g-3">
         <div class="col-12 text-center">
-            <div class="h6 text-primary">{{ $t('planetName_' + planet.id) }}</div>
+            <div class="h6 text-primary">{{ $t('planetName_' + planet.ref.id) }}</div>
         </div>
         <div v-if="planet.getGroundShipCount() <= 0" class="col-12 text-center">
             <span class="text-gray">There is no ship on the ground</span>
@@ -13,6 +13,11 @@
                     <span class="col-auto text-white">{{ ship.count.toLocaleString() }}</span>
                 </div>
             </div>
+        </div>
+        <div v-if="planet.getGroundShipCount() > 0" class="col-12">
+            <button type="button" class="w-100 btn border" @click="planet.createFleet()">
+                Create Fleet
+            </button>
         </div>
     </div>
 </template>

@@ -18,9 +18,15 @@ $body-bg:                     #333 !default;
 
 $headings-margin-bottom:      0 !default;
 
+$h6-font-size:                $font-size-base * 1.125 !default;
+
 $input-btn-focus-box-shadow:  none !default;
 
 $hr-margin-y:                 .75rem !default;
+
+$dropdown-bg:                 rgba(2, 4, 5, .7) !default;
+$dropdown-link-color:         $white !default;
+$dropdown-link-hover-bg:      rgba(22, 38, 46, .75) !default;
 
 @import 'node_modules/bootstrap/scss/bootstrap.scss';
 
@@ -79,10 +85,14 @@ hr { background-color: $primary; }
 .bg-2 { background-color: rgba(22, 38, 46, .75); }
 .bg-3 { background-color: rgba(2, 4, 5, .7); }
 
+.bg-normal { background-color: $normal; }
+
 .bg-grid { background-image: url('~@/assets/ui/background.png'); }
 
 .text-gray { color: #aaa!important; }
 .text-normal { color: $normal!important; }
+
+.shadow-normal { text-shadow: -1px -1px 1px #1b3844, 0px -1px 1px #1b3844, 1px -1px 1px #1b3844, -1px 0px 1px #1b3844, 1px 0px 1px #1b3844, 1px 1px 1px #1b3844, 0px 1px 1px #1b3844, -1px 1px 1px #1b3844; }
 
 .medium { font-size: 0.65625rem; line-height: 1.2; }
 
@@ -112,3 +122,98 @@ hr { background-color: $primary; }
 .bg-andromeda { background-image: url('~@/assets/nebulas/andromeda.png'); background-size: cover; }
 
 .bg-promision { background-image: url('~@/assets/planets/promision.png'); background-size: cover; }
+.bg-vasilis { background-image: url('~@/assets/planets/vasilis.png'); background-size: cover; }
+.bg-aequoreas { background-image: url('~@/assets/planets/aequoreas.png'); background-size: cover; }
+.bg-orpheus { background-image: url('~@/assets/planets/orpheus.png'); background-size: cover; }
+.bg-antirion { background-image: url('~@/assets/planets/antirion.png'); background-size: cover; }
+.bg-city { background-image: url('~@/assets/planets/city.png'); background-size: cover; }
+.bg-ishtar { background-image: url('~@/assets/planets/ishtar.png'); background-size: cover; }
+.bg-traumland { background-image: url('~@/assets/planets/traumland.png'); background-size: cover; }
+.bg-tataridu { background-image: url('~@/assets/planets/tataridu.png'); background-size: cover; }
+.bg-zelera { background-image: url('~@/assets/planets/zelera.png'); background-size: cover; }
+.bg-posirion { background-image: url('~@/assets/planets/posirion.png'); background-size: cover; }
+.bg-tsartasis { background-image: url('~@/assets/planets/tsartasis.png'); background-size: cover; }
+.bg-acanthus { background-image: url('~@/assets/planets/acanthus.png'); background-size: cover; }
+.bg-raknar { background-image: url('~@/assets/planets/raknar.png'); background-size: cover; }
+.bg-shin { background-image: url('~@/assets/planets/shin.png'); background-size: cover; }
+.bg-phorun { background-image: url('~@/assets/planets/phorun.png'); background-size: cover; }
+.bg-antaris { background-image: url('~@/assets/planets/antaris.png'); background-size: cover; }
+.bg-teleras { background-image: url('~@/assets/planets/teleras.png'); background-size: cover; }
+.bg-jabir { background-image: url('~@/assets/planets/jabir.png'); background-size: cover; }
+.bg-epsilon { background-image: url('~@/assets/planets/epsilon.png'); background-size: cover; }
+.bg-zhura { background-image: url('~@/assets/planets/zhura.png'); background-size: cover; }
+.bg-kitrion { background-image: url('~@/assets/planets/kitrion.png'); background-size: cover; }
+.bg-ares { background-image: url('~@/assets/planets/ares.png'); background-size: cover; }
+.bg-kandi { background-image: url('~@/assets/planets/kandi.png'); background-size: cover; }
+.bg-bharash { background-image: url('~@/assets/planets/bharash.png'); background-size: cover; }
+.bg-caerul { background-image: url('~@/assets/planets/caerul.png'); background-size: cover; }
+.bg-mermorra { background-image: url('~@/assets/planets/mermorra.png'); background-size: cover; }
+.bg-xora2 { background-image: url('~@/assets/planets/xora2.png'); background-size: cover; }
+.bg-xora { background-image: url('~@/assets/planets/xora.png'); background-size: cover; }
+.bg-babilo { background-image: url('~@/assets/planets/babilo.png'); background-size: cover; }
+.bg-nassaus { background-image: url('~@/assets/planets/nassaus.png'); background-size: cover; }
+.bg-solidad { background-image: url('~@/assets/planets/solidad.png'); background-size: cover; }
+.bg-conquest { background-image: url('~@/assets/planets/conquest.png'); background-size: cover; }
+.bg-kartarid { background-image: url('~@/assets/planets/kartarid.png'); background-size: cover; }
+.bg-cerberus { background-image: url('~@/assets/planets/cerberus.png'); background-size: cover; }
+.bg-death { background-image: url('~@/assets/planets/death.png'); background-size: cover; }
+.bg-yanyin { background-image: url('~@/assets/planets/yanyin.png'); background-size: cover; }
+.bg-siris { background-image: url('~@/assets/planets/siris.png'); background-size: cover; }
+.bg-xilea { background-image: url('~@/assets/planets/xilea.png'); background-size: cover; }
+.bg-asun { background-image: url('~@/assets/planets/asun.png'); background-size: cover; }
+.bg-swamp { background-image: url('~@/assets/planets/swamp.png'); background-size: cover; }
+.bg-columbus { background-image: url('~@/assets/planets/columbus.png'); background-size: cover; }
+.bg-magellan { background-image: url('~@/assets/planets/magellan.png'); background-size: cover; }
+.bg-gerlache { background-image: url('~@/assets/planets/gerlache.png'); background-size: cover; }
+.bg-gagarin { background-image: url('~@/assets/planets/gagarin.png'); background-size: cover; }
+.bg-alfari { background-image: url('~@/assets/planets/alfari.png'); background-size: cover; }
+.bg-xeno { background-image: url('~@/assets/planets/xeno.png'); background-size: cover; }
+.bg-caligo { background-image: url('~@/assets/planets/caligo.png'); background-size: cover; }
+.bg-halea { background-image: url('~@/assets/planets/halea.png'); background-size: cover; }
+.bg-persephone { background-image: url('~@/assets/planets/persephone.png'); background-size: cover; }
+.bg-hades { background-image: url('~@/assets/planets/hades.png'); background-size: cover; }
+.bg-demeter { background-image: url('~@/assets/planets/demeter.png'); background-size: cover; }
+.bg-hermr { background-image: url('~@/assets/planets/hermr.png'); background-size: cover; }
+.bg-calipsi { background-image: url('~@/assets/planets/calipsi.png'); background-size: cover; }
+.bg-auriga { background-image: url('~@/assets/planets/auriga.png'); background-size: cover; }
+.bg-cygnus { background-image: url('~@/assets/planets/cygnus.png'); background-size: cover; }
+.bg-forax { background-image: url('~@/assets/planets/forax.png'); background-size: cover; }
+.bg-volor { background-image: url('~@/assets/planets/volor.png'); background-size: cover; }
+.bg-discordia { background-image: url('~@/assets/planets/discordia.png'); background-size: cover; }
+.bg-mallus { background-image: url('~@/assets/planets/mallus.png'); background-size: cover; }
+.bg-lascura { background-image: url('~@/assets/planets/lascura.png'); background-size: cover; }
+.bg-pollux { background-image: url('~@/assets/planets/pollux.png'); background-size: cover; }
+.bg-mihandria { background-image: url('~@/assets/planets/mihandria.png'); background-size: cover; }
+.bg-mellivor { background-image: url('~@/assets/planets/mellivor.png'); background-size: cover; }
+.bg-extremandur { background-image: url('~@/assets/planets/extremandur.png'); background-size: cover; }
+.bg-urdum { background-image: url('~@/assets/planets/urdum.png'); background-size: cover; }
+.bg-hordron { background-image: url('~@/assets/planets/hordron.png'); background-size: cover; }
+.bg-viscarius { background-image: url('~@/assets/planets/viscarius.png'); background-size: cover; }
+.bg-bolmir { background-image: url('~@/assets/planets/bolmir.png'); background-size: cover; }
+.bg-misfir { background-image: url('~@/assets/planets/misfir.png'); background-size: cover; }
+.bg-vehemir { background-image: url('~@/assets/planets/vehemir.png'); background-size: cover; }
+.bg-xirandrus { background-image: url('~@/assets/planets/xirandrus.png'); background-size: cover; }
+.bg-peleuvis { background-image: url('~@/assets/planets/peleuvis.png'); background-size: cover; }
+.bg-cranium { background-image: url('~@/assets/planets/cranium.png'); background-size: cover; }
+.bg-exabolan { background-image: url('~@/assets/planets/exabolan.png'); background-size: cover; }
+.bg-madame { background-image: url('~@/assets/planets/madame.png'); background-size: cover; }
+.bg-elon { background-image: url('~@/assets/planets/elon.png'); background-size: cover; }
+.bg-gora { background-image: url('~@/assets/planets/gora.png'); background-size: cover; }
+.bg-yllirium { background-image: url('~@/assets/planets/yllirium.png'); background-size: cover; }
+.bg-malus { background-image: url('~@/assets/planets/malus.png'); background-size: cover; }
+.bg-janus { background-image: url('~@/assets/planets/janus.png'); background-size: cover; }
+.bg-aquarius { background-image: url('~@/assets/planets/aquarius.png'); background-size: cover; }
+.bg-japheth { background-image: url('~@/assets/planets/japheth.png'); background-size: cover; }
+.bg-poligon { background-image: url('~@/assets/planets/poligon.png'); background-size: cover; }
+.bg-atlas { background-image: url('~@/assets/planets/atlas.png'); background-size: cover; }
+.bg-augmeris { background-image: url('~@/assets/planets/augmeris.png'); background-size: cover; }
+.bg-cetus { background-image: url('~@/assets/planets/cetus.png'); background-size: cover; }
+.bg-erpervestalis { background-image: url('~@/assets/planets/erpervestalis.png'); background-size: cover; }
+.bg-etaaras { background-image: url('~@/assets/planets/etaaras.png'); background-size: cover; }
+.bg-jardin { background-image: url('~@/assets/planets/jardin.png'); background-size: cover; }
+.bg-karmirion { background-image: url('~@/assets/planets/karmirion.png'); background-size: cover; }
+.bg-parai { background-image: url('~@/assets/planets/parai.png'); background-size: cover; }
+.bg-premeza { background-image: url('~@/assets/planets/premeza.png'); background-size: cover; }
+.bg-unia { background-image: url('~@/assets/planets/unia.png'); background-size: cover; }
+.bg-vanubis { background-image: url('~@/assets/planets/vanubis.png'); background-size: cover; }
+.bg-vikasuka { background-image: url('~@/assets/planets/vikasuka.png'); background-size: cover; }
