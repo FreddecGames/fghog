@@ -1483,6 +1483,7 @@ var techRefs = [
             
             ret += "<div class='h6 text-gray mb-2 mt-3'>Improves</div>"
             
+            ret += techDescImprove("Foundry", "Prod")
             ret += techDescImprove("Plastic Factory", "Prod")
             ret += techDescImprove("Polymerizer", "Prod")
             ret += techDescImprove("Nanotube Factory", "Prod")
@@ -2367,8 +2368,8 @@ class Tech {
     isVisible() {
         
         if (this.ref.planetReq) {
-        
-            if (this.game.planets[this.ref.planetReq].civId == "human") return true
+            
+            if (this.game.planets[this.ref.planetReq].ref.civId == "human") return true
             else return false
         }
         
@@ -2469,7 +2470,23 @@ class Planet {
         this.buildings = {}
         buildingRefs.forEach(ref => {
             if (ref.envs.includes(this.ref.env) == true) {
-                this.buildings[ref.id] = new PlanetBuilding(this, ref)
+            
+                if (ref.type == "extraction") {
+                
+                    let tmp = true
+                    for (let rId in ref.prod) {
+                        if (this.ref.prod[rId] == null) {
+                            tmp = false
+                        }
+                    }
+                    
+                    if (tmp == true) {
+                        this.buildings[ref.id] = new PlanetBuilding(this, ref)
+                    }
+                }
+                else {
+                    this.buildings[ref.id] = new PlanetBuilding(this, ref)
+                }
             }
         })
         
@@ -2766,8 +2783,8 @@ class PlanetBuilding {
         
         if (this.ref.type != "extraction") {
             for (let rId in this.ref.prod) {
-                if (this.planet.resources[rId].count + (this.count * this.ref.prod[rId]) < 0) {
-                
+                if (this.planet.resources[rId].count + (this.count * this.ref.prod[rId]) < 0 && this.planet.resources[rId].prod + (this.count * this.ref.prod[rId]) < 0) {
+                    
                     ret = false
                     this.need[rId] = true
                     this.stoppedDelay = 1

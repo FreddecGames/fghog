@@ -7,11 +7,12 @@
                 </button>
                 <span class="col-auto text-primary">{{ $t('shipName_' + ship.ref.id) }}</span>
                 <span class="col text-start" :class="{ 'text-white':ship.count > 0, 'text-gray':ship.count <= 0 }">{{ ship.count.toLocaleString() }}</span>
-                <div class="col-auto btn-group">
+                <div class="col-auto btn-group btn-group-sm">
                     <button type="button" class="btn" :class="{ 'disabled':$parent.currentPlanet.canBuy(ship.getCost(1)) == false  }" @click="ship.build(1)"><i class="fas fa-fw fa-plus-circle"></i>1</button>
                     <button type="button" class="btn" :class="{ 'disabled':$parent.currentPlanet.canBuy(ship.getCost(10)) == false }" @click="ship.build(10)"><i class="fas fa-fw fa-plus-circle"></i>10</button>
                     <button type="button" class="btn" :class="{ 'disabled':$parent.currentPlanet.canBuy(ship.getCost(100)) == false }" @click="ship.build(100)"><i class="fas fa-fw fa-plus-circle"></i>100</button>
-                    <button type="button" class="btn" :class="{ 'disabled':$parent.currentPlanet.canBuy(ship.getCost(1000)) == false }" @click="ship.build(1000)"><i class="fas fa-fw fa-plus-circle"></i>1000</button>
+                    <button type="button" class="btn" :class="{ 'disabled':$parent.currentPlanet.canBuy(ship.getCost(1000)) == false }" @click="ship.build(1000)"><i class="fas fa-fw fa-plus-circle"></i>1<small class="opacity-75"> K</small></button>
+                    <button type="button" class="btn" :class="{ 'disabled':$parent.currentPlanet.canBuy(ship.getCost(10000)) == false }" @click="ship.build(10000)"><i class="fas fa-fw fa-plus-circle"></i>10<small class="opacity-75"> K</small></button>
                 </div>
             </div>
         </button>
@@ -21,7 +22,7 @@
                     <span class="text-danger">{{ $t('shipName_' + ship.ref.id) }}</span>
                 </div>
                 <div class="col-auto">
-                    <span class="text-danger">{{ ship.ref.shipyardLevel }} Shipyards required</span>
+                    <span class="medium text-danger">{{ ship.ref.shipyardLevel }} Shipyards required</span>
                 </div>
             </div>
         </button>

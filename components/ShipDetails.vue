@@ -46,11 +46,12 @@
                 <div class="col text-gray">
                     <span class="h6">Building</span>
                 </div>
-                <div class="col-auto btn-group" role="group">
+                <div class="col-auto btn-group btn-group-sm" role="group">
                     <button type="button" class="btn border py-1" :class="{ 'text-white':$parent.currentShipCount == 1 }" @click="$parent.currentShipCount = 1">1</button>
                     <button type="button" class="btn border py-1" :class="{ 'text-white':$parent.currentShipCount == 10 }" @click="$parent.currentShipCount = 10">10</button>
                     <button type="button" class="btn border py-1" :class="{ 'text-white':$parent.currentShipCount == 100 }" @click="$parent.currentShipCount = 100">100</button>
-                    <button type="button" class="btn border py-1" :class="{ 'text-white':$parent.currentShipCount == 1000 }" @click="$parent.currentShipCount = 1000">1000</button>
+                    <button type="button" class="btn border py-1" :class="{ 'text-white':$parent.currentShipCount == 1000 }" @click="$parent.currentShipCount = 1000">1<small class="opacity-75"> K</small></button>
+                    <button type="button" class="btn border py-1" :class="{ 'text-white':$parent.currentShipCount == 10000 }" @click="$parent.currentShipCount = 10000">10<small class="opacity-75"> K</small></button>
                 </div>
             </div>
             <div v-for="(res, key) of ship.getCost($parent.currentShipCount)" :key="key">

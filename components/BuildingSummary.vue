@@ -17,7 +17,7 @@
                     <i class="fas fa-fw fa-times-circle"></i>
                 </button>
             </div>
-            <div class="col-auto btn-group">
+            <div class="col-auto btn-group btn-group-sm">
                 <button type="button" class="btn" :class="{ 'text-success':building.canBuild(1) }" @click="building.addQueue(1)"><i class="fas fa-fw fa-plus-circle"></i>1</button>
                 <button type="button" class="btn" :class="{ 'text-success':building.canBuild(10) }" @click="building.addQueue(10)"><i class="fas fa-fw fa-plus-circle"></i>10</button>
                 <button type="button" class="btn" :class="{ 'text-success':building.canBuild(50) }" @click="building.addQueue(50)"><i class="fas fa-fw fa-plus-circle"></i>50</button>
