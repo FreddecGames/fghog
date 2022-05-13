@@ -28,9 +28,9 @@ export default {
             else if (absValue >= 1e9)  { ret = sign + (absValue / 1e9).toFixed(1);  symbol = "B";  }
             else if (absValue >= 1e6)  { ret = sign + (absValue / 1e6).toFixed(1);  symbol = "M";  }
             else if (absValue >= 1e3)  { ret = sign + (absValue / 1e3).toFixed(1);  symbol = "K";  }
-            else if (absValue >= 100)  { ret = sign + Math.abs(this.value).toFixed(0) }
+            else if (absValue >= 100)  { ret = sign + Math.abs(this.value).toFixed(1) }
             
-            else ret = sign + Math.abs(this.value).toFixed(0)
+            else ret = sign + Math.abs(this.value).toFixed(1)
             
             return { value:ret, symbol:symbol }
         }

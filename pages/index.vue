@@ -306,26 +306,36 @@
                             </div>
                         </div>
                         <div class="col-auto px-3" style="width:275px;">
-                            <div class="row align-items-center justify-content-end">
-                                <button v-if="game.paused == false" type="button" class="col-auto btn lh-1" style="width:65px;" @click="togglePause()">
+                            <div class="row gx-2 align-items-center justify-content-end">
+                                <button v-if="game.paused == false" type="button" class="col-auto btn lh-1" @click="togglePause()">
                                     <div class="h6"><i class="fas fa-fw fa-pause"></i></div>
-                                    <div class="small">Game Resumed</div>
+                                    <div class="small">Game<br>Resumed</div>
                                 </button>
-                                <button v-if="game.paused == true" type="button" class="col-auto btn lh-1" style="width:65px;" @click="togglePause()">
+                                <button v-if="game.paused == true" type="button" class="col-auto btn lh-1" @click="togglePause()">
                                     <div class="h6"><i class="fas fa-fw fa-play"></i></div>
-                                    <div class="small">Game Paused</div>
+                                    <div class="small">Game<br>Paused</div>
                                 </button>
-                                <div class="col-auto text-center">
-                                    <div class="text-normal">Bonus Time</div>
-                                    <div class="text-white"><FormatTime :value="game.bonus.count / 1000" /></div>
+                                <div class="col-auto text-start pe-2">
+                                    <div class="lh-1">
+                                        <span class="medium text-normal">Year</span>
+                                        <span class="medium text-white">{{ years }}</span>
+                                    </div>
+                                    <div class="lh-1">
+                                        <span class="medium text-normal">Day</span>
+                                        <span class="medium text-white">{{ days }}</span>
+                                    </div>
                                 </div>
-                                <button v-if="game.bonusActive == false" type="button" class="col-auto btn lh-1" :class="{ 'disabled':game.bonus.count <= 0 }" style="width:65px;" @click="toggleBonus()">
+                                <div class="col-auto text-end ps-2">
+                                    <div class="medium text-normal">Bonus Time</div>
+                                    <div class="medium text-white"><FormatTime :value="game.bonus.count / 1000" /></div>
+                                </div>
+                                <button v-if="game.bonusActive == false" type="button" class="col-auto btn lh-1" :class="{ 'disabled':game.bonus.count <= 0 }" @click="toggleBonus()">
                                     <div class="h6"><i class="fas fa-fw fa-play"></i></div>
-                                    <div class="small">Bonus Disabled</div>
+                                    <div class="small">Bonus<br>Disabled</div>
                                 </button>
-                                <button v-if="game.bonusActive == true" type="button" class="col-auto btn lh-1" style="width:65px;" @click="toggleBonus()">
+                                <button v-if="game.bonusActive == true" type="button" class="col-auto btn lh-1" @click="toggleBonus()">
                                     <div class="h6 text-success"><i class="fas fa-fw fa-pause"></i></div>
-                                    <div class="small text-success">Bonus Enabled</div>
+                                    <div class="small text-success">Bonus<br>Enabled</div>
                                 </button>
                             </div>
                         </div>
@@ -1475,7 +1485,7 @@ var techRefs = [
             var ret = ""
             ret += "<div class='h6 text-gray mb-2'>Unlocks</div>"
             
-            ret += techDescUnlock(1, "Plastic Factory", level)
+            ret += techDescUnlock(8, "Plastic Factory", level)
             ret += techDescUnlock(8, "Polymerizer", level)
             ret += techDescUnlock(15, "Nanotube Factory", level)
             ret += techDescUnlock(15, "Nanotube Dome", level)
@@ -1976,7 +1986,7 @@ var nebulaRefs = [
 
 var planetRefs = [
     
-    {	id: "promision",	nebulaId: "perseus",	civId: "human",	x: 26,	y: 1,	env: "terrestrial",	influence: 1,	radius: 6833,	temp: 22,	atmos: "oxygen",	orbit: 1,	prod:{ graphite: 1, iron: 1, methane: 1, silicon: 1, titanium: 1, uranium: 1, sand: .5 },	},
+    {	id: "promision",	nebulaId: "perseus",	civId: "human",	x: 26,	y: 1,	env: "terrestrial",	influence: 1,	radius: 6833,	temp: 22,	atmos: "oxygen",	orbit: 1,	prod:{ graphite: 1, iron: 1, methane: 1, oil : 1, silicon: 1, titanium: 1, uranium: 1, sand: .5 },	},
     {	id: "vasilis",	nebulaId: "perseus",	civId: null,	x: 100,	y: 39,	env: "ice",	influence: 1,	radius: 5201,	temp: -21,	atmos: "oxygen",	orbit: 2.9,	prod:{ coolant: 2, ice: 2, methane: 2, titanium: 1.5, iron: 1, uranium: 1, oil: .5 },	},
     {	id: "aequoreas",	nebulaId: "perseus",	civId: null,	x: 0,	y: 71,	env: "ocean",	influence: 1,	radius: 8890,	temp: 18,	atmos: "oxygen",	orbit: .7,	prod:{ sand: 2, iron: 1, titanium: 1.5, oil: 1, water: 5 },	},
     {	id: "orpheus",	nebulaId: "perseus",	civId: null,	x: 18,	y: 133,	env: "gas",	influence: 1,	radius: 18540,	temp: -141,	atmos: "hydrogen",	orbit: 8.2,	prod:{ hydrogen: 8, methane: 3, technetium: 2 },	},
@@ -2729,7 +2739,7 @@ class PlanetBuilding {
         
         for (let rId in this.ref.prod) {
             ret[rId] = this.ref.prod[rId] * count
-            if (this.planet.ref.prod[rId]) ret[rId] *= this.planet.ref.prod[rId]
+            if (this.ref.prod[rId] > 0 && this.planet.ref.prod[rId]) ret[rId] *= this.planet.ref.prod[rId]
         }
         
         if (this.ref.energy < 0) {
@@ -2816,6 +2826,10 @@ class PlanetBuilding {
     destroy(count) {
     
         this.count -= count
+        
+        for (let rId in this.ref.prod) {
+            this.need[rId] = false
+        }
         
         let refund = this.getRefund(count)
         for (let rId in refund) {
@@ -3461,6 +3475,7 @@ class Game {
         this.tutorialActive = true
         this.resetInProgress = false
         
+        this.days = 0
         this.timeTravelCount = 0
         
         this.bonus = { count:0 }
@@ -3644,7 +3659,8 @@ class Game {
     //---
     
     loadFromData(data) {
-    
+        
+        this.days = data.days || 0
         this.bonus.count = data.bonusCount || 0
         this.timeTravelCount = data.timeTravelCount || 0
         this.tutorialActive = data.tutorialActive
@@ -3655,9 +3671,9 @@ class Game {
             
             if (tech && tech.level > 0) {
             
-                this.techs[tId].level = tech.level
-                
                 for (let i = 0; i < tech.level; i++) {
+                
+                    this.techs[tId].level += 1
                     this.techs[tId].ref.onLevelUp(tech.level, this)
                 }
             }
@@ -3736,6 +3752,7 @@ class Game {
     
         let ret = {
             
+            days: this.days,
             bonusCount: this.bonus.count,
             researchPointCount: this.researchPoint.count,
             timeTravelCount: this.timeTravelCount,
@@ -3850,6 +3867,8 @@ class Game {
                 coeff = 5
             }
             
+            this.days += .25 * delta * coeff
+            
             this.produceResources(delta * coeff)
             this.buildBuildings()
             this.updateTravels(coeff)
@@ -3892,7 +3911,9 @@ class Game {
                                 for (let rId in building.ref.prod) {
                                     
                                     planet.resources[rId].prod += building.ref.prod[rId] * building.count * energyCoeff
-                                    if (planet.ref.prod[rId]) planet.resources[rId].ref.prod *= planet.ref.prod[rId]
+                                    if (building.ref.prod[rId] > 0 && planet.ref.prod[rId] > 0) {
+                                        planet.resources[rId].prod *= planet.ref.prod[rId]
+                                    }
                                 }
                                 
                                 planet.researchPoint.prod += building.ref.researchPoint * building.count * energyCoeff
@@ -4059,7 +4080,17 @@ export default {
     },
     
     computed: {
-    
+        
+        days() {
+        
+            return parseInt(this.game.days) - 365 * this.years
+        },
+        
+        years() {
+        
+            return parseInt(this.game.days / 365)
+        },
+        
         exportGameData() {
         
             let text = localStorage.getItem(this.localStorageName)
