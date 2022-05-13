@@ -2,7 +2,7 @@
     <div class="h-100 w-100">
 
         <div v-if="popupText" class="position-absolute top-0 bottom-0 start-0 end-0 bg-3 d-flex align-items-center justify-content-center" style="z-index:100;">
-            <div class="bg-2 rounded border p-3" style="width:380px; overflow-y:auto; overflow-x:hidden; max-height:728px;">
+            <div class="bg-2 rounded border p-3" style="width:380px; overflow-y:auto; overflow-x:hidden; max-height:642px;">
                 <div class="row g-3">
                     <div class="col-12 text-center" v-html="popupText"></div>
                     <div class="col-6 text-start">
@@ -87,7 +87,7 @@
                                     <div class="text-primary text-center h5">Move <span class="text-white">{{ popupMoveFleet.name }}</span> to</div>
                                 </div>
                                 <div class="col-12">
-                                    <div class="row">
+                                    <div class="row align-items-center">
                                         <div class="col">
                                             <span class="text-gray">Select a destination</span>
                                         </div>
@@ -264,6 +264,92 @@
                                 <div class="col-6 text-end">
                                     <button type="button" class="btn border" :class="{ 'disabled':popupUnloadCurrentStorage < 0 }" @click="popupUnloadFleet.unload(popupUnloadResources); popupUnloadFleet = null;">
                                         <span>Unload</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div v-if="popupAutorouteFleet" class="position-absolute top-0 bottom-0 start-0 end-0 bg-3 d-flex align-items-center justify-content-center" style="z-index:100;">
+                        <div class="bg-2 rounded border p-3" style="width:675px; overflow-y:auto; overflow-x:hidden; max-height:642px;">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="text-primary text-center h5">Create autoroute with <span class="text-white">{{ popupAutorouteFleet.name }}</span></div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-6 border-end">
+                                            <div class="row align-items-center mb-2" style="height:32px;">
+                                                <div class="col">
+                                                    <span class="text-gray">Origin</span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <span class="text-white">{{ $t('planetName_' + popupAutorouteFleet.planet.ref.id) }}</span>
+                                                </div>
+                                            </div>
+                                            <div v-for="(value, id) in popupAutorouteOriginPercentages" :key="id" class="row gx-2 align-items-center">
+                                                <div class="col"><span class="text-normal">{{ $t('resName_' + id) }}</span></div>
+                                                <div class="col-auto d-flex align-items-center">
+                                                    <input type="number" class="form-control text-white border bg-3" min="0" max="100" v-model.number="popupAutorouteOriginPercentages[id]" :change="refreshPopupAutorouteTotalOrigin()" style="width:100px;"/>
+                                                    <span class="ms-1 text-normal">%</span>
+                                                </div>
+                                                <div class="col-auto text-end" style="width:50px;">
+                                                    <span class="medium text-gray"><FormatNumber :value="popupAutorouteOriginPercentages[id] / 100 * popupAutorouteFleet.getTotalStorage()" /></span>
+                                                </div>
+                                            </div>
+                                            <div class="row gx-2 align-items-center" style="height:32px;">
+                                                <div class="col"><span class="text-gray">Fleet Storage</span></div>
+                                                <div class="col-auto">
+                                                    <span :class="{ 'text-success':popupAutorouteTotalOrigin <= popupAutorouteFleet.getTotalStorage(), 'text-danger':popupAutorouteTotalOrigin > popupAutorouteFleet.getTotalStorage() }"><FormatNumber :value="popupAutorouteTotalOrigin" /></span>
+                                                    <span class="text-gray medium">/<FormatNumber :value="popupAutorouteFleet.getTotalStorage()" /></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="row align-items-center mb-2">
+                                                <div class="col">
+                                                    <span class="text-gray">Destination</span>
+                                                </div>
+                                                <div class="col-auto dropdown">
+                                                    <button type="button" class="btn border bg-3 text-white text-end dropdown-toggle" style="width:165px;" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <span v-if="popupAutorouteDestination != null">{{ $t('planetName_' + popupAutorouteDestination.ref.id) }}</span>
+                                                        <span v-if="popupAutorouteDestination == null">No destination selected</span>
+                                                    </button>
+                                                    <div class="dropdown-menu border" style="max-height:200px; width:165px; overflow-y:auto;">
+                                                        <button v-for="planet in currentNebula.getVisiblePlanets()" :key="planet.ref.id" type="button" class="text-start dropdown-item" @click="popupAutorouteDestination = planet">
+                                                            <span>{{ $t('planetName_' + planet.ref.id) }}</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div v-for="(value, id) in popupAutorouteDestinationPercentages" :key="id" class="row align-items-center">
+                                                <div class="col"><span class="text-normal">{{ $t('resName_' + id) }}</span></div>
+                                                <div class="col-auto d-flex align-items-center">
+                                                    <input type="number" class="form-control text-white border bg-3" min="0" max="100" v-model.number="popupAutorouteDestinationPercentages[id]" :change="refreshPopupAutorouteTotalDestination()" style="width:100px;"/>
+                                                    <span class="ms-1 text-normal">%</span>
+                                                </div>
+                                                <div class="col-auto text-end" style="width:50px;">
+                                                    <span class="medium text-gray"><FormatNumber :value="popupAutorouteDestinationPercentages[id] / 100 * popupAutorouteFleet.getTotalStorage()" /></span>
+                                                </div>
+                                            </div>
+                                            <div class="row gx-2 align-items-center" style="height:32px;">
+                                                <div class="col"><span class="text-gray">Fleet Storage</span></div>
+                                                <div class="col-auto">
+                                                    <span :class="{ 'text-success':popupAutorouteTotalDestination <= popupAutorouteFleet.getTotalStorage(), 'text-danger':popupAutorouteTotalDestination > popupAutorouteFleet.getTotalStorage() }"><FormatNumber :value="popupAutorouteTotalDestination" /></span>
+                                                    <span class="text-gray medium">/<FormatNumber :value="popupAutorouteFleet.getTotalStorage()" /></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6 text-start">
+                                    <button type="button" class="btn border" @click="popupAutorouteFleet = null">
+                                        <span>Cancel</span>
+                                    </button>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <button type="button" class="btn border" :class="{ 'disabled':popupAutorouteDestination == null || popupAutorouteTotalOrigin > popupAutorouteFleet.getTotalStorage() || popupAutorouteTotalDestination > popupAutorouteFleet.getTotalStorage() }" @click="popupAutorouteFleet.autoroute(popupAutorouteFleet.planet.ref.id, popupAutorouteDestination.ref.id, popupAutorouteOriginPercentages, popupAutorouteDestinationPercentages); popupAutorouteFleet = null; currentFleetsOrbitting = null;">
+                                        <span>Create</span>
                                     </button>
                                 </div>
                             </div>
@@ -2483,10 +2569,11 @@ class Planet {
             
                 if (ref.type == "extraction") {
                 
-                    let tmp = true
+                    let tmp = false
                     for (let rId in ref.prod) {
-                        if (this.ref.prod[rId] == null) {
-                            tmp = false
+                        if (this.ref.prod[rId] != null) {
+                            tmp = true
+                            break
                         }
                     }
                     
@@ -2738,8 +2825,21 @@ class PlanetBuilding {
         }
         
         for (let rId in this.ref.prod) {
-            ret[rId] = this.ref.prod[rId] * count
-            if (this.ref.prod[rId] > 0 && this.planet.ref.prod[rId]) ret[rId] *= this.planet.ref.prod[rId]
+
+            if (this.ref.type == "extraction") {
+                if (this.ref.prod[rId] > 0 && this.planet.ref.prod[rId] > 0) {
+                
+                    ret[rId] = this.ref.prod[rId] * count
+                    ret[rId] *= this.planet.ref.prod[rId]
+                }
+            }
+            else {
+            
+                ret[rId] = this.ref.prod[rId] * count
+                if (this.ref.prod[rId] > 0 && this.planet.ref.prod[rId]) {
+                    ret[rId] *= this.planet.ref.prod[rId]
+                }
+            }
         }
         
         if (this.ref.energy < 0) {
@@ -3134,7 +3234,7 @@ class Fleet {
         
         this.planet = null
         
-        this.game.travels.push(new Travel(this.game, new Date().getTime(), this, originId, originId, destinationId, "move"))
+        this.game.travels.push(new Travel(this.game, this, originId, destinationId))
     }
 
     rename(name) {
@@ -3214,47 +3314,125 @@ class Fleet {
         return report
     }
 
-    load(resourcesArr) {
-    
+    load(resourcesArr, planet) {
+        
+        if (planet == null) { planet = this.planet }
+        
         for (let rId in resourcesArr) {
         
             this.resources[rId] += parseInt(resourcesArr[rId])
-            this.planet.resources[rId].count -= parseInt(resourcesArr[rId])
+            planet.resources[rId].count -= parseInt(resourcesArr[rId])
         }
     }
     
-    unload(resourcesArr) {
-    
+    unload(resourcesArr, planet) {
+        
+        if (planet == null) { planet = this.planet }
+        
         for (let rId in resourcesArr) {
         
             this.resources[rId] -= parseInt(resourcesArr[rId])
-            this.planet.resources[rId].count += parseInt(resourcesArr[rId])
+            planet.resources[rId].count += parseInt(resourcesArr[rId])
         }
+    }
+
+    autoroute(originId, destinationId, originPercentages, destinationPercentages) {
+
+        this.unload(this.resources)
+        
+        let totalStorage = this.getTotalStorage()
+        
+        let loadResources = {}
+        for (let rId in originPercentages) {        
+            loadResources[rId] = Math.min(originPercentages[rId] / 100 * totalStorage, this.planet.resources[rId].count)
+        }
+        this.load(loadResources)
+        
+        let index = this.planet.fleets.indexOf(this)
+        this.planet.fleets.splice(index, 1)
+        
+        this.planet = null
+
+        this.game.travels.push(new Autoroute(this.game, this, originId, destinationId, originPercentages, destinationPercentages))
     }
 }
 
 class Travel {
 
-    constructor(game, startTime, fleet, sourceId, originId, destinationId, type) {
+    constructor(game, fleet, originId, destinationId, remainingSeconds) {
     
         this.game = game
-        
-        this.type = type
+        this.type = "normal"
         this.fleet = fleet
-        
-        this.source = this.game.planets[sourceId]
         this.origin = this.game.planets[originId]
         this.destination = this.game.planets[destinationId]
+        
+        if (remainingSeconds) {
+        
+            this.remainingSeconds = remainingSeconds
+        }
+        else {
+        
+            this.remainingSeconds = this.origin.paths[destinationId].distance / this.fleet.getSpeed()
+        }
+    }
     
-        let departureTime = startTime
-        if (!departureTime) {
-            departureTime = new Date().getTime()
+    onArrive() {
+    
+        let index = this.game.travels.indexOf(this)
+        this.game.travels.splice(index, 1)
+        
+        this.fleet.planet = this.destination
+        this.destination.fleets.push(this.fleet)
+    }
+}
+
+class Autoroute extends Travel {
+
+    constructor(game, fleet, originId, destinationId, originPercentages, destinationPercentages, lastPlanetId, remainingSeconds) {
+        super(game, fleet, originId, destinationId, remainingSeconds)
+        
+        this.type = "autoroute"
+        
+        this.originPercentages = originPercentages
+        this.destinationPercentages = destinationPercentages
+        
+        if (lastPlanetId) {
+        
+            this.lastPlanet = this.game.planets[lastPlanetId]
+        }
+        else {
+        
+            this.lastPlanet = this.origin
+        }
+    }
+    
+    onArrive() {
+        
+        let loadPercentages
+        
+        if (this.lastPlanet == this.origin) {
+            
+            loadPercentages = this.destinationPercentages            
+            this.lastPlanet = this.destination
+        }
+        else {
+        
+            loadPercentages = this.originPercentages            
+            this.lastPlanet = this.origin
         }
         
-        let arrivalTime = departureTime + (this.source.paths[destinationId].distance / this.fleet.getSpeed() * 1e3)
+        this.fleet.unload(this.fleet.resources, this.lastPlanet)
         
-        this.departureTime = departureTime
-        this.arrivalTime = arrivalTime
+        let totalStorage = this.fleet.getTotalStorage()
+        
+        let loadResources = {}
+        for (let rId in loadPercentages) {        
+            loadResources[rId] = Math.min(loadPercentages[rId] / 100 * totalStorage, this.lastPlanet.resources[rId].count)
+        }
+        this.fleet.load(loadResources, this.lastPlanet)
+        
+        this.remainingSeconds = this.origin.paths[this.destination.ref.id].distance / this.fleet.getSpeed()
     }
 }
 
@@ -3743,7 +3921,15 @@ class Game {
             data.travels.forEach(travel => {
                 
                 let fleet = new Fleet(this, travel.fleet.civId, travel.fleet.name, null, travel.fleet.experience, travel.fleet.ships, travel.fleet.resources)
-                this.travels.push(new Travel(this, travel.startTime, fleet, travel.sourceId, travel.originId, travel.destinationId, travel.type))
+                
+                if (travel.type == "autoroute") {
+                
+                    this.travels.push(new Autoroute(this, fleet, travel.originId, travel.destinationId, travel.originPercentages, travel.destinationPercentages, travel.lastPlanetId, travel.remainingSeconds))
+                }
+                else {
+                
+                    this.travels.push(new Travel(this, fleet, travel.originId, travel.destinationId, travel.remainingSeconds))
+                }
             })
         }
     }
@@ -3820,11 +4006,11 @@ class Game {
         
             let data = {}
             
-            data.type = travel.type            
-            data.sourceId = travel.source.ref.id
+            data.type = travel.type
             data.originId = travel.origin.ref.id
             data.destinationId = travel.destination.ref.id        
-            data.startTime = travel.departureTime            
+            data.remainingSeconds = travel.remainingSeconds            
+            
             data.fleet = {
             
                 civId: travel.fleet.civId,
@@ -3832,6 +4018,14 @@ class Game {
                 experience: travel.fleet.experience,      
                 resources: travel.fleet.resources,
                 ships: travel.fleet.ships,
+            }
+            
+            if (travel.type == "autoroute") {
+            
+                data.originPercentages = travel.originPercentages
+                data.destinationPercentages = travel.destinationPercentages
+                
+                data.lastPlanetId = travel.lastPlanet.ref.id
             }
             
             ret.travels.push(data)
@@ -3871,7 +4065,7 @@ class Game {
             
             this.produceResources(delta * coeff)
             this.buildBuildings()
-            this.updateTravels(coeff)
+            this.updateTravels(delta * coeff)
         }
     }
     
@@ -3910,9 +4104,19 @@ class Game {
                                 
                                 for (let rId in building.ref.prod) {
                                     
-                                    planet.resources[rId].prod += building.ref.prod[rId] * building.count * energyCoeff
-                                    if (building.ref.prod[rId] > 0 && planet.ref.prod[rId] > 0) {
-                                        planet.resources[rId].prod *= planet.ref.prod[rId]
+                                    if (building.ref.type == "extraction") {
+                                        if (building.ref.prod[rId] > 0 && planet.ref.prod[rId] > 0) {
+                                        
+                                            planet.resources[rId].prod += building.ref.prod[rId] * building.count * energyCoeff
+                                            planet.resources[rId].prod *= planet.ref.prod[rId]
+                                        }
+                                    }
+                                    else {
+                                    
+                                        planet.resources[rId].prod += building.ref.prod[rId] * building.count * energyCoeff
+                                        if (building.ref.prod[rId] > 0 && planet.ref.prod[rId] > 0) {
+                                            planet.resources[rId].prod *= planet.ref.prod[rId]
+                                        }
                                     }
                                 }
                                 
@@ -3969,19 +4173,17 @@ class Game {
         }
     }
 
-    updateTravels(coeff) {
-        
-        let currentTime = new Date().getTime()
+    updateTravels(delta) {
         
         for (let tId = 0; tId < this.travels.length; tId++) {
             let travel = this.travels[tId]
-            if (travel.departureTime + (travel.arrivalTime - travel.departureTime) / coeff <= currentTime) {
+            if (travel.remainingSeconds - delta <= 0) {
                 
-                let index = this.travels.indexOf(travel)
-                this.travels.splice(index, 1)
-                
-                travel.fleet.planet = travel.destination
-                travel.destination.fleets.push(travel.fleet)
+                travel.onArrive()
+            }
+            else {
+            
+                travel.remainingSeconds -= delta
             }
         }
     }    
@@ -4026,6 +4228,14 @@ export default {
 
             popupMoveFleet: null,
             popupMoveDestination: null,
+            //---
+
+            popupAutorouteFleet: null,
+            popupAutorouteDestination: null,
+            popupAutorouteOriginPercentages: {},
+            popupAutorouteDestinationPercentages: {},
+            popupAutorouteTotalOrigin: 0,
+            popupAutorouteTotalDestination: 0,
             
             //---
                         
@@ -4240,6 +4450,48 @@ export default {
             }
             
             this.popupUnloadCurrentStorage = ret
+        },
+        
+        showPopupAutoroute(fleet) {
+        
+            this.popupAutorouteFleet = fleet
+            this.popupAutorouteDestination = null
+            this.popupAutorouteOriginPercentages = {}
+            this.popupAutorouteDestinationPercentages = {}
+            this.popupAutorouteTotalOrigin = 0
+            this.popupAutorouteTotalDestination = 0
+            
+            resourceRefs.forEach(ref => {
+                if (ref.techReqs == null || this.game.areTechReqsSatisfied(ref.techReqs) == true) {
+                
+                    this.popupAutorouteOriginPercentages[ref.id] = 0
+                    this.popupAutorouteDestinationPercentages[ref.id] = 0
+                }
+            })
+        },
+        
+        refreshPopupAutorouteTotalOrigin() {
+            
+            let totalStorage = this.popupAutorouteFleet.getTotalStorage()
+            
+            let ret = 0
+            for (let rId in this.popupAutorouteOriginPercentages) {
+                ret += parseInt(this.popupAutorouteOriginPercentages[rId] / 100 * totalStorage)
+            }
+            
+            this.popupAutorouteTotalOrigin = ret
+        },
+        
+        refreshPopupAutorouteTotalDestination() {
+            
+            let totalStorage = this.popupAutorouteFleet.getTotalStorage()
+            
+            let ret = 0
+            for (let rId in this.popupAutorouteDestinationPercentages) {
+                ret += parseInt(this.popupAutorouteDestinationPercentages[rId] / 100 * totalStorage)
+            }
+            
+            this.popupAutorouteTotalDestination = ret
         },
         
         closePopup() {
@@ -4497,6 +4749,8 @@ export default {
 
             if (!this.importExportData || !this.importExportData.trim()) return this.showToast("No data to import!", "error")
             if (this.importExportData.length % 4 !== 0) return this.showToast("Data corrupted!", "error")
+            
+            this.game.resetInProgress = true
             
             localStorage.setItem(this.localStorageName, this.importExportData)
             window.location.reload()

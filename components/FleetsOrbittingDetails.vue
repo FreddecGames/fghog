@@ -66,6 +66,11 @@
                 Move to
             </button>
         </div>
+        <div class="col-12">
+            <button type="button" class="w-100 btn border" @click="$parent.showPopupAutoroute(fleet)">
+                Autoroute
+            </button>
+        </div>
         <div v-if="fleet.planet.ref.civId != 'human' && fleet.planet.getEnemyFleets().length < 1" class="col-12">
             <button type="button" class="w-100 btn border" @click="fleet.colonize()">
                 Colonize

@@ -11,6 +11,9 @@
                     </button>
                 </div>
             </div>
+            <div v-if="travel.type == 'autoroute'" class="text-center">
+                <span class="medium text-gray">Autoroute</span>
+            </div>
         </div>
         <div class="col-12">
             <div class="row gx-2">
@@ -43,6 +46,12 @@
             <div v-for="(count, sId) in travel.fleet.getShips()" :key="sId" class="row gx-2">
                 <div class="col"><span class="text-normal">{{ $t('shipName_' + sId) }}</span></div>
                 <div class="col-auto"><span class="text-white"><FormatNumber :value="count" /></span></div>
+            </div>
+            <div v-if="travel.fleet.getAvailableResources().length > 0" class="mt-2">
+                <div v-for="res in travel.fleet.getAvailableResources()" :key="res.id" class="row gx-2">
+                    <div class="col"><span class="text-normal">{{ $t('resName_' + res.id) }}</span></div>
+                    <div class="col-auto"><span class="text-white"><FormatNumber :value="res.count" /></span></div>
+                </div>
             </div>
         </div>
     </div>
